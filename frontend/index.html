@@ -159,7 +159,7 @@
       .about p { font-size: 16px; color: var(--ink-soft); margin-bottom: 16px; }
       .for-whom { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
       .pill { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--olive-deep); background: var(--sand); }
-      .about-photo { border-radius: 22px; min-height: 420px; background: linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url("/pics/client-4.jpg") center/cover; box-shadow: var(--shadow); position: relative; }
+      .about-photo { border-radius: 22px; min-height: 420px; background: linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url("/pics/hero-new.jpg") center/cover; box-shadow: var(--shadow); position: relative; }
       .about-photo .cap { position: absolute; left: 20px; right: 20px; bottom: 20px; background: rgba(35,41,31,0.5); color: var(--white); padding: 12px 16px; border-radius: 12px; font-family: "Fraunces", serif; }
       .gallery { background: var(--sand-deep); }
       .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; flex-wrap: wrap; }
@@ -332,16 +332,10 @@
           </div>
           <p class="gallery-note">Tip: use a few high-quality photos from your Airbnb or Booking.com listing, then paste their URLs in the admin section below.</p>
           <div class="gal-grid" id="galleryGrid">
-            <div class="gal-item" style="background-image: url('/pics/client-6.jpg');"><span>Dining Area</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-7.jpg');"><span>Bedroom Setup</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-8.jpg');"><span>Wardrobe</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-9.jpg');"><span>Fire Pit</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-10.jpg');"><span>Laundry Area</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-11.jpg');"><span>Shower</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-12.jpg');"><span>Bathroom View</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-13.jpg');"><span>Living Room</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-14.jpg');"><span>Hallway</span></div>
-            <div class="gal-item" style="background-image: url('/pics/client-15.jpg');"><span>Lobby</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-new-1.jpg');" title="Click to enlarge"><span>Interior</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-new-2.jpg');" title="Click to enlarge"><span>Corridor</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-new-3.jpg');" title="Click to enlarge"><span>Bedroom Front</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-new-4.jpg');" title="Click to enlarge"><span>Bedroom Side</span></div>
           </div>
         </div>
       </section>
@@ -569,6 +563,39 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
     <script src="main.js"></script>
+    <div id="lightbox" class="lightbox">
+      <span class="lightbox-close">&times;</span>
+      <img id="lightbox-img" src="">
+    </div>
+    <style>
+      .lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+      .lightbox.active { display: flex; opacity: 1; }
+      .lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      .lightbox-close { position: absolute; top: 30px; right: 40px; color: #fff; font-size: 40px; cursor: pointer; user-select: none; }
+      .gal-item { cursor: pointer; transition: transform 0.2s; }
+      .gal-item:hover { transform: scale(1.02); z-index: 2; position: relative; }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightbox-img');
+        const closeBtn = document.querySelector('.lightbox-close');
+        
+        document.querySelectorAll('.gal-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const bg = item.style.backgroundImage;
+            const url = bg.slice(4, -1).replace(/["']/g, "");
+            lbImg.src = url;
+            lightbox.classList.add('active');
+          });
+        });
+        
+        closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
+        lightbox.addEventListener('click', (e) => {
+          if (e.target === lightbox) lightbox.classList.remove('active');
+        });
+      });
+    </script>
   </body>
 </html>
 
