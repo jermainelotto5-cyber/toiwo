@@ -332,18 +332,24 @@
           </div>
           <p class="gallery-note">Tip: use a few high-quality photos from your Airbnb or Booking.com listing, then paste their URLs in the admin section below.</p>
           <div class="gal-grid" id="galleryGrid">
-  <div class="gal-item" style="background-image: url('/pics/exterior-entrance.jpg');"><span>Courtyard entrance</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Courtyard entrance</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Living room</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Kitchen</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Bedroom</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Garden terrace</span></div>
+  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Outdoor dining</span></div>
+</div>
   <div class="gal-item" style="background-image: url('/pics/living-room.jpg');"><span>Living room</span></div>
   <div class="gal-item" style="background-image: url('/pics/kitchen.jpg');"><span>Kitchen</span></div>
   <div class="gal-item" style="background-image: url('/pics/bedroom.jpg');"><span>Bedroom</span></div>
   <div class="gal-item" style="background-image: url('/pics/outdoor-lounge.jpg');"><span>Garden terrace</span></div>
   <div class="gal-item" style="background-image: url('/pics/night-exterior.jpg');"><span>Outdoor dining</span></div>
 </div>
-            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80');"><span>Living room</span></div>
-            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1000&q=80');"><span>Kitchen</span></div>
-            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80');"><span>Bedroom</span></div>
-            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80');"><span>Garden terrace</span></div>
-            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1000&q=80');"><span>Outdoor dining</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Living room</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Kitchen</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Bedroom</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Garden terrace</span></div>
+            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Outdoor dining</span></div>
           </div>
         </div>
       </section>
@@ -573,4 +579,6 @@
     <script src="main.js"></script>
   </body>
 </html>
+
+
 
