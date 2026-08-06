@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Toiwo Residence - Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--sand:#f6f1e7;--ink:#23291f;--clay:#a6502c;--line:rgba(35,41,31,0.12);--white:#fffdf9}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI, Roboto, "Helvetica Neue", Arial; background:var(--sand); color:var(--ink); margin:0}
+    .wrap{max-width:1100px;margin:40px auto;padding:0 20px}
+    .card{background:var(--white);border:1px solid var(--line);padding:20px;border-radius:12px;margin-bottom:18px}
+    h1{font-family:Fraunces,serif}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)}
+    .btn{display:inline-block;padding:10px 14px;border-radius:8px;border:none;background:var(--clay);color:var(--white);cursor:pointer}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--line)}
+    .u-row{display:flex;gap:10px;align-items:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Toiwo Residence — Admin</h1>
+    <div id="authBox" class="card">
+      <h3>Sign in</h3>
+      <div class="grid">
+        <div>
+          <label>Email</label>
+          <input id="adminEmailInput" type="email" value="jermainelotto5@gmail.com" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="adminPasswordInput" type="password" placeholder="password" />
+        </div>
+      </div>
+      <div style="margin-top:12px"><button class="btn" id="adminSignInBtn">Sign In</button> <span id="authStatus" style="margin-left:12px;color:var(--clay)"></span></div>
+    </div>
+
+    <div id="dashboard" style="display:none">
+      <div class="card">
+        <h3>Site Settings</h3>
+        <div class="grid">
+          <div>
+            <label>Phone</label>
+            <input id="settingPhone" />
+          </div>
+          <div>
+            <label>WhatsApp</label>
+            <input id="settingWhats" />
+          </div>
+        </div>
+        <div style="margin-top:10px" class="grid">
+          <div>
+            <label>Email</label>
+            <input id="settingEmail" />
+          </div>
+          <div>
+            <label>Base Price ($/night)</label>
+            <input id="settingPrice" type="number" step="0.01" />
+          </div>
+        </div>
+        <div style="margin-top:12px"><button class="btn" id="saveSettingsBtn">Save Settings</button> <button class="btn" id="signOutBtn" style="background:#999">Sign Out</button></div>
+      </div>
+
+      <div class="card">
+        <h3>Gallery Manager</h3>
+        <p>Upload images to Supabase Storage (`property-images` bucket) and save to property.</p>
+        <input id="uploadFile" type="file" accept="image/*" multiple />
+        <div style="margin-top:8px"><button class="btn" id="uploadBtn">Upload Selected</button></div>
+        <div id="galleryPreview" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px"></div>
+      </div>
+
+      <div class="card">
+        <h3>Bookings Overview</h3>
+        <table>
+          <thead><tr><th>Guest</th><th>Dates</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody id="bookingsBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Blocked Dates</h3>
+        <div class="u-row"><input id="blockedDateInput" type="date"/><input id="blockedReason" placeholder="Reason (optional)" /><button class="btn" id="addBlockedBtn">Add</button></div>
+        <div id="blockedList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card">
+        <h3>Reviews</h3>
+        <div id="reviewsList">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="supabase-client.js"></script>
+  <script>
+    const PROPERTY_ID = '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
+    const uploadBucket = 'property-images';
+
+    document.getElementById('adminSignInBtn').addEventListener('click', async () => {
+      const email = document.getElementById('adminEmailInput').value;
+      const password = document.getElementById('adminPasswordInput').value;
+      const statusEl = document.getElementById('authStatus');
+      try {
+        statusEl.textContent = 'Signing in...';
+        await signInAdmin(email, password);
+        statusEl.textContent = 'Signed in';
+        document.getElementById('authBox').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        await loadDashboard();
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error signing in';
+      }
+    });
+
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await signOutAdmin();
+      document.getElementById('authBox').style.display = 'block';
+      document.getElementById('dashboard').style.display = 'none';
+    });
+
+    async function loadDashboard() {
+      // load settings
+      const settings = await getSiteSettings() || {};
+      document.getElementById('settingPhone').value = settings.phone || '';
+      document.getElementById('settingWhats').value = settings.whatsapp || '';
+      document.getElementById('settingEmail').value = settings.email || '';
+      document.getElementById('settingPrice').value = settings.base_price || '';
+
+      // load gallery images
+      const imgs = await getPropertyImages(PROPERTY_ID);
+      renderGalleryPreview(imgs || []);
+
+      // load bookings
+      const bookings = await listBookings(PROPERTY_ID);
+      renderBookings(bookings || []);
+
+      // blocked dates
+      const blocked = await listBlockedDates(PROPERTY_ID);
+      renderBlockedDates(blocked || []);
+
+      // reviews
+      const reviews = await getReviews(PROPERTY_ID);
+      renderReviewsAdmin(reviews || []);
+    }
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+      const updates = { contact_phone: document.getElementById('settingPhone').value, contact_whatsapp: document.getElementById('settingWhats').value, contact_email: document.getElementById('settingEmail').value, base_price: parseFloat(document.getElementById('settingPrice').value) };
+      try {
+        await updateAdminSettings(PROPERTY_ID, updates);
+        alert('Settings saved');
+      } catch (err) { console.error(err); alert('Error saving settings'); }
+    });
+
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const files = document.getElementById('uploadFile').files;
+      if (!files || files.length === 0) return alert('Choose files to upload');
+      const arr = Array.from(files);
+      for (const f of arr) {
+        const path = `properties/${PROPERTY_ID}/${Date.now()}_${f.name}`;
+        try {
+          const url = await uploadImageToBucket(uploadBucket, path, f);
+          await insertPropertyImage(PROPERTY_ID, url, f.name, 0);
+        } catch (err) { console.error('Upload error', err); alert('Error uploading one or more files'); }
+      }
+      await loadDashboard();
+    });
+
+    function renderGalleryPreview(list) {
+      const preview = document.getElementById('galleryPreview'); preview.innerHTML = '';
+      (list||[]).forEach(i => {
+        const d = document.createElement('div'); d.style.backgroundImage = `url('${i.image_url}')`; d.style.height='120px'; d.style.backgroundSize='cover'; d.style.borderRadius='8px'; preview.appendChild(d);
+      });
+    }
+
+    function renderBookings(list) {
+      const body = document.getElementById('bookingsBody');
+      if (!list || list.length===0) { body.innerHTML = '<tr><td colspan="5">No bookings yet</td></tr>'; return; }
+      body.innerHTML = list.map(b => `<tr><td>${b.guest_name}</td><td>${b.check_in} → ${b.check_out}</td><td>$${(b.total_price||0).toFixed(2)}</td><td>${b.payment_status||'pending'}</td><td>${b.status||'pending'}</td></tr>`).join('');
+    }
+
+    async function renderBlockedDates(list) {
+      const el = document.getElementById('blockedList'); el.innerHTML = '';
+      (list||[]).forEach(d => {
+        const row = document.createElement('div'); row.style.padding='8px 0'; row.innerHTML = `${d.blocked_date} — ${d.reason || ''} <button onclick="removeBlocked('${d.id}')">Remove</button>`; el.appendChild(row);
+      });
+    }
+
+    window.removeBlocked = async function(id) {
+      try { await removeBlockedDate(id); await loadDashboard(); } catch(e){console.error(e); alert('Error removing');}
+    }
+
+    document.getElementById('addBlockedBtn').addEventListener('click', async () => {
+      const date = document.getElementById('blockedDateInput').value; const reason = document.getElementById('blockedReason').value;
+      if (!date) return alert('Choose a date');
+      try { await addBlockedDate(PROPERTY_ID, date, reason); await loadDashboard(); } catch(e){console.error(e); alert('Error adding date');}
+    });
+
+    function renderReviewsAdmin(list) {
+      const out = document.getElementById('reviewsList'); out.innerHTML='';
+      (list||[]).forEach(r => {
+        const div = document.createElement('div'); div.className='u-row'; div.style.marginBottom='8px'; div.innerHTML = `<div style="flex:1"><strong>${r.name}</strong><div>${r.comment}</div></div><div><button onclick="approveReview('${r.id}')">Approve</button> <button onclick="deleteReview('${r.id}')">Delete</button></div>`; out.appendChild(div);
+      });
+    }
+
+    window.approveReview = async function(id){ try{ await supabase.from('reviews').update({approved:true}).eq('id', id); alert('Approved'); await loadDashboard(); }catch(e){console.error(e);} }
+    window.deleteReview = async function(id){ try{ await supabase.from('reviews').delete().eq('id', id); alert('Deleted'); await loadDashboard(); }catch(e){console.error(e);} }
+
+    // helper wrappers for functions defined in supabase-client.js
+    async function getSiteSettings() { try{ const { data } = await supabase.from('site_settings').select('*').limit(1).single(); return data; }catch(e){return null;} }
+    async function getPropertyImages(propertyId){ try{ const { data } = await supabase.from('property_images').select('*').eq('property_id', propertyId).order('display_order',{ascending:true}); return data; }catch(e){return [];} }
+    async function getReviews(propertyId){ try{ const { data } = await supabase.from('reviews').select('*').eq('property_id', propertyId).order('created_at',{ascending:false}); return data; }catch(e){return [];} }
+
+    // Use functions from supabase-client where present
+    async function updateAdminSettings(propertyId, updates) {
+      try { return await supabase.from('site_settings').upsert({ ...updates, updated_at: new Date().toISOString() }, { onConflict: 'id' }); } catch(e){throw e;}
+    }
+
+    async function listBookings(propertyId) { try{ const { data } = await supabase.from('bookings').select('*').eq('property_id', propertyId).order('created_at',{ascending:false}); return data; }catch(e){return [];} }
+    async function listBlockedDates(propertyId) { try{ const { data } = await supabase.from('blocked_dates').select('*').eq('property_id', propertyId); return data; }catch(e){return [];} }
+    async function removeBlockedDate(id) { try{ await supabase.from('blocked_dates').delete().eq('id', id); return true; }catch(e){throw e;} }
+    async function addBlockedDate(propertyId, date, reason){ try{ await supabase.from('blocked_dates').insert([{ property_id: propertyId, blocked_date: date, reason }]); return true; }catch(e){throw e;} }
+
+    // upload helper
+    async function uploadImageToBucket(bucket, path, file) {
+      const { data, error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
+      return urlData.publicUrl;
+    }
+
+    async function insertPropertyImage(propertyId, imageUrl, caption, order=0) {
+      await supabase.from('property_images').insert([{ property_id: propertyId, image_url: imageUrl, caption, display_order: order }]);
+    }
+
+    // Wire to initial check if already logged in
+    (async function(){
+      try { const { data } = await supabase.auth.getUser(); if (data && data.user) { document.getElementById('authBox').style.display='none'; document.getElementById('dashboard').style.display='block'; await loadDashboard(); } } catch(e){}
+    })();
+  </script>
+</body>
+</html>

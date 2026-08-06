@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toiwo Residence — Private Home in Ilboru, Arusha</title>
+    <meta name="description" content="A private four-bedroom residence in Ilboru, Arusha. Ideal for families, groups, and safari stopovers. Comfortable, peaceful, and ready for your stay." />
+    <meta name="keywords" content="Arusha accommodation, private villa, Ilboru, Tanzania holiday rental" />
+    <meta property="og:title" content="Toiwo Residence — Private Home in Ilboru, Arusha" />
+    <meta property="og:description" content="A private four-bedroom residence in Ilboru, Arusha. Ideal for families, groups, and safari stopovers." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#f6f1e7" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <style>
+      :root {
+        --sand: #f6f1e7;
+        --sand-deep: #ede4d3;
+        --ink: #23291f;
+        --ink-soft: #4b5142;
+        --clay: #a6502c;
+        --clay-deep: #8a3f22;
+        --olive: #5c6b47;
+        --olive-deep: #414b33;
+        --gold: #c89344;
+        --line: rgba(35, 41, 31, 0.12);
+        --white: #fffdf9;
+        --radius: 22px;
+        --radius-sm: 14px;
+        --shadow: 0 20px 50px -25px rgba(35, 41, 31, 0.35);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--ink);
+        background: var(--sand);
+        line-height: 1.6;
+      }
+      h1, h2, h3, h4 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        line-height: 1.08;
+        color: var(--ink);
+      }
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; display: block; }
+      button, input, select, textarea { font: inherit; }
+      .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+      .eyebrow {
+        font-size: 12.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--clay-deep);
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 22px;
+        height: 1px;
+        background: var(--clay-deep);
+        display: inline-block;
+      }
+      section { padding: 100px 0; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 24px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .btn:hover { transform: translateY(-2px); }
+      .btn-primary {
+        background: var(--clay);
+        color: var(--white);
+        box-shadow: 0 14px 30px -12px rgba(166, 80, 44, 0.55);
+      }
+      .btn-primary:hover { background: var(--clay-deep); }
+      .btn-ghost {
+        background: transparent;
+        color: var(--white);
+        border-color: rgba(255, 253, 249, 0.55);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--line);
+      }
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 22px 0;
+        transition: background 0.35s ease, padding 0.35s ease;
+      }
+      header .wrap { display: flex; align-items: center; justify-content: space-between; }
+      .logo { font-family: "Fraunces", serif; font-size: 20px; color: var(--white); }
+      .logo span { color: var(--gold); }
+      nav { display: flex; align-items: center; gap: 28px; }
+      nav a { font-size: 14.5px; font-weight: 600; color: rgba(255, 253, 249, 0.86); }
+      header.scrolled { background: rgba(246, 241, 231, 0.95); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); padding: 14px 0; }
+      header.scrolled .logo { color: var(--ink); }
+      header.scrolled nav a { color: var(--ink-soft); }
+      .nav-toggle { display: none; }
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-end;
+        color: var(--white);
+        background: linear-gradient(120deg, #6b7a54 0%, #a6502c 55%, #c89344 100%);
+      }
+      .hero-inner { position: relative; z-index: 2; width: 100%; padding-bottom: 64px; }
+      .hero-tag { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 22px; }
+      .hero h1 { font-size: clamp(42px, 6.4vw, 84px); color: var(--white); max-width: 900px; margin-bottom: 20px; }
+      .hero-lede { font-size: 19px; max-width: 540px; color: rgba(255, 253, 249, 0.88); margin-bottom: 34px; }
+      .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 46px; }
+      .book-bar {
+        background: rgba(255, 253, 249, 0.97);
+        border-radius: var(--radius);
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 12px;
+        box-shadow: var(--shadow);
+        color: var(--ink);
+      }
+      .book-field { display: flex; flex-direction: column; gap: 6px; padding: 6px 12px; border-right: 1px solid var(--line); }
+      .book-field:last-child { border-right: none; }
+      .book-field label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; }
+      .book-field input, .book-field select { border: none; outline: none; background: transparent; font-size: 15px; color: var(--ink); font-weight: 600; }
+      .about { background: var(--white); }
+      .about-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: start; }
+      .about h2 { font-size: clamp(32px, 4vw, 46px); margin-bottom: 22px; max-width: 520px; }
+      .about p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 18px; }
+      .about p { font-size: 16px; color: var(--ink-soft); margin-bottom: 16px; }
+      .for-whom { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+      .pill { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--olive-deep); background: var(--sand); }
+      .about-photo { border-radius: 22px; min-height: 420px; background: linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url("https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80") center/cover; box-shadow: var(--shadow); position: relative; }
+      .about-photo .cap { position: absolute; left: 20px; right: 20px; bottom: 20px; background: rgba(35,41,31,0.5); color: var(--white); padding: 12px 16px; border-radius: 12px; font-family: "Fraunces", serif; }
+      .gallery { background: var(--sand-deep); }
+      .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; flex-wrap: wrap; }
+      .section-head h2 { font-size: clamp(30px, 3.6vw, 42px); }
+      .section-head .sub { color: var(--ink-soft); font-size: 16px; max-width: 420px; }
+      .gallery-note { margin-bottom: 16px; font-size: 14px; color: var(--ink-soft); }
+      .gal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .gal-item { border-radius: 16px; min-height: 180px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 16px; color: var(--white); background-size: cover; background-position: center; }
+      .gal-item span { backdrop-filter: blur(4px); background: rgba(24, 26, 18, 0.38); padding: 6px 12px; border-radius: 8px; font-family: "Fraunces", serif; font-size: 14px; }
+      .amenities { background: var(--white); }
+      .amen-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+      .amen-item { background: var(--white); padding: 28px 22px; display: flex; flex-direction: column; gap: 12px; }
+      .amen-icon { width: 40px; height: 40px; border-radius: 11px; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; color: var(--clay-deep); }
+      .amen-item strong { font-size: 15px; }
+      .amen-item p { font-size: 13.5px; color: var(--ink-soft); }
+      .details { background: var(--olive-deep); color: var(--sand); }
+      .details h2 { color: var(--sand); }
+      .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+      .detail-card { background: rgba(246, 241, 231, 0.06); border: 1px solid rgba(246,241,231,0.16); border-radius: var(--radius-sm); padding: 22px; }
+      .detail-card .num { font-family: "Fraunces", serif; font-size: 34px; color: var(--gold); }
+      .detail-card .label { font-size: 13.5px; color: rgba(246,241,231,0.76); }
+      .reviews { background: var(--sand); }
+      .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+      .rev-card { background: var(--white); border-radius: var(--radius); padding: 24px; border: 1px solid var(--line); box-shadow: 0 12px 30px -20px rgba(35,41,31,0.25); }
+      .rev-card .stars { color: var(--gold); letter-spacing: 2px; margin-bottom: 12px; }
+      .rev-card p { color: var(--ink-soft); margin-bottom: 16px; }
+      .rev-card .who { display: flex; align-items: center; gap: 12px; }
+      .rev-card .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(150deg, var(--olive), var(--gold)); color: var(--white); display: flex; align-items: center; justify-content: center; font-family: "Fraunces", serif; }
+      .booking { background: linear-gradient(160deg, #2a2e22, #1f2a22 60%, #3a2a1c); color: var(--sand); }
+      .booking-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 56px; align-items: start; }
+      .booking h2 { color: var(--sand); font-size: clamp(30px, 3.6vw, 44px); margin-bottom: 16px; }
+      .booking p { color: rgba(246,241,231,0.8); font-size: 16px; margin-bottom: 18px; }
+      .price-tag { display: flex; align-items: baseline; gap: 8px; margin-bottom: 20px; }
+      .price-tag .amt { font-family: "Fraunces", serif; font-size: 44px; color: var(--gold); }
+      .book-card { background: var(--white); color: var(--ink); border-radius: var(--radius); padding: 30px; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45); }
+      .book-card .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+      .book-card .field { display: flex; flex-direction: column; gap: 6px; }
+      .book-card label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); font-weight: 700; }
+      .book-card input, .book-card select, .book-card textarea { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; outline: none; color: var(--ink); }
+      .book-card input:focus, .book-card select:focus, .book-card textarea:focus { border-color: var(--clay); }
+      .book-card .btn-primary { width: 100%; margin-top: 8px; padding: 16px; }
+      .book-note { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 12px; }
+      .payment-slot { margin-top: 14px; border: 1px dashed var(--line); border-radius: 12px; padding: 14px; background: var(--sand); }
+      .payment-slot .placeholder { color: var(--ink-soft); font-size: 14px; }
+      .admin-auth { background: var(--white); border-top: 1px solid var(--line); padding: 24px; border-radius: 18px; margin-top: 18px; }
+      .admin-auth h3 { margin-bottom: 10px; }
+      .admin-auth p { color: var(--ink-soft); margin-bottom: 14px; }
+      .admin-auth .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+      .admin-auth input { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+      .admin-auth .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .admin-status { font-size: 13px; color: var(--olive-deep); margin-bottom: 12px; }
+      .admin-panel { background: var(--white); border-top: 1px solid var(--line); padding: 30px; border-radius: 18px; margin-top: 18px; }
+      .admin-panel h3 { margin-bottom: 12px; }
+      .admin-panel p { color: var(--ink-soft); margin-bottom: 14px; }
+      .admin-panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+      .admin-panel input, .admin-panel textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+      .admin-panel textarea { min-height: 104px; resize: vertical; }
+      .admin-panel .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .contact { background: var(--white); }
+      .contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; }
+      .contact-cards { display: flex; flex-direction: column; gap: 16px; }
+      .ccard { border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
+      .footer { background: var(--ink); color: rgba(246,241,231,0.8); padding: 62px 0 24px; }
+      .foot-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 34px; margin-bottom: 30px; }
+      .foot-logo { font-family: "Fraunces", serif; font-size: 22px; color: var(--sand); margin-bottom: 12px; }
+      .foot-logo span { color: var(--gold); }
+      footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+      footer h5 { color: var(--sand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+      .foot-bottom { border-top: 1px solid rgba(246, 241, 231, 0.14); padding-top: 20px; font-size: 13px; color: rgba(246,241,231,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+      @media (max-width: 900px) {
+        .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; }
+        .amen-grid { grid-template-columns: repeat(2, 1fr); }
+        .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr 1fr; }
+        nav { position: fixed; top: 0; right: -100%; height: 100vh; width: 78%; max-width: 320px; background: var(--white); flex-direction: column; align-items: flex-start; padding: 100px 32px 32px; gap: 24px; transition: right 0.35s ease; box-shadow: -10px 0 40px rgba(0,0,0,0.15); }
+        nav.open { right: 0; }
+        nav a { color: var(--ink) !important; }
+        .nav-toggle { display: flex; flex-direction: column; gap: 5px; cursor: pointer; z-index: 200; background: none; border: none; padding: 6px; }
+        .nav-toggle span { width: 22px; height: 2px; background: var(--white); transition: background 0.3s ease; }
+        header.scrolled .nav-toggle span { background: var(--ink); }
+      }
+      @media (max-width: 700px) {
+        .book-bar { grid-template-columns: 1fr 1fr; }
+        .book-field { border-right: none; border-bottom: 1px solid var(--line); }
+        .book-bar .btn-primary { grid-column: 1 / -1; width: 100%; }
+        .book-card .row, .admin-panel .grid, .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="siteHeader">
+      <div class="wrap">
+        <a href="#top" class="logo">Toiwo <span>Residence</span></a>
+        <nav id="siteNav">
+          <a href="#about">About</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#amenities">Amenities</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#booking">Booking</a>
+          <a href="#contact">Contact</a>
+          <a href="/admin.html" class="btn btn-outline" style="padding: 12px 20px;">Admin Login</a>
+          <a class="btn btn-ghost" href="#booking">Check Availability</a>
+        </nav>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="wrap hero-inner">
+          <div class="hero-tag">Ilboru · Arusha, Tanzania</div>
+          <h1>ComfortHome with a calm local feel.</h1>
+          <p class="hero-lede">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
+          <div class="hero-ctas">
+            <a href="#booking" class="btn btn-primary">Book Your Stay</a>
+            <a href="#gallery" class="btn btn-ghost">View the House</a>
+          </div>
+          <div class="book-bar">
+            <div class="book-field">
+              <label>Check-in</label>
+              <input type="date" id="heroCheckIn" />
+            </div>
+            <div class="book-field">
+              <label>Check-out</label>
+              <input type="date" id="heroCheckOut" />
+            </div>
+            <div class="book-field">
+              <label>Guests</label>
+              <select id="heroGuests">
+                <option>2 adults</option>
+                <option>4 adults</option>
+                <option>6 adults</option>
+                <option>8 adults</option>
+              </select>
+            </div>
+            <a href="#booking" class="btn btn-primary">Check Availability</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="about" id="about">
+        <div class="wrap about-grid">
+          <div>
+            <div class="eyebrow">The House</div>
+            <h2>A home that feels like it was waiting for you.</h2>
+            <p class="lead">Set behind a gated garden in the residential quiet of Ilboru, Toiwo Residence offers privacy, comfort, and the kind of calm that makes stays feel longer than they are.</p>
+            <p>Arched doorways, warm wood details, and a shaded courtyard create a home that is both elegant and easygoing. Four bedrooms, generous living spaces, and a terrace for outdoor dining make it ideal for families, couples, and safari groups.</p>
+            <div class="for-whom">
+              <span class="pill">Families</span>
+              <span class="pill">Groups of friends</span>
+              <span class="pill">Couples</span>
+              <span class="pill">Safari stopovers</span>
+            </div>
+          </div>
+          <div class="about-photo">
+            <div class="cap">The courtyard — a gentle, welcoming start to the day.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery" id="gallery">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Gallery</div>
+              <h2>Photos from your listing pages, ready to swap.</h2>
+            </div>
+            <p class="sub">This section is ready for your Airbnb or Booking.com photos. Replace the image URLs below with real listing images when you have them.</p>
+          </div>
+          <p class="gallery-note">Tip: use a few high-quality photos from your Airbnb or Booking.com listing, then paste their URLs in the admin section below.</p>
+          <div class="gal-grid" id="galleryGrid">
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80');"><span>Courtyard entrance</span></div>
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80');"><span>Living room</span></div>
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1000&q=80');"><span>Kitchen</span></div>
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80');"><span>Bedroom</span></div>
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80');"><span>Garden terrace</span></div>
+            <div class="gal-item" style="background-image: url('https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1000&q=80');"><span>Outdoor dining</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="amenities" id="amenities">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Amenities</div>
+              <h2>Everything you need, nothing you don't.</h2>
+            </div>
+            <p class="sub">Stay comfortable and settled with a practical layout and thoughtful touches.</p>
+          </div>
+          <div class="amen-grid">
+            <div class="amen-item">
+              <div class="amen-icon">◈</div>
+              <strong>Fast Wi-Fi</strong>
+              <p>Reliable internet for work, streaming, and staying in touch.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">▤</div>
+              <strong>Full Kitchen</strong>
+              <p>Everything needed for simple meals, coffee, and family dinners.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">⛊</div>
+              <strong>Private Parking</strong>
+              <p>Safe parking inside the gated compound.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">♨</div>
+              <strong>Hot Water</strong>
+              <p>Comfortable hot showers and daily convenience.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">▭</div>
+              <strong>Flat-Screen TV</strong>
+              <p>Easy evenings in after a day out.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">↻</div>
+              <strong>Washing Machine</strong>
+              <p>Helpful for longer stays and safari trips.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">☾</div>
+              <strong>Night Security</strong>
+              <p>Peace of mind for arrivals and late evenings.</p>
+            </div>
+            <div class="amen-item">
+              <div class="amen-icon">✤</div>
+              <strong>Private Garden</strong>
+              <p>Shade, quiet, and outdoor space to relax.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="details">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow" style="color: var(--gold);">Property Details</div>
+              <h2>The essentials, at a glance.</h2>
+            </div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-card"><div class="num">4</div><div class="label">Bedrooms</div></div>
+            <div class="detail-card"><div class="num">4</div><div class="label">Beds</div></div>
+            <div class="detail-card"><div class="num">3</div><div class="label">Bathrooms</div></div>
+            <div class="detail-card"><div class="num">8</div><div class="label">Max Guests</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reviews" id="reviews">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Guest Reviews</div>
+              <h2>Warm words from travelers who stayed here.</h2>
+            </div>
+          </div>
+          <div class="rev-grid">
+            <div class="rev-card">
+              <div class="stars">★★★★★</div>
+              <p>“Beautiful, calm, and very comfortable for our family stay.”</p>
+              <div class="who"><div class="avatar">N</div><div><strong>Natalia</strong><span>Family stay</span></div></div>
+            </div>
+            <div class="rev-card">
+              <div class="stars">★★★★★</div>
+              <p>“The garden, the quiet, and the easy check-in made everything simple.”</p>
+              <div class="who"><div class="avatar">D</div><div><strong>David</strong><span>Couple stay</span></div></div>
+            </div>
+            <div class="rev-card">
+              <div class="stars">★★★★★</div>
+              <p>“Perfect for a group trip and very easy to reach from town.”</p>
+              <div class="who"><div class="avatar">A</div><div><strong>Amara</strong><span>Group trip</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="booking" id="booking">
+        <div class="wrap booking-grid">
+          <div>
+            <div class="eyebrow" style="color: var(--gold);">Booking</div>
+            <h2>Reserve your dates today.</h2>
+            <p>Choose your dates, send your details, and complete your payment once the booking is ready.</p>
+            <div class="price-tag"><span class="amt">$180</span><span class="per">/ night · whole house</span></div>
+            <p>Payment integration is placed below the form so you can swap in Selcom, M-Pesa, Tigo Pesa, Stripe, or another provider whenever you are ready.</p>
+          </div>
+          <div class="book-card">
+            <div class="row">
+              <div class="field">
+                <label>Check-in</label>
+                <input type="date" id="bookingCheckIn" />
+              </div>
+              <div class="field">
+                <label>Check-out</label>
+                <input type="date" id="bookingCheckOut" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label>Guests</label>
+                <select id="bookingGuests">
+                  <option>2 adults</option>
+                  <option>4 adults</option>
+                  <option>6 adults</option>
+                  <option>8 adults</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Rooms</label>
+                <select>
+                  <option>1 room (whole house)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom: 14px;">
+              <label>Name</label>
+              <input type="text" id="bookingName" placeholder="Your name" />
+            </div>
+            <div class="field" style="margin-bottom: 14px;">
+              <label>Email</label>
+              <input type="email" id="bookingEmail" placeholder="you@email.com" />
+            </div>
+            <div class="field" style="margin-bottom: 14px;">
+              <label>Special requests</label>
+              <textarea id="bookingNotes" rows="3" placeholder="Arrival time, questions, or needs"></textarea>
+            </div>
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(166, 80, 44, 0.08); border-radius: 12px; border: 1px solid rgba(166, 80, 44, 0.2);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Subtotal</span><span id="subtotalPrice">$0</span></div>
+              <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 16px;"><span>Total</span><span id="totalPrice" style="color: var(--clay);">$0</span></div>
+            </div>
+            <button class="btn btn-primary" id="bookingSubmit" style="width: 100%; margin-bottom: 12px;">Reserve Your Stay</button>
+            <p id="bookingMessage" style="margin: 12px 0; color: var(--clay); font-size: 14px; display: none;"></p>
+            <p class="book-note">Your stay is reserved once you complete payment.</p>
+            <div id="paymentSlot" class="payment-slot">
+              <div class="placeholder" style="text-align: center; padding: 32px 16px; color: var(--ink-soft); font-size: 14px;">Payment gateway will appear here after confirming your reservation.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="wrap contact-grid">
+          <div>
+            <div class="eyebrow">Contact</div>
+            <h2>We usually reply quickly.</h2>
+            <p>Questions about pricing, dates, or the property? Send a note and we will reply as soon as possible.</p>
+            <div class="contact-cards">
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">☏</div><div><strong>Call</strong><span id="contactPhoneText">+255 71 865 4332</span></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">✆</div><div><strong>WhatsApp</strong><span id="contactWhatsAppText">+255 71 865 4332</span></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">✉</div><div><strong>Email</strong><span id="contactEmailText">jermainelotto5@gmail.com</span></div></div>
+            </div>
+          </div>
+          <div class="contact-form" style="background: var(--sand); border: 1px solid var(--line); border-radius: 24px; padding: 24px;">
+            <form id="contactForm" onsubmit="submitContactForm(event)">
+              <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div class="field"><label>Name</label><input type="text" id="contactName" placeholder="Your name" required /></div>
+                <div class="field"><label>Email</label><input type="email" id="contactEmailInput" placeholder="you@email.com" required /></div>
+              </div>
+              <div class="field"><label>Message</label><textarea id="contactMessage" rows="5" placeholder="Tell us about your trip" required></textarea></div>
+              <button type="submit" class="btn btn-primary">Send Message</button>
+              <p id="contactFormMessage" style="margin-top: 12px; color: var(--clay); font-size: 14px; display: none;"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <div class="foot-logo">Toiwo <span>Residence</span></div>
+            <p>A private four-bedroom home in Ilboru, Arusha — calm, spacious, and ready for your stay.</p>
+          </div>
+          <div>
+            <h5>Explore</h5>
+            <ul><li><a href="#top">Home</a></li><li><a href="#about">About</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#booking">Booking</a></li></ul>
+          </div>
+          <div>
+            <h5>Guests</h5>
+            <ul><li><a href="#reviews">Reviews</a></li><li><a href="#amenities">Amenities</a></li><li><a href="#contact">Contact</a></li></ul>
+          </div>
+          <div>
+            <h5>Admin</h5>
+            <ul><li><a href="/admin">Dashboard</a></li><li><a href="/admin">Manage bookings</a></li><li><a href="/admin">Settings</a></li></ul>
+          </div>
+          <div>
+            <h5>Follow</h5>
+            <ul><li><a href="https://instagram.com/toiworesidence.arusha" target="_blank">Instagram</a></li><li><a href="https://facebook.com/toiworesidence" target="_blank">Facebook</a></li><li><a href="https://wa.me/255718654332" target="_blank">WhatsApp</a></li></ul>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <span>© 2026 Toiwo Residence</span>
+          <span>Designed for restful stays in Arusha.</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
