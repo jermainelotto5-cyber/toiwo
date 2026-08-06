@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -306,7 +306,7 @@
         <div class="section-box">
           <h3>Gallery & Featured Images</h3>
           <p style="color: var(--ink-soft); margin-bottom: 16px;">Paste one image URL per line to update the public gallery.</p>
-          <textarea id="galleryUrls" placeholder="https://example.com/image1.jpg\nhttps://example.com/image2.jpg"></textarea>
+          <textarea id="galleryUrls" placeholder="/pics/gallery-replace.jpg"></textarea>
           <div class="gallery-preview" id="galleryPreview"></div>
           <button class="btn btn-secondary" style="margin-top: 16px;" onclick="previewGallery()">Preview Gallery</button>
         </div>
@@ -509,7 +509,7 @@
       const preview = document.getElementById('galleryPreview');
       preview.innerHTML = urls.map(url => `
         <div class="gallery-item" style="background-image: url('${url}');">
-          <button type="button" onclick="removeImage(this)">×</button>
+          <button type="button" onclick="removeImage(this)">Ã—</button>
         </div>
       `).join('');
     }
@@ -581,3 +581,4 @@
   </script>
 </body>
 </html>
+

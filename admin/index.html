@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -334,7 +334,7 @@
         <div class="section-box">
           <h3>Gallery Images</h3>
           <p style="color: var(--ink-soft); margin-bottom: 16px;">Paste image URLs, one per line. You can get these from Airbnb or Booking.com</p>
-          <textarea id="galleryUrls" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea>
+          <textarea id="galleryUrls" placeholder="/pics/gallery-replace.jpg"></textarea>
           <div class="gallery-preview" id="galleryPreview"></div>
           <button class="btn btn-secondary" style="margin-top: 16px;" onclick="previewGallery()">Preview Gallery</button>
         </div>
@@ -561,7 +561,7 @@
       
       preview.innerHTML = urls.map(url => `
         <div class="gallery-item" style="background-image: url('${url}');">
-          <button type="button" onclick="removeImage(this)">×</button>
+          <button type="button" onclick="removeImage(this)">Ã—</button>
         </div>
       `).join('');
     }
@@ -640,3 +640,4 @@
   </script>
 </body>
 </html>
+
