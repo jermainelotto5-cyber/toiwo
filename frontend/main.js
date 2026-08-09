@@ -93,9 +93,30 @@ function renderGallery(imageUrls = []) {
   const urls = (imageUrls || []).filter(Boolean);
   const list = urls.length > 0 ? urls : (currentProperty?.photos || []);
 
-  galleryGrid.innerHTML = list.slice(0, 8).map((url, index) => `
-    <div class="gal-item" style="background-image: url('${url}');">
-      <span>${defaultLabels[index] || 'Photo'}</span>
+  // Initially render only first 4
+  renderGalleryGrid(list.slice(0, 4), defaultLabels);
+
+  const seeAllBtn = document.getElementById('seeAllGalleryBtn');
+  if (seeAllBtn) {
+    if (list.length > 4) {
+      seeAllBtn.style.display = 'inline-flex';
+      seeAllBtn.onclick = () => {
+        renderGalleryGrid(list, defaultLabels);
+        seeAllBtn.style.display = 'none';
+      };
+    } else {
+      seeAllBtn.style.display = 'none';
+    }
+  }
+}
+
+function renderGalleryGrid(list, defaultLabels) {
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) return;
+
+  galleryGrid.innerHTML = list.map((url, index) => `
+    <div class="gal-item" style="background-image: url('${url}');" title="Click to enlarge">
+      <span>${defaultLabels[index] || 'Photo ' + (index + 1)}</span>
     </div>
   `).join('');
 }
@@ -161,7 +182,7 @@ async function submitBooking() {
 
     // Calculate total price
     const nights = calculateNights(checkIn, checkOut);
-    const totalPrice = calculateTotalPrice(currentProperty.price_per_night, nights);
+    const totalPrice = await calculatePriceForDates(checkIn, checkOut);
 
     // Create booking
     const bookingData = {
@@ -261,7 +282,36 @@ document.addEventListener('change', (e) => {
   }
 });
 
-function updateTotalPrice() {
+async function calculatePriceForDates(checkIn, checkOut) {
+  if (!currentProperty) return 0;
+  
+  try {
+    const rules = await getPricingRules(currentProperty.id);
+    const basePrice = parseFloat(currentProperty.price_per_night);
+    
+    let totalPrice = 0;
+    let current = new Date(checkIn);
+    const end = new Date(checkOut);
+    
+    while (current < end) {
+      const dateStr = current.toISOString().split('T')[0];
+      const rule = rules.find(r => dateStr >= r.start_date && dateStr <= r.end_date);
+      if (rule) {
+        totalPrice += parseFloat(rule.price_per_night);
+      } else {
+        totalPrice += basePrice;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return totalPrice;
+  } catch (error) {
+    console.error('Error calculating seasonal price:', error);
+    return calculateNights(checkIn, checkOut) * parseFloat(currentProperty.price_per_night);
+  }
+}
+
+async function updateTotalPrice() {
   const checkIn = document.getElementById('bookingCheckIn').value;
   const checkOut = document.getElementById('bookingCheckOut').value;
   const totalPriceEl = document.getElementById('totalPrice');
@@ -269,13 +319,15 @@ function updateTotalPrice() {
 
   if (checkIn && checkOut && new Date(checkOut) > new Date(checkIn)) {
     const nights = calculateNights(checkIn, checkOut);
-    const total = calculateTotalPrice(currentProperty.price_per_night, nights);
+    const total = await calculatePriceForDates(checkIn, checkOut);
     
     if (totalPriceEl) totalPriceEl.value = formatCurrency(total);
-    if (nightsEl) nightsEl.textContent = `${nights} ${nights === 1 ? 'night' : 'nights'} × $${currentProperty.price_per_night}/night = ${formatCurrency(total)}`;
+    if (nightsEl) {
+      const avg = (total / nights).toFixed(2);
+      nightsEl.textContent = `${nights} ${nights === 1 ? 'night' : 'nights'} × avg $${avg}/night = ${formatCurrency(total)}`;
+    }
   }
 }
-
 // ============================================
 // CONTACT FORM FUNCTIONS
 // ============================================

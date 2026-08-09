@@ -336,3 +336,94 @@ function formatDate(dateString) {
     day: 'numeric' 
   });
 }
+
+// ============================================
+// PRICING RULES FUNCTIONS
+// ============================================
+
+async function getPricingRules(propertyId) {
+  try {
+    const { data, error } = await supabase
+      .from('pricing_rules')
+      .select('*')
+      .eq('property_id', propertyId)
+      .order('start_date', { ascending: true });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching pricing rules:', error);
+    return [];
+  }
+}
+
+async function addPricingRule(propertyId, rule) {
+  try {
+    const { data, error } = await supabase
+      .from('pricing_rules')
+      .insert([{ property_id: propertyId, ...rule }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error adding pricing rule:', error);
+    throw error;
+  }
+}
+
+async function removePricingRule(ruleId) {
+  try {
+    const { error } = await supabase
+      .from('pricing_rules')
+      .delete()
+      .eq('id', ruleId);
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error removing pricing rule:', error);
+    throw error;
+  }
+}
+
+// ============================================
+// PROPERTY UPDATE FUNCTIONS
+// ============================================
+
+async function updatePropertyDetails(propertyId, updates) {
+  try {
+    const { data, error } = await supabase
+      .from('properties')
+      .update(updates)
+      .eq('id', propertyId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error updating property details:', error);
+    throw error;
+  }
+}
+
+// ============================================
+// SUPABASE STORAGE PHOTO UPLOAD
+// ============================================
+
+async function uploadPhotoToStorage(file) {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `gallery/${fileName}`;
+    const { data, error } = await supabase.storage
+      .from('property-photos')
+      .upload(filePath, file);
+    if (error) throw error;
+    const { data: { publicUrl } } = supabase.storage
+      .from('property-photos')
+      .getPublicUrl(filePath);
+    return publicUrl;
+  } catch (error) {
+    console.error('Error uploading photo:', error);
+    throw error;
+  }
+}
