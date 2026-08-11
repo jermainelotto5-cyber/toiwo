@@ -293,6 +293,19 @@ async function signOutAdmin() {
   }
 }
 
+async function resetAdminPassword(email) {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin`
+    });
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    throw error;
+  }
+}
+
 async function getCurrentUser() {
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
