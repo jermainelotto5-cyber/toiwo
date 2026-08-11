@@ -8,18 +8,23 @@ let currentAdminSettings = null;
 const NIGHTLY_RATE = 180;
 
 const DEFAULT_GALLERY_PHOTOS = [
-  { src: '/pics/gallery-new-1.jpg', label: 'Interior' },
-  { src: '/pics/gallery-new-2.jpg', label: 'Corridor' },
-  { src: '/pics/gallery-new-3.jpg', label: 'Bedroom Front' },
-  { src: '/pics/gallery-new-4.jpg', label: 'Bedroom Side' },
+  { src: '/pics/exterior-day.jpg', label: 'Exterior' },
   { src: '/pics/living-room.jpg', label: 'Living Room' },
-  { src: '/pics/bedroom.jpg', label: 'Bedroom' },
-  { src: '/pics/kitchen.jpg', label: 'Kitchen' },
-  { src: '/pics/hallway.jpg', label: 'Hallway' },
-  { src: '/pics/exterior-entrance.jpg', label: 'Exterior Entrance' },
-  { src: '/pics/outdoor-lounge.jpg', label: 'Outdoor Lounge' },
+  { src: '/pics/dining-room.jpg', label: 'Dining Room' },
   { src: '/pics/night-exterior.jpg', label: 'Night Exterior' },
-  { src: '/pics/hero-new.jpg', label: 'Hero' }
+  { src: '/pics/living-room-fireplace.jpg', label: 'Living Room & Fireplace' },
+  { src: '/pics/kitchen.jpg', label: 'Kitchen' },
+  { src: '/pics/bedroom.jpg', label: 'Bedroom' },
+  { src: '/pics/bedroom-2.jpg', label: 'Bedroom' },
+  { src: '/pics/bedroom-3.jpg', label: 'Bedroom' },
+  { src: '/pics/bathroom.jpg', label: 'Bathroom' },
+  { src: '/pics/bathroom-2.jpg', label: 'Bathroom' },
+  { src: '/pics/hallway.jpg', label: 'Hallway' },
+  { src: '/pics/entryway.jpg', label: 'Entryway' },
+  { src: '/pics/study.jpg', label: 'Study' },
+  { src: '/pics/backyard.jpg', label: 'Backyard & Fire Pit' },
+  { src: '/pics/laundry.jpg', label: 'Laundry' },
+  { src: '/pics/exterior-alt.jpg', label: 'Exterior View' }
 ];
 
 // ============================================
