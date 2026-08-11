@@ -5,6 +5,23 @@
 let currentProperty = null;
 let currentAdminSettings = null;
 
+const NIGHTLY_RATE = 180;
+
+const DEFAULT_GALLERY_PHOTOS = [
+  { src: '/pics/gallery-new-1.jpg', label: 'Interior' },
+  { src: '/pics/gallery-new-2.jpg', label: 'Corridor' },
+  { src: '/pics/gallery-new-3.jpg', label: 'Bedroom Front' },
+  { src: '/pics/gallery-new-4.jpg', label: 'Bedroom Side' },
+  { src: '/pics/living-room.jpg', label: 'Living Room' },
+  { src: '/pics/bedroom.jpg', label: 'Bedroom' },
+  { src: '/pics/kitchen.jpg', label: 'Kitchen' },
+  { src: '/pics/hallway.jpg', label: 'Hallway' },
+  { src: '/pics/exterior-entrance.jpg', label: 'Exterior Entrance' },
+  { src: '/pics/outdoor-lounge.jpg', label: 'Outdoor Lounge' },
+  { src: '/pics/night-exterior.jpg', label: 'Night Exterior' },
+  { src: '/pics/hero-new.jpg', label: 'Hero' }
+];
+
 // ============================================
 // INITIALIZATION
 // ============================================
@@ -17,25 +34,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initializeApp() {
   try {
-    // Fetch property data
     currentProperty = await getPropertyByName('Toiwo Residence');
-    if (!currentProperty) {
-      console.error('Property not found');
-      return;
+
+    if (currentProperty) {
+      currentAdminSettings = await getAdminSettings(currentProperty.id);
+      renderPropertyData();
+      renderAmenities();
+      renderDetails();
     }
 
-    // Fetch admin settings
-    currentAdminSettings = await getAdminSettings(currentProperty.id);
-
-    // Populate UI with data
-    renderPropertyData();
     renderGallery(currentAdminSettings?.gallery_images || []);
-    renderAmenities();
-    renderDetails();
     updateContactDetails();
-
   } catch (error) {
     console.error('Error initializing app:', error);
+    renderGallery([]);
+    updateTotalPrice();
   }
 }
 
@@ -89,19 +102,24 @@ function renderGallery(imageUrls = []) {
   const galleryGrid = document.getElementById('galleryGrid');
   if (!galleryGrid) return;
 
-  const defaultLabels = ['Courtyard entrance', 'Living room', 'Kitchen', 'Bedroom', 'Garden terrace', 'Outdoor dining', 'Terrace view', 'Master bedroom'];
   const urls = (imageUrls || []).filter(Boolean);
-  const list = urls.length > 0 ? urls : (currentProperty?.photos || []);
+  let photos = DEFAULT_GALLERY_PHOTOS;
 
-  // Initially render only first 4
-  renderGalleryGrid(list.slice(0, 4), defaultLabels);
+  if (urls.length > 0) {
+    photos = urls.map((src, index) => ({
+      src,
+      label: DEFAULT_GALLERY_PHOTOS[index]?.label || `Photo ${index + 1}`
+    }));
+  }
+
+  renderGalleryGrid(photos.slice(0, 4));
 
   const seeAllBtn = document.getElementById('seeAllGalleryBtn');
   if (seeAllBtn) {
-    if (list.length > 4) {
+    if (photos.length > 4) {
       seeAllBtn.style.display = 'inline-flex';
       seeAllBtn.onclick = () => {
-        renderGalleryGrid(list, defaultLabels);
+        renderGalleryGrid(photos);
         seeAllBtn.style.display = 'none';
       };
     } else {
@@ -110,13 +128,14 @@ function renderGallery(imageUrls = []) {
   }
 }
 
-function renderGalleryGrid(list, defaultLabels) {
+function renderGalleryGrid(photos) {
   const galleryGrid = document.getElementById('galleryGrid');
   if (!galleryGrid) return;
 
-  galleryGrid.innerHTML = list.map((url, index) => `
-    <div class="gal-item" style="background-image: url('${url}');" title="Click to enlarge">
-      <span>${defaultLabels[index] || 'Photo ' + (index + 1)}</span>
+  galleryGrid.innerHTML = photos.map(({ src, label }) => `
+    <div class="gal-item">
+      <img src="${src}" alt="${label}" loading="lazy" />
+      <span>${label}</span>
     </div>
   `).join('');
 }
@@ -136,7 +155,7 @@ function updateContactDetails() {
 
   if (phoneEl) {
     phoneEl.textContent = phone;
-    phoneEl.href = `tel:${phone.replace(/\s/g, '')}`;
+    phoneEl.href = `tel:${phone.replace(/\D/g, '')}`;
   }
   if (whatsappEl) {
     whatsappEl.textContent = whatsapp;
@@ -275,9 +294,15 @@ async function checkAvailabilityFromHero() {
   }
 }
 
-// Update total price when dates or guests change
+// Update total price when dates change
 document.addEventListener('change', (e) => {
-  if (e.target.id === 'bookingCheckIn' || e.target.id === 'bookingCheckOut' || e.target.id === 'bookingGuests') {
+  if (e.target.id === 'bookingCheckIn' || e.target.id === 'bookingCheckOut') {
+    updateTotalPrice();
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'bookingCheckIn' || e.target.id === 'bookingCheckOut') {
     updateTotalPrice();
   }
 });
@@ -311,22 +336,24 @@ async function calculatePriceForDates(checkIn, checkOut) {
   }
 }
 
-async function updateTotalPrice() {
-  const checkIn = document.getElementById('bookingCheckIn').value;
-  const checkOut = document.getElementById('bookingCheckOut').value;
-  const totalPriceEl = document.getElementById('totalPrice');
-  const nightsEl = document.getElementById('nightsDisplay');
+function updateTotalPrice() {
+  const checkIn = document.getElementById('bookingCheckIn')?.value;
+  const checkOut = document.getElementById('bookingCheckOut')?.value;
+  const subtotalEl = document.getElementById('subtotalPrice');
+  const totalEl = document.getElementById('totalPrice');
 
-  if (checkIn && checkOut && new Date(checkOut) > new Date(checkIn)) {
-    const nights = calculateNights(checkIn, checkOut);
-    const total = await calculatePriceForDates(checkIn, checkOut);
-    
-    if (totalPriceEl) totalPriceEl.value = formatCurrency(total);
-    if (nightsEl) {
-      const avg = (total / nights).toFixed(2);
-      nightsEl.textContent = `${nights} ${nights === 1 ? 'night' : 'nights'} × avg $${avg}/night = ${formatCurrency(total)}`;
-    }
+  if (!checkIn || !checkOut || new Date(checkOut) <= new Date(checkIn)) {
+    if (subtotalEl) subtotalEl.textContent = '$0';
+    if (totalEl) totalEl.textContent = '$0';
+    return;
   }
+
+  const nights = calculateNights(checkIn, checkOut);
+  const total = nights * NIGHTLY_RATE;
+  const formatted = formatCurrency(total);
+
+  if (subtotalEl) subtotalEl.textContent = formatted;
+  if (totalEl) totalEl.textContent = formatted;
 }
 // ============================================
 // CONTACT FORM FUNCTIONS
@@ -423,8 +450,12 @@ function setupEventListeners() {
 
   if (checkInEl) {
     checkInEl.addEventListener('change', updateTotalPrice);
+    checkInEl.addEventListener('input', updateTotalPrice);
   }
   if (checkOutEl) {
     checkOutEl.addEventListener('change', updateTotalPrice);
+    checkOutEl.addEventListener('input', updateTotalPrice);
   }
+
+  updateTotalPrice();
 }
