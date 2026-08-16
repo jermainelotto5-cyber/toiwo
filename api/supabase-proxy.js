@@ -1,9 +1,34 @@
 // /api/supabase-proxy.js
 // Transparent proxy between the browser and Supabase.
-// This server-side route forwards requests to Supabase and returns
-// the raw response bytes to the browser while preserving important headers.
+// The browser posts a JSON payload here; we parse it safely, then forward the request
+// to Supabase and return the raw response bytes without forwarding Content-Encoding.
 
 const SUPABASE_PREFIX = 'https://kzpdoxmooddkujtntvlf.supabase.co';
+
+function getRequestPayload(req) {
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) {
+    return req.body;
+  }
+
+  if (typeof req.body === 'string') {
+    try {
+      return JSON.parse(req.body);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  // Some Vercel serverless bodies arrive as a Buffer. Parse it if present.
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      return JSON.parse(req.body.toString('utf8'));
+    } catch (error) {
+      return {};
+    }
+  }
+
+  return {};
+}
 
 module.exports = async (req, res) => {
   // CORS for browser requests from the site
@@ -16,8 +41,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Expect the client to POST a JSON payload: { url, method, headers, body }
-    const payload = req.body || {};
+    const payload = getRequestPayload(req);
     const url = payload.url;
     const method = (payload.method || 'GET').toUpperCase();
     const headers = Object.assign({}, payload.headers || {});
@@ -29,10 +53,8 @@ module.exports = async (req, res) => {
 
     const fetchOptions = { method, headers };
 
-    // If the client provided a body, forward it. Keep it as a string if already a string.
     if (body != null && method !== 'GET' && method !== 'HEAD') {
       fetchOptions.body = typeof body === 'string' ? body : JSON.stringify(body);
-      // Ensure content-type header is present when we send JSON
       if (!Object.keys(fetchOptions.headers).some(h => h.toLowerCase() === 'content-type')) {
         fetchOptions.headers['Content-Type'] = 'application/json';
       }
@@ -40,21 +62,17 @@ module.exports = async (req, res) => {
 
     const response = await fetch(url, fetchOptions);
 
-    // Copy response headers but exclude those that would cause the browser to try to
-    // re-decode an already-decoded body (Content-Encoding) or other hop-by-hop headers.
-    const hopByHop = new Set(['transfer-encoding', 'connection', 'content-encoding', 'content-length']);
+    const hopByHop = new Set(['transfer-encoding', 'connection', 'content-encoding', 'content-length', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'upgrade']);
     response.headers.forEach((value, key) => {
       if (!hopByHop.has(key.toLowerCase())) {
         res.setHeader(key, value);
       }
     });
 
-    // Read raw response bytes and send them directly so encoding is preserved.
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     res.status(response.status);
-    // Some responses may be empty (204). If buffer has length, send it; otherwise end.
     if (buffer.length) {
       res.send(buffer);
     } else {
@@ -62,7 +80,6 @@ module.exports = async (req, res) => {
     }
   } catch (error) {
     console.error('Proxy error:', error);
-    // Return a JSON error (safe for the client) with status 502 to indicate upstream failure
     res.status(502).json({ error: 'Proxy request failed', message: error.message });
   }
 };

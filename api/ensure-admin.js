@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
-const SETUP_KEY = 'toiwo-setup-2026';
-const ADMIN_EMAIL = 'jermainelotto5@gmail.com';
-const ADMIN_PASSWORD = 'jermy1234';
+const SETUP_KEY = process.env.ADMIN_SETUP_KEY || 'toiwo-setup-2026';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jermainelotto5@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me-now';
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
         'Open Supabase Dashboard → Project Settings → API → copy the service_role key',
         'Open Vercel Dashboard → toiwo-residence → Settings → Environment Variables',
         'Add SUPABASE_SERVICE_ROLE_KEY with the service_role value',
+        'Set ADMIN_EMAIL and ADMIN_PASSWORD if you want to create/update the admin account',
         'Redeploy, then visit this URL again'
       ]
     });
