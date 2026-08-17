@@ -6,7 +6,8 @@
   <title>Toiwo Residence - Admin Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase bundled locally — no external CDN needed -->
+  <script src="./frontend/supabase.min.js"></script>
   <style>
     :root {
       --sand: #f6f1e7;
@@ -113,28 +114,43 @@
     .welcome-text { color: var(--ink-soft); }
     .welcome-text strong { color: var(--clay); }
     
+    .dashboard-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 24px;
+      align-items: start;
+    }
     .tabs {
       display: flex;
-      gap: 0;
-      margin-bottom: 30px;
-      border-bottom: 1px solid var(--line);
-      overflow-x: auto;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--white);
+      padding: 10px;
+      position: sticky;
+      top: 20px;
+      box-shadow: 0 2px 10px rgba(35, 41, 31, 0.04);
     }
     .tab-btn {
-      padding: 16px 20px;
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
       background: none;
-      border: none;
+      border: 1px solid transparent;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
       color: var(--ink-soft);
-      border-bottom: 3px solid transparent;
       transition: all 0.2s;
       font-size: 14px;
       white-space: nowrap;
     }
     .tab-btn.active {
       color: var(--clay);
-      border-bottom-color: var(--clay);
+      background: rgba(166, 80, 44, 0.08);
+      border-color: rgba(166, 80, 44, 0.14);
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -273,7 +289,9 @@
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
       .dashboard-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .tabs { flex-wrap: nowrap; }
+      .dashboard-shell { grid-template-columns: 1fr; }
+      .tabs { position: static; order: -1; }
+      .tab-btn { text-align: center; }
     }
   </style>
 </head>
@@ -311,17 +329,10 @@
         <button class="btn btn-secondary" onclick="handleLogout()">Sign Out</button>
       </div>
 
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'overview')">Overview</button>
-        <button class="tab-btn" onclick="switchTab(event, 'bookings')">Bookings</button>
-        <button class="tab-btn" onclick="switchTab(event, 'calendar')">Pricing & Blocks</button>
-        <button class="tab-btn" onclick="switchTab(event, 'content')">Content & Photos</button>
-        <button class="tab-btn" onclick="switchTab(event, 'ical')">Calendar Sync (iCal)</button>
-        <button class="tab-btn" onclick="switchTab(event, 'messages')">Messages</button>
-      </div>
-
-      <!-- Tab: Overview -->
-      <div id="overview" class="tab-content active">
+      <div class="dashboard-shell">
+        <div class="dashboard-main">
+          <!-- Tab: Overview -->
+          <div id="overview" class="tab-content active">
         <div class="stats-grid">
           <div class="stats-card">
             <h4>Total Revenue</h4>
@@ -626,11 +637,21 @@
           </div>
         </div>
       </div>
+        </div>
 
+        <div class="tabs" role="tablist" aria-label="Admin sections">
+          <button class="tab-btn active" onclick="switchTab(event, 'overview')">Overview</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bookings')">Bookings</button>
+          <button class="tab-btn" onclick="switchTab(event, 'calendar')">Pricing & Blocks</button>
+          <button class="tab-btn" onclick="switchTab(event, 'content')">Content & Photos</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ical')">Calendar Sync (iCal)</button>
+          <button class="tab-btn" onclick="switchTab(event, 'messages')">Messages</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="./frontend/supabase-client.js"></script>
+  <script src="./frontend/supabase-client.js?v=9"></script>
   <script>
     let currentPropertyId = null;
     let currentAdminSettings = null;
@@ -644,6 +665,12 @@
 
     async function handleLogin(event) {
       event.preventDefault();
+      
+      if (typeof signInAdmin !== 'function') {
+        alert('Critical Error: The backend connection script did not load correctly. Please make sure you are at https://toiwo.vercel.app/admin.html and that your network is not blocking scripts.');
+        return;
+      }
+      
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
       const errorEl = document.getElementById('loginError');
@@ -662,7 +689,7 @@
         if (code.includes('Email not confirmed')) {
           errorEl.textContent = 'Please confirm your email first. Check your inbox for a Supabase confirmation link, or click Forgot Password.';
         } else {
-          errorEl.textContent = 'Invalid email or password. Click Forgot Password to reset it.';
+          errorEl.textContent = 'Error: ' + code;
         }
         console.error('Login error:', error);
       }
@@ -750,6 +777,21 @@
       } catch (error) {
         console.error('Error loading dashboard data:', error);
       }
+    }
+
+    function updatePropertyStatus(property) {
+      const statusEl = document.getElementById('propertyStatus');
+      if (!statusEl || !property) {
+        return;
+      }
+      statusEl.innerHTML = `
+        <div style="display:grid; gap: 10px;">
+          <div><strong>${property.name || 'Toiwo Residence'}</strong> · ${property.location || 'Ilboru, Arusha'}</div>
+          <div>${property.description || 'A peaceful residence for discerning travellers.'}</div>
+          <div><strong>Base Rate:</strong> ${formatCurrency(property.price_per_night || 0)} / night</div>
+          <div><strong>Guests:</strong> ${property.max_guests || 0} · <strong>Bedrooms:</strong> ${property.bedrooms || 0} · <strong>Beds:</strong> ${property.beds || 0} · <strong>Baths:</strong> ${property.bathrooms || 0}</div>
+        </div>
+      `;
     }
 
     function calculateAnalytics(bookings, blocks, messages) {
@@ -957,7 +999,7 @@
 
     async function getBlockedDatesRaw() {
       if (!currentPropertyId) return [];
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('blocked_dates')
         .select('*')
         .eq('property_id', currentPropertyId)
@@ -1212,6 +1254,9 @@
     }
 
     window.addEventListener('load', async () => {
+      if (typeof getCurrentUser !== 'function') {
+        return;
+      }
       try {
         const user = await getCurrentUser();
         if (user) {

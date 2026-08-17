@@ -6,7 +6,43 @@
 const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1NzU3NjQsImV4cCI6MjA5OTE1MTc2NH0.cIuu86DwNQzHPvzyWoc6Hu3dEz8YTdE84MTi4fLhfRc';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Custom fetch: routes all Supabase requests through our Vercel proxy
+// so the browser never directly contacts supabase.co (bypassing network blocks)
+const proxyFetch = async (url, options = {}) => {
+  const outgoingHeaders = options.headers instanceof Headers
+    ? Object.fromEntries(options.headers.entries())
+    : (options.headers || {});
+
+  return fetch('/api/supabase-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url: url,
+      method: options.method || 'GET',
+      headers: outgoingHeaders,
+      body: options.body || null
+    })
+  });
+};
+
+let supabaseClient;
+try {
+  if (window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      global: { fetch: proxyFetch }
+    });
+    console.log('Supabase client initialized via proxy.');
+  } else {
+    console.error('window.supabase is not defined.');
+  }
+} catch (e) {
+  console.error('Failed to initialize Supabase client:', e);
+}
+
+if (supabaseClient) {
+  window.supabase = supabaseClient;
+  window.supabaseClient = supabaseClient;
+}
 
 // ============================================
 // PROPERTY FUNCTIONS
@@ -14,7 +50,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function getProperty(propertyId = null) {
   try {
-    let query = supabase.from('properties').select('*');
+    let query = supabaseClient.from('properties').select('*');
     if (propertyId) {
       query = query.eq('id', propertyId);
     }
@@ -29,7 +65,7 @@ async function getProperty(propertyId = null) {
 
 async function getPropertyByName(name = 'Toiwo Residence') {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('properties')
       .select('*')
       .eq('name', name)
@@ -48,7 +84,7 @@ async function getPropertyByName(name = 'Toiwo Residence') {
 
 async function getAdminSettings(propertyId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('admin_settings')
       .select('*')
       .eq('property_id', propertyId)
@@ -68,7 +104,7 @@ async function updateAdminSettings(propertyId, updates) {
       ...updates,
       updated_at: new Date().toISOString()
     };
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('admin_settings')
       .upsert(payload, { onConflict: 'property_id' })
       .select()
@@ -87,7 +123,7 @@ async function updateAdminSettings(propertyId, updates) {
 
 async function checkAvailability(propertyId, checkIn, checkOut) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .rpc('check_availability', {
         property_id: propertyId,
         check_in_date: checkIn,
@@ -103,7 +139,7 @@ async function checkAvailability(propertyId, checkIn, checkOut) {
 
 async function createBooking(bookingData) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('bookings')
       .insert([bookingData])
       .select()
@@ -118,7 +154,7 @@ async function createBooking(bookingData) {
 
 async function getBookingsByEmail(email) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('bookings')
       .select('*')
       .eq('guest_email', email);
@@ -132,7 +168,7 @@ async function getBookingsByEmail(email) {
 
 async function getAllBookings(propertyId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('bookings')
       .select('*')
       .eq('property_id', propertyId)
@@ -147,7 +183,7 @@ async function getAllBookings(propertyId) {
 
 async function updateBookingStatus(bookingId, status) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('bookings')
       .update({
         status: status,
@@ -170,7 +206,7 @@ async function updateBookingStatus(bookingId, status) {
 
 async function getBlockedDates(propertyId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('blocked_dates')
       .select('*')
       .eq('property_id', propertyId);
@@ -184,7 +220,7 @@ async function getBlockedDates(propertyId) {
 
 async function addBlockedDate(propertyId, date, reason = '') {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('blocked_dates')
       .insert([{ property_id: propertyId, blocked_date: date, reason }])
       .select()
@@ -199,7 +235,7 @@ async function addBlockedDate(propertyId, date, reason = '') {
 
 async function removeBlockedDate(blockedDateId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('blocked_dates')
       .delete()
       .eq('id', blockedDateId);
@@ -217,7 +253,7 @@ async function removeBlockedDate(blockedDateId) {
 
 async function createContactMessage(propertyId, senderName, senderEmail, message) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('contact_messages')
       .insert([{
         property_id: propertyId,
@@ -237,7 +273,7 @@ async function createContactMessage(propertyId, senderName, senderEmail, message
 
 async function getContactMessages(propertyId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('contact_messages')
       .select('*')
       .eq('property_id', propertyId)
@@ -256,7 +292,7 @@ async function getContactMessages(propertyId) {
 
 async function signUpAdmin(email, password) {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseClient.auth.signUp({
       email: email,
       password: password
     });
@@ -270,7 +306,10 @@ async function signUpAdmin(email, password) {
 
 async function signInAdmin(email, password) {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    if (!supabaseClient) {
+      throw new Error('Supabase client failed to load! Your browser or adblocker may be blocking it (cdn.jsdelivr.net). Please disable your adblocker or try a different browser.');
+    }
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password
     });
@@ -284,7 +323,7 @@ async function signInAdmin(email, password) {
 
 async function signOutAdmin() {
   try {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabaseClient.auth.signOut();
     if (error) throw error;
     return true;
   } catch (error) {
@@ -295,7 +334,7 @@ async function signOutAdmin() {
 
 async function resetAdminPassword(email) {
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/admin`
     });
     if (error) throw error;
@@ -308,7 +347,7 @@ async function resetAdminPassword(email) {
 
 async function getCurrentUser() {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
     if (error) throw error;
     return user;
   } catch (error) {
@@ -356,7 +395,7 @@ function formatDate(dateString) {
 
 async function getPricingRules(propertyId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('pricing_rules')
       .select('*')
       .eq('property_id', propertyId)
@@ -371,7 +410,7 @@ async function getPricingRules(propertyId) {
 
 async function addPricingRule(propertyId, rule) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('pricing_rules')
       .insert([{ property_id: propertyId, ...rule }])
       .select()
@@ -386,7 +425,7 @@ async function addPricingRule(propertyId, rule) {
 
 async function removePricingRule(ruleId) {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from('pricing_rules')
       .delete()
       .eq('id', ruleId);
@@ -404,7 +443,7 @@ async function removePricingRule(ruleId) {
 
 async function updatePropertyDetails(propertyId, updates) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('properties')
       .update(updates)
       .eq('id', propertyId)
@@ -427,11 +466,11 @@ async function uploadPhotoToStorage(file) {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
     const filePath = `gallery/${fileName}`;
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseClient.storage
       .from('property-photos')
       .upload(filePath, file);
     if (error) throw error;
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = supabaseClient.storage
       .from('property-photos')
       .getPublicUrl(filePath);
     return publicUrl;
@@ -440,3 +479,4 @@ async function uploadPhotoToStorage(file) {
     throw error;
   }
 }
+
