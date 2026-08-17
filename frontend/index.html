@@ -253,10 +253,22 @@
         header.scrolled .nav-toggle span { background: var(--ink); }
       }
       @media (max-width: 700px) {
+        .wrap { padding: 0 18px; }
+        .hero-ctas { flex-direction: column; }
+        .hero-ctas .btn { width: 100%; }
         .book-bar { grid-template-columns: 1fr 1fr; }
         .book-field { border-right: none; border-bottom: 1px solid var(--line); }
         .book-bar .btn-primary { grid-column: 1 / -1; width: 100%; }
         .book-card .row, .admin-panel .grid, .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 480px) {
+        section { padding: 80px 0; }
+        .hero h1 { font-size: clamp(36px, 16vw, 52px); }
+        .hero-lede { font-size: 16px; }
+        .book-bar { grid-template-columns: 1fr; }
+        .book-field { border-bottom: 1px solid var(--line); }
+        .section-head { align-items: flex-start; }
+        .foot-bottom { flex-direction: column; }
       }
     </style>
   </head>
