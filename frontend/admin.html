@@ -217,7 +217,38 @@
 
     // Use functions from supabase-client where present
     async function updateAdminSettings(propertyId, updates) {
-      try { return await supabase.from('site_settings').upsert({ ...updates, updated_at: new Date().toISOString() }, { onConflict: 'id' }); } catch(e){throw e;}
+      try {
+        const { data: existing, error: readError } = await supabase
+          .from('site_settings')
+          .select('*')
+          .limit(1)
+          .maybeSingle();
+
+        if (readError && readError.code !== 'PGRST116') throw readError;
+
+        const payload = { ...updates, updated_at: new Date().toISOString() };
+
+        if (existing && existing.id) {
+          const { data, error } = await supabase
+            .from('site_settings')
+            .update(payload)
+            .eq('id', existing.id)
+            .select()
+            .single();
+          if (error) throw error;
+          return data;
+        }
+
+        const { data, error } = await supabase
+          .from('site_settings')
+          .insert([payload])
+          .select()
+          .single();
+        if (error) throw error;
+        return data;
+      } catch (e) {
+        throw e;
+      }
     }
 
     async function listBookings(propertyId) { try{ const { data } = await supabase.from('bookings').select('*').eq('property_id', propertyId).order('created_at',{ascending:false}); return data; }catch(e){return [];} }

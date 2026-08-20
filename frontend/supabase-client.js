@@ -63,18 +63,45 @@ async function getAdminSettings(propertyId) {
 
 async function updateAdminSettings(propertyId, updates) {
   try {
+    const currentUser = await getCurrentUser();
     const payload = {
       property_id: propertyId,
+      admin_email: updates.admin_email || currentUser?.email || 'jermainelotto5@gmail.com',
       ...updates,
       updated_at: new Date().toISOString()
     };
-    const { data, error } = await supabase
+
+    const { data: existing, error: readError } = await supabase
       .from('admin_settings')
-      .upsert(payload, { onConflict: 'property_id' })
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+      .select('*')
+      .eq('property_id', propertyId)
+      .maybeSingle();
+
+    if (readError && readError.code !== 'PGRST116') {
+      throw readError;
+    }
+
+    let result;
+    if (existing && existing.id) {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .update(payload)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      if (error) throw error;
+      result = data;
+    } else {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .insert([payload])
+        .select()
+        .single();
+      if (error) throw error;
+      result = data;
+    }
+
+    return result;
   } catch (error) {
     console.error('Error updating admin settings:', error);
     throw error;

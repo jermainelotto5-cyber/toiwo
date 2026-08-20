@@ -508,12 +508,13 @@
       const urls = document.getElementById('galleryUrls').value.split('\n').filter(u => u.trim());
       const preview = document.getElementById('galleryPreview');
       preview.innerHTML = urls.map(url => `
-        <div class="gallery-item" style="background-image: url('${url}');">
-          <button type="button" onclick="removeImage(this)">Ã—</button>
-        </div>
+        <a href="../frontend/index.html#gallery"  style="display:block; width:100%; height:100%; text-decoration:none;">
+          <div class="gallery-item" style="background-image: url('${url}'); cursor:pointer;">
+            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); removeImage(this)">×</button>
+          </div>
+        </a>
       `).join('');
     }
-
     function removeImage(btn) {
       btn.parentElement.remove();
     }
