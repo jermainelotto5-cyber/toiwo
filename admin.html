@@ -1,12 +1,2037 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url=/admin/index.html" />
-  <title>Redirecting to Admin...</title>
-  <script>window.location.replace('/admin/index.html');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Toiwo Residence - Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Supabase bundled locally — no external CDN needed -->
+  <script src="./frontend/supabase.min.js"></script>
+  <style>
+    :root {
+      --sand: #f8fafc;
+      --ink: #0f172a;
+      --ink-soft: #334155;
+      --clay: #b45309;
+      --clay-deep: #78350f;
+      --gold: #d97706;
+      --line: #cbd5e1;
+      --line-light: #e2e8f0;
+      --white: #ffffff;
+      --success: #15803d;
+      --error: #b91c1c;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: var(--sand);
+      line-height: 1.6;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    h1, h2, h3, h4 {
+      font-family: "Fraunces", Georgia, serif;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 22px; margin-bottom: 12px; }
+    h3 { font-size: 19px; }
+    h4 { font-size: 17px; }
+
+    /* Login Screen */
+    .login-container {
+      max-width: 460px;
+      margin: 80px auto;
+      padding: 0 16px;
+    }
+    .login-box {
+      background: var(--white);
+      padding: 40px 36px;
+      border-radius: 20px;
+      border: 1.5px solid var(--line);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    .login-box h2 {
+      margin-top: 0;
+      font-size: 24px;
+      color: var(--ink);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--ink);
+      font-weight: 500;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--clay);
+      box-shadow: 0 0 0 3.5px rgba(180, 83, 9, 0.15);
+    }
+    input::placeholder, textarea::placeholder {
+      color: #94a3b8;
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 9px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      transition: all 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--clay);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--clay-deep);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+    }
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .btn-danger {
+      background: var(--error);
+      color: #ffffff;
+    }
+    .btn-danger:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    
+    /* Header */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1.5px solid var(--line);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .welcome-text { color: var(--ink-soft); font-size: 14px; }
+    .welcome-text strong { color: var(--clay); font-weight: 700; }
+    
+    /* Layout: PC Sidebar + Main */
+    .dashboard-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 0;
+      border: 1.5px solid var(--line);
+      border-radius: 16px;
+      background: var(--white);
+      padding: 12px;
+      position: sticky;
+      top: 24px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      width: 100%;
+    }
+    .tab-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      background: none;
+      border: 1.5px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--ink-soft);
+      transition: all 0.2s;
+      font-size: 14.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover {
+      background: #f8fafc;
+      color: var(--ink);
+    }
+    .tab-btn.active {
+      color: var(--clay-deep);
+      background: #fef3c7;
+      border-color: #fde68a;
+      font-weight: 700;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Content Cards */
+    .section-box {
+      background: var(--white);
+      padding: 28px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      border: 1.5px solid var(--line);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+    .section-box h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--line-light);
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stats-card {
+      background: var(--white);
+      border: 1.5px solid var(--line);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+    }
+    .stats-card h4 {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      font-family: inherit;
+    }
+    .stats-card .num {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--clay);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+    
+    /* Alerts */
+    .alert {
+      padding: 14px 16px;
+      border-radius: 9px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .alert-success {
+      background: #f0fdf4;
+      color: var(--success);
+      border: 1.5px solid #bbf7d0;
+    }
+    .alert-error {
+      background: #fef2f2;
+      color: var(--error);
+      border: 1.5px solid #fecaca;
+    }
+    
+    /* Tables */
+    .data-table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--white);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+    .data-table thead {
+      background: #f1f5f9;
+    }
+    .data-table th {
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1.5px solid var(--line);
+    }
+    .data-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line-light);
+      color: var(--ink);
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+    .data-table tr:hover {
+      background: #f8fafc;
+    }
+    
+    .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+    .action-buttons button { padding: 5px 10px; font-size: 12px; }
+    
+    .gallery-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .gallery-item {
+      aspect-ratio: 1.5;
+      border-radius: 8px;
+      background: #e2e8f0;
+      background-size: cover;
+      background-position: center;
+      border: 1.5px solid var(--line);
+      position: relative;
+    }
+    .gallery-item button {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: var(--error);
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    }
+
+    /* Checklist Grid */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .checklist-item input {
+      width: auto;
+      cursor: pointer;
+    }
+
+    /* Responsive Design for Mobile & Tablet */
+    @media (max-width: 900px) {
+      .container { padding: 20px 14px; }
+      .dashboard-header { margin-bottom: 18px; }
+      .dashboard-shell {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .tabs {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(8px);
+        -webkit-overflow-scrolling: touch;
+      }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tabs { -ms-overflow-style: none; scrollbar-width: none; }
+      .tab-btn {
+        width: auto;
+        flex: 0 0 auto;
+        padding: 9px 14px;
+        font-size: 13.5px;
+        border-radius: 8px;
+      }
+      .section-box { padding: 20px 16px; margin-bottom: 18px; }
+      .form-row { grid-template-columns: 1fr; gap: 14px; }
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 24px; }
+      .login-container { margin: 40px auto; padding: 0 12px; }
+      .login-box { padding: 28px 20px; border-radius: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stats-card { padding: 14px; }
+      .stats-card .num { font-size: 22px; }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="/admin/index.html">Admin Dashboard</a>...</p>
+  <!-- Login Section -->
+  <div id="loginPage" class="login-container">
+    <div class="login-box">
+      <h2>Admin Dashboard</h2>
+      <p style="color: var(--ink-soft); margin-bottom: 24px;">Sign in to manage your property, calendar sync, reservations, pricing, and content.</p>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" value="jermainelotto5@gmail.com" placeholder="admin@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required />
+        </div>
+        <div id="loginError" style="display:none;" class="alert alert-error"></div>
+        <div id="loginSuccess" style="display:none;" class="alert alert-success"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        <button type="button" class="btn btn-secondary" style="width: 100%; margin-top: 12px;" onclick="handleForgotPassword()">Forgot Password?</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div id="dashboardPage" class="dashboard">
+    <div class="container">
+      <div class="dashboard-header">
+        <div>
+          <h1>Toiwo Residence Admin</h1>
+          <p class="welcome-text">Logged in as <strong id="adminEmail"></strong></p>
+        </div>
+        <button class="btn btn-secondary" onclick="handleLogout()">Sign Out</button>
+      </div>
+
+      <div class="dashboard-shell">
+        <aside class="tabs" role="tablist" aria-label="Admin sections">
+          <button class="tab-btn active" onclick="switchTab(event, 'overview')">📊 Overview</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bookings')">📅 Bookings</button>
+          <button class="tab-btn" onclick="switchTab(event, 'calendar')">💲 Pricing & Blocks</button>
+          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">🌐 Website Content</button>
+          <button class="tab-btn" onclick="switchTab(event, 'content')">🏠 Property Details</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ical')">🔄 Calendar Sync</button>
+          <button class="tab-btn" onclick="switchTab(event, 'messages')">✉️ Messages</button>
+        </aside>
+
+        <div class="dashboard-main">
+          <!-- Tab: Overview -->
+          <div id="overview" class="tab-content active">
+        <div class="stats-grid">
+          <div class="stats-card">
+            <h4>Total Revenue</h4>
+            <div class="num" id="statRevenue">$0.00</div>
+          </div>
+          <div class="stats-card">
+            <h4>Confirmed Bookings</h4>
+            <div class="num" id="statBookings">0</div>
+          </div>
+          <div class="stats-card">
+            <h4>Blocked Dates</h4>
+            <div class="num" id="statBlocks">0</div>
+          </div>
+          <div class="stats-card">
+            <h4>Pending Messages</h4>
+            <div class="num" id="statMessages">0</div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <h3>Property Status</h3>
+          <div id="propertyStatus">Loading property info...</div>
+        </div>
+
+        <div class="section-box">
+          <h3>Upcoming Stays</h3>
+          <div class="data-table-container">
+            <table class="data-table" id="recentBookingsTable">
+              <thead>
+                <tr>
+                  <th>Guest Name</th>
+                  <th>Check-in</th>
+                  <th>Check-out</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="recentBookingsBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Bookings -->
+      <div id="bookings" class="tab-content">
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <h3>All Reservations</h3>
+            <button class="btn btn-secondary" onclick="exportReservationsToCSV()">Export to CSV</button>
+          </div>
+          <div class="data-table-container">
+            <table class="data-table" id="allBookingsTable">
+              <thead>
+                <tr>
+                  <th>Guest Name</th>
+                  <th>Email</th>
+                  <th>Check-in</th>
+                  <th>Check-out</th>
+                  <th>Guests</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="allBookingsBody"><tr><td colspan="8">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Calendar & Blocks -->
+      <div id="calendar" class="tab-content">
+        <div class="form-row">
+          <div class="section-box">
+            <h3>Manual Date Blocking</h3>
+            <p style="color: var(--ink-soft); margin-bottom: 15px;">Block a date range manually to block booking requests for those days.</p>
+            <form id="blockDateForm" onsubmit="handleBlockDateSubmit(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Start Date</label>
+                  <input type="date" id="blockStartDate" required />
+                </div>
+                <div class="form-group">
+                  <label>End Date</label>
+                  <input type="date" id="blockEndDate" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Reason / Note</label>
+                <input type="text" id="blockReason" placeholder="Maintenance, Private Stay, etc." />
+              </div>
+              <button type="submit" class="btn btn-primary">Block Dates</button>
+            </form>
+          </div>
+
+          <div class="section-box">
+            <h3>Active Blocked Ranges</h3>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="blockedDatesList">
+                  <tr><td colspan="3">Loading blocked dates...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <h3>Seasonal & Holiday Pricing</h3>
+          <p style="color: var(--ink-soft); margin-bottom: 20px;">Define custom price rules for specific date ranges (e.g., peak holiday periods). Dates not covered by a custom rule will default to the property base price.</p>
+          
+          <form id="pricingRuleForm" onsubmit="handlePricingRuleSubmit(event)" style="margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 25px;">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Rule Name</label>
+                <input type="text" id="ruleName" placeholder="Christmas Holiday / Peak Summer" required />
+              </div>
+              <div class="form-group">
+                <label>Price per Night (USD)</label>
+                <input type="number" id="rulePrice" step="0.01" placeholder="220" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" id="ruleStartDate" required />
+              </div>
+              <div class="form-group">
+                <label>End Date</label>
+                <input type="date" id="ruleEndDate" required />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Pricing Rule</button>
+          </form>
+
+          <h3>Active Rules</h3>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Rule Name</th>
+                  <th>Dates</th>
+                  <th>Price / Night</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="pricingRulesList">
+                <tr><td colspan="4">Loading rules...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Website Content (CMS) -->
+      <div id="webcontent" class="tab-content">
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="margin:0;">Website Content Manager</h3>
+              <p style="color: var(--ink-soft); margin: 4px 0 0 0; font-size: 14px;">Edit all text, photos, amenities, reviews, and contact info on the public website.</p>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">↺ Refresh Content</button>
+          </div>
+        </div>
+
+        <!-- Section: Hero & Header -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">🏠 Hero Section (Top of Page)</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsHero()">Save Hero</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Location Tag</label>
+              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru · Arusha, Tanzania" />
+            </div>
+            <div class="form-group">
+              <label>Price per Night (USD)</label>
+              <input type="number" id="cmsPropertyPrice" placeholder="180" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Main Headline</label>
+            <input type="text" id="cmsHeroHeadline" placeholder="A private retreat with the warmth of home." />
+          </div>
+          <div class="form-group">
+            <label>Sub-headline / Description</label>
+            <textarea id="cmsHeroSubHeadline" rows="2" placeholder="A four-bedroom residence in Ilboru..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Primary Button Label</label>
+              <input type="text" id="cmsHeroCtaPrimary" placeholder="Book Your Stay" />
+            </div>
+            <div class="form-group">
+              <label>Secondary Button Label</label>
+              <input type="text" id="cmsHeroCtaSecondary" placeholder="View the House" />
+            </div>
+          </div>
+          <div id="cmsHeroStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: About -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📖 About Section</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsAbout()">Save About</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Eyebrow Label</label>
+              <input type="text" id="cmsAboutEyebrow" placeholder="The House" />
+            </div>
+            <div class="form-group">
+              <label>Photo Caption</label>
+              <input type="text" id="cmsAboutCaption" placeholder="The courtyard — a gentle, welcoming start..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Section Headline</label>
+            <input type="text" id="cmsAboutHeadline" placeholder="A home that feels like it was waiting for you." />
+          </div>
+          <div class="form-group">
+            <label>Lead Paragraph</label>
+            <textarea id="cmsAboutLead" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Body Paragraph</label>
+            <textarea id="cmsAboutBody" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>"Ideal For" Badges (comma separated)</label>
+            <input type="text" id="cmsAboutPills" placeholder="Families, Groups of friends, Couples, Safari stopovers" />
+          </div>
+          <div id="cmsAboutStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Property Specs -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📊 Property Essentials</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsPropertySpecs()">Save Specs</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Bedrooms</label>
+              <input type="number" id="cmsPropBedrooms" value="4" />
+            </div>
+            <div class="form-group">
+              <label>Beds</label>
+              <input type="number" id="cmsPropBeds" value="4" />
+            </div>
+            <div class="form-group">
+              <label>Bathrooms</label>
+              <input type="number" id="cmsPropBathrooms" value="3" />
+            </div>
+            <div class="form-group">
+              <label>Max Guests</label>
+              <input type="number" id="cmsPropMaxGuests" value="8" />
+            </div>
+          </div>
+          <div id="cmsPropStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Gallery Photos -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">🖼️ Gallery Photos</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Add, remove, or change photo URLs and captions shown on the website.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsGalleryItem()">+ Add Photo</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsGallery()">Save Gallery</button>
+            </div>
+          </div>
+          <div id="cmsGalleryContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          <div id="cmsGalleryStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Amenities -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">✨ Amenities</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Manage the features and amenities displayed on the website.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsAmenityItem()">+ Add Amenity</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsAmenities()">Save Amenities</button>
+            </div>
+          </div>
+          <div id="cmsAmenitiesContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+          <div id="cmsAmenitiesStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Guest Reviews -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">⭐ Guest Reviews</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Showcase guest testimonials and ratings on the homepage.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsReviewItem()">+ Add Review</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsReviews()">Save Reviews</button>
+            </div>
+          </div>
+          <div id="cmsReviewsContainer" style="display: flex; flex-direction: column; gap: 14px;"></div>
+          <div id="cmsReviewsStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Contact & Social Links -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📞 Contact & Social Links</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsContactAndSocial()">Save Contact & Social</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" id="cmsContactPhone" placeholder="+255718654332" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Number</label>
+              <input type="text" id="cmsContactWhatsApp" placeholder="+255718654332" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="cmsContactEmail" placeholder="jermainelotto5@gmail.com" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Instagram URL</label>
+              <input type="url" id="cmsSocialInstagram" placeholder="https://instagram.com/toiworesidence.arusha" />
+            </div>
+            <div class="form-group">
+              <label>Facebook URL</label>
+              <input type="url" id="cmsSocialFacebook" placeholder="https://facebook.com/toiworesidence" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Direct Link</label>
+              <input type="url" id="cmsSocialWhatsApp" placeholder="https://wa.me/255718654332" />
+            </div>
+          </div>
+          <div id="cmsContactStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Footer -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">🦶 Footer Content</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsFooter()">Save Footer</button>
+          </div>
+          <div class="form-group">
+            <label>Footer Tagline</label>
+            <input type="text" id="cmsFooterTagline" placeholder="A private four-bedroom home in Ilboru, Arusha..." />
+          </div>
+          <div class="form-group">
+            <label>Copyright Text</label>
+            <input type="text" id="cmsFooterCopyright" placeholder="2026 Toiwo Residence" />
+          </div>
+          <div id="cmsFooterStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Content & Photos -->
+      <div id="content" class="tab-content">
+        <div class="section-box">
+          <h3>Property Details</h3>
+          <form id="propertyDetailsForm" onsubmit="handlePropertyDetailsSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Property Name</label>
+                <input type="text" id="propName" required />
+              </div>
+              <div class="form-group">
+                <label>Location Text</label>
+                <input type="text" id="propLocation" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Base Price per Night (USD)</label>
+                <input type="number" id="propBasePrice" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label>Max Guests</label>
+                <input type="number" id="propMaxGuests" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Bedrooms</label>
+                <input type="number" id="propBedrooms" required />
+              </div>
+              <div class="form-group">
+                <label>Beds</label>
+                <input type="number" id="propBeds" required />
+              </div>
+              <div class="form-group">
+                <label>Bathrooms</label>
+                <input type="number" id="propBathrooms" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="propDescription" rows="6" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Amenities Checklist</label>
+              <div class="checklist-grid" id="amenitiesGrid">
+                <!-- Checklist dynamic inputs -->
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Property Details</button>
+          </form>
+        </div>
+
+        <div class="section-box">
+          <h3>Gallery Images</h3>
+          <p style="color: var(--ink-soft); margin-bottom: 15px;">Add new images to the website gallery by uploading them or pasting image URLs.</p>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Upload Image file</label>
+              <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoUpload(event)" />
+              <div id="uploadProgress" style="font-size: 13px; color: var(--clay); margin-top: 6px;"></div>
+            </div>
+            <div class="form-group">
+              <label>Or Paste Image URL</label>
+              <div style="display:flex; gap: 8px;">
+                <input type="url" id="photoUrlInput" placeholder="https://example.com/photo.jpg" />
+                <button type="button" class="btn btn-secondary" onclick="handleAddPhotoUrl()">Add URL</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Current Gallery URLs (one per line)</label>
+            <textarea id="galleryUrls" rows="6" onchange="previewGallery()"></textarea>
+          </div>
+          
+          <button type="button" class="btn btn-primary" onclick="saveGalleryUrls()">Save Gallery Images</button>
+          
+          <h4 style="margin-top: 20px;">Live Gallery Preview:</h4>
+          <div class="gallery-preview" id="galleryPreview"></div>
+        </div>
+      </div>
+
+      <!-- Tab: iCal Sync -->
+      <div id="ical" class="tab-content">
+        <div class="section-box">
+          <h3>Two-Way Calendar Sync (iCal)</h3>
+          <p style="color: var(--ink-soft); margin-bottom: 20px;">Synchronize your direct bookings with Airbnb and Booking.com. Paste their export calendar links below to block imported dates. Use the export feeds below to configure synchronization in Airbnb and Booking.com.</p>
+          
+          <div class="section-box" style="background: var(--sand); border: none;">
+            <h4>Your Export Feeds</h4>
+            <p style="color: var(--ink-soft); font-size: 13.5px; margin-bottom: 12px;">Copy these links and paste them into the "Import Calendar" sections on Airbnb and Booking.com.</p>
+            <div class="form-group">
+              <label>Airbnb Export URL</label>
+              <input type="text" id="airbnbExportUrl" readonly style="background: var(--line);" />
+            </div>
+            <div class="form-group">
+              <label>Booking.com Export URL</label>
+              <input type="text" id="bookingExportUrl" readonly style="background: var(--line);" />
+            </div>
+          </div>
+
+          <form id="icalUrlsForm" onsubmit="handleICalUrlsSubmit(event)">
+            <div class="form-group">
+              <label>Airbnb Import Calendar URL (iCal link)</label>
+              <input type="url" id="airbnbImportUrl" placeholder="https://www.airbnb.com/calendar/ical/..." />
+            </div>
+            <div class="form-group">
+              <label>Booking.com Import Calendar URL (iCal link)</label>
+              <input type="url" id="bookingImportUrl" placeholder="https://ical.booking.com/v1/export?..." />
+            </div>
+            <button type="submit" class="btn btn-primary">Save Import URLs</button>
+          </form>
+          <div style="margin-top: 25px; border-top: 1px solid var(--line); padding-top: 20px;">
+            <h4>Trigger Synchronization</h4>
+            <p style="color: var(--ink-soft); font-size: 13.5px; margin-bottom: 12px;">Trigger a manual sync of external calendars now. (Vercel cron can also call this endpoint automatically in the background).</p>
+            <button type="button" class="btn btn-secondary" onclick="triggerICalSync()">Sync Calendars Now</button>
+            <div id="syncStatus" style="font-size: 13.5px; color: var(--clay); margin-top: 8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Messages -->
+      <div id="messages" class="tab-content">
+        <div class="section-box">
+          <h3>Guest Messages</h3>
+          <div class="data-table-container">
+            <table class="data-table" id="messagesTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Date</th>
+                  <th>Message</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="messagesBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./frontend/supabase-client.js?v=14"></script>
+  <script>
+    let currentPropertyId = null;
+    let currentAdminSettings = null;
+    let allBookings = [];
+    let allBlockedDates = [];
+    let allPricingRules = [];
+
+    // ============================================
+    // AUTHENTICATION AND INIT
+    // ============================================
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      if (typeof signInAdmin !== 'function') {
+        alert('Critical Error: The backend connection script did not load correctly. Please make sure your network is not blocking scripts.');
+        return;
+      }
+      
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      const successEl = document.getElementById('loginSuccess');
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing in...'; }
+
+      try {
+        const result = await signInAdmin(email, password);
+        if (result && (result.session || result.user)) {
+          await initAdminPanel(email);
+        } else {
+          throw new Error('Could not start session. Please verify your credentials.');
+        }
+      } catch (error) {
+        errorEl.style.display = 'block';
+        const code = error?.message || '';
+        if (code.includes('Email not confirmed')) {
+          errorEl.textContent = 'Please confirm your email first. Check your inbox for a Supabase confirmation link, or click Forgot Password.';
+        } else {
+          errorEl.textContent = 'Error: ' + code;
+        }
+        console.error('Login error:', error);
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In'; }
+      }
+    }
+
+    async function handleForgotPassword() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const errorEl = document.getElementById('loginError');
+      const successEl = document.getElementById('loginSuccess');
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+
+      if (!email) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Enter your email address first.';
+        return;
+      }
+
+      try {
+        await resetAdminPassword(email);
+        successEl.style.display = 'block';
+        successEl.textContent = 'Password reset email sent. Check your inbox and set your password to jermy1234.';
+      } catch (error) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Could not send reset email. Please try again.';
+        console.error('Reset error:', error);
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await signOutAdmin();
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+      document.getElementById('loginPage').style.display = 'block';
+      document.getElementById('dashboardPage').classList.remove('active');
+      document.getElementById('loginForm').reset();
+    }
+
+    async function initAdminPanel(email) {
+      // Immediately switch views so the admin sees the dashboard
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboardPage').classList.add('active');
+      document.getElementById('adminEmail').textContent = email;
+
+      try {
+        const property = await getPropertyByName('Toiwo Residence');
+        if (property) {
+          currentPropertyId = property.id;
+          currentAdminSettings = await getAdminSettings(property.id) || {};
+          loadSettingsForm();
+          loadPropertyForm(property);
+        }
+      } catch (err) {
+        console.warn('Property load warning:', err);
+      }
+
+      try {
+        await loadCmsData();
+      } catch (err) {
+        console.warn('CMS load warning:', err);
+      }
+
+      try {
+        await loadDashboardData();
+      } catch (err) {
+        console.warn('Dashboard data load warning:', err);
+      }
+    }
+
+    async function loadDashboardData() {
+      if (!currentPropertyId) return;
+      try {
+        const property = await getProperty(currentPropertyId);
+        updatePropertyStatus(property);
+
+        // Fetch direct variables
+        allBookings = await getAllBookings(currentPropertyId);
+        displayRecentBookings(allBookings.slice(0, 5));
+        displayAllBookings(allBookings);
+
+        const messages = await getContactMessages(currentPropertyId);
+        displayMessages(messages);
+
+        allBlockedDates = await getBlockedDatesRaw();
+        displayBlockedDates(allBlockedDates);
+
+        allPricingRules = await getPricingRules(currentPropertyId);
+        displayPricingRules(allPricingRules);
+
+        // Calculate analytics
+        calculateAnalytics(allBookings, allBlockedDates, messages);
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+
+    function updatePropertyStatus(property) {
+      const statusEl = document.getElementById('propertyStatus');
+      if (!statusEl || !property) {
+        return;
+      }
+      statusEl.innerHTML = `
+        <div style="display:grid; gap: 10px;">
+          <div><strong>${property.name || 'Toiwo Residence'}</strong> · ${property.location || 'Ilboru, Arusha'}</div>
+          <div>${property.description || 'A peaceful residence for discerning travellers.'}</div>
+          <div><strong>Base Rate:</strong> ${formatCurrency(property.price_per_night || 0)} / night</div>
+          <div><strong>Guests:</strong> ${property.max_guests || 0} · <strong>Bedrooms:</strong> ${property.bedrooms || 0} · <strong>Beds:</strong> ${property.beds || 0} · <strong>Baths:</strong> ${property.bathrooms || 0}</div>
+        </div>
+      `;
+    }
+
+    function calculateAnalytics(bookings, blocks, messages) {
+      // Calculate revenue from confirmed direct bookings
+      const confirmed = bookings.filter(b => b.status === 'confirmed');
+      const revenue = confirmed.reduce((sum, b) => sum + parseFloat(b.total_price || 0), 0);
+      
+      document.getElementById('statRevenue').textContent = formatCurrency(revenue);
+      document.getElementById('statBookings').textContent = confirmed.length;
+      document.getElementById('statBlocks').textContent = blocks.length;
+      document.getElementById('statMessages').textContent = messages.filter(m => !m.read).length;
+    }
+
+    // ============================================
+    // PROPERTY DETAILS EDITOR
+    // ============================================
+
+    const defaultAmenitiesList = [
+      "Fast Wi-Fi", "Full Kitchen", "Private Parking", "Hot Water", 
+      "Flat-Screen TV", "Washing Machine", "Night Security", "Private Garden"
+    ];
+
+    function loadPropertyForm(property) {
+      document.getElementById('propName').value = property.name || '';
+      document.getElementById('propLocation').value = property.location || '';
+      document.getElementById('propBasePrice').value = property.price_per_night || '';
+      document.getElementById('propMaxGuests').value = property.max_guests || '';
+      document.getElementById('propBedrooms').value = property.bedrooms || '';
+      document.getElementById('propBeds').value = property.beds || '';
+      document.getElementById('propBathrooms').value = property.bathrooms || '';
+      document.getElementById('propDescription').value = property.description || '';
+
+      const currentAmenities = property.amenities || [];
+      const grid = document.getElementById('amenitiesGrid');
+      grid.innerHTML = defaultAmenitiesList.map(amenity => `
+        <label class="checklist-item">
+          <input type="checkbox" name="amenities" value="${amenity}" ${currentAmenities.includes(amenity) ? 'checked' : ''} />
+          ${amenity}
+        </label>
+      `).join('');
+    }
+
+    async function handlePropertyDetailsSubmit(event) {
+      event.preventDefault();
+      if (!currentPropertyId) return;
+
+      const checkedAmenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked'))
+        .map(input => input.value);
+
+      const updates = {
+        name: document.getElementById('propName').value,
+        location: document.getElementById('propLocation').value,
+        price_per_night: parseFloat(document.getElementById('propBasePrice').value),
+        max_guests: parseInt(document.getElementById('propMaxGuests').value),
+        bedrooms: parseInt(document.getElementById('propBedrooms').value),
+        beds: parseInt(document.getElementById('propBeds').value),
+        bathrooms: parseInt(document.getElementById('propBathrooms').value),
+        description: document.getElementById('propDescription').value,
+        amenities: checkedAmenities,
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        await updatePropertyDetails(currentPropertyId, updates);
+
+        // Also sync to site_content so frontend updates instantly
+        try {
+          const existingProp = cmsContentData.property || {};
+          await saveSiteContentSection('property', {
+            ...existingProp,
+            name: updates.name,
+            location: updates.location,
+            price_per_night: updates.price_per_night,
+            max_guests: updates.max_guests,
+            bedrooms: updates.bedrooms,
+            beds: updates.beds,
+            bathrooms: updates.bathrooms,
+            description: updates.description
+          });
+          if (checkedAmenities.length > 0) {
+            const existingAmenities = cmsContentData.amenities || [];
+            const amenObjects = checkedAmenities.map(name => {
+              const found = existingAmenities.find(a => a.name === name);
+              return found || { name, description: '' };
+            });
+            await saveSiteContentSection('amenities', amenObjects);
+          }
+        } catch (cmsErr) {
+          console.warn('CMS sync warning:', cmsErr);
+        }
+
+        alert('Property details saved successfully! Changes are live on the website.');
+        await loadDashboardData();
+        await loadCmsData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to update property details: ' + (error?.message || error));
+      }
+    }
+
+    // ============================================
+    // PHOTO AND URL GALLERY MANAGER
+    // ============================================
+
+    async function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const progressEl = document.getElementById('uploadProgress');
+      progressEl.textContent = 'Uploading to storage...';
+
+      try {
+        const publicUrl = await uploadPhotoToStorage(file);
+        progressEl.innerHTML = `<span style="color:var(--success);">Upload Successful!</span>`;
+        
+        // Append URL
+        const textEl = document.getElementById('galleryUrls');
+        textEl.value += (textEl.value ? '\n' : '') + publicUrl;
+        previewGallery();
+      } catch (error) {
+        progressEl.innerHTML = `<span style="color:var(--error);">Failed to upload: ${error.message}</span>`;
+        console.error(error);
+      }
+    }
+
+    function handleAddPhotoUrl() {
+      const urlInput = document.getElementById('photoUrlInput');
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      const textEl = document.getElementById('galleryUrls');
+      textEl.value += (textEl.value ? '\n' : '') + url;
+      urlInput.value = '';
+      previewGallery();
+    }
+
+    function previewGallery() {
+      const text = document.getElementById('galleryUrls').value;
+      const urls = text.split('\n').map(u => u.trim()).filter(Boolean);
+      const previewGrid = document.getElementById('galleryPreview');
+      
+      previewGrid.innerHTML = urls.map((url, index) => `
+        <div class="gallery-item" style="background-image: url('${url}');">
+          <button type="button" onclick="deletePhoto(${index})">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function deletePhoto(indexToDelete) {
+      const text = document.getElementById('galleryUrls').value;
+      const urls = text.split('\n').map(u => u.trim()).filter(Boolean);
+      urls.splice(indexToDelete, 1);
+      
+      document.getElementById('galleryUrls').value = urls.join('\n');
+      previewGallery();
+    }
+
+    async function saveGalleryUrls() {
+      if (!currentPropertyId) return;
+      const text = document.getElementById('galleryUrls').value;
+      const urls = text.split('\n').map(u => u.trim()).filter(Boolean);
+
+      try {
+        await updateAdminSettings(currentPropertyId, {
+          gallery_images: urls
+        });
+        const galleryObjects = urls.map((url, i) => ({ url, caption: `Photo ${i + 1}` }));
+        await saveSiteContentSection('gallery', galleryObjects);
+        alert('Gallery configuration saved successfully! Photos are live on the website.');
+        await loadDashboardData();
+        await loadCmsData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to save gallery URLs: ' + (error?.message || error));
+      }
+    }
+
+    // ============================================
+    // PRICING RULES (SEASONAL PRICING)
+    // ============================================
+
+    function displayPricingRules(rules) {
+      const tbody = document.getElementById('pricingRulesList');
+      if (rules.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">No pricing rules defined. Using default rates.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rules.map(r => `
+        <tr>
+          <td><strong>${r.name}</strong></td>
+          <td>${r.start_date} to ${r.end_date}</td>
+          <td>${formatCurrency(r.price_per_night)}</td>
+          <td>
+            <button class="btn btn-secondary btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deletePricingRule('${r.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function handlePricingRuleSubmit(event) {
+      event.preventDefault();
+      if (!currentPropertyId) return;
+
+      const rule = {
+        name: document.getElementById('ruleName').value,
+        price_per_night: parseFloat(document.getElementById('rulePrice').value),
+        start_date: document.getElementById('ruleStartDate').value,
+        end_date: document.getElementById('ruleEndDate').value
+      };
+
+      try {
+        await addPricingRule(currentPropertyId, rule);
+        document.getElementById('pricingRuleForm').reset();
+        await loadDashboardData();
+        alert('Pricing rule added!');
+      } catch (error) {
+        console.error(error);
+        alert('Failed to add pricing rule. Check date constraints.');
+      }
+    }
+
+    async function deletePricingRule(id) {
+      if (!confirm('Are you sure you want to delete this rule?')) return;
+      try {
+        await removePricingRule(id);
+        await loadDashboardData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to delete pricing rule.');
+      }
+    }
+
+    // ============================================
+    // DATE BLOCKING
+    // ============================================
+
+    async function getBlockedDatesRaw() {
+      if (!currentPropertyId) return [];
+      const { data, error } = await supabaseClient
+        .from('blocked_dates')
+        .select('*')
+        .eq('property_id', currentPropertyId)
+        .order('blocked_date', { ascending: true });
+      if (error) throw error;
+      return data || [];
+    }
+
+    function displayBlockedDates(blocks) {
+      const tbody = document.getElementById('blockedDatesList');
+      if (blocks.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">No active manual date blocks.</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = blocks.map(b => `
+        <tr>
+          <td>${b.blocked_date}</td>
+          <td>${b.reason || 'Manual block'}</td>
+          <td>
+            <button class="btn btn-secondary btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deleteBlockedDate('${b.id}')">Unblock</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function handleBlockDateSubmit(event) {
+      event.preventDefault();
+      if (!currentPropertyId) return;
+
+      const start = new Date(document.getElementById('blockStartDate').value);
+      const end = new Date(document.getElementById('blockEndDate').value);
+      const reason = document.getElementById('blockReason').value;
+
+      if (end < start) {
+        alert('End date must be after or equal to start date.');
+        return;
+      }
+
+      // Loop over dates
+      const promises = [];
+      let current = new Date(start);
+      while (current <= end) {
+        const dateStr = current.toISOString().split('T')[0];
+        promises.push(addBlockedDate(currentPropertyId, dateStr, reason));
+        current.setDate(current.getDate() + 1);
+      }
+
+      try {
+        await Promise.all(promises);
+        document.getElementById('blockDateForm').reset();
+        await loadDashboardData();
+        alert('Dates blocked successfully!');
+      } catch (error) {
+        console.error(error);
+        alert('Failed to block dates.');
+      }
+    }
+
+    async function deleteBlockedDate(id) {
+      if (!confirm('Are you sure you want to remove this block?')) return;
+      try {
+        await removeBlockedDate(id);
+        await loadDashboardData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to delete block.');
+      }
+    }
+
+    // ============================================
+    // RESERVATIONS & BOOKINGS
+    // ============================================
+
+    function displayRecentBookings(bookings) {
+      const tbody = document.getElementById('recentBookingsBody');
+      if (bookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">No stays booked.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong>${b.guest_name}</strong></td>
+          <td>${formatDate(b.check_in)}</td>
+          <td>${formatDate(b.check_out)}</td>
+          <td><span style="padding: 4px 8px; font-weight:700; background: ${b.status === 'confirmed' ? '#e8f5e9' : '#fff3e0'}; border-radius: 4px; font-size: 11px;">${b.status.toUpperCase()}</span></td>
+          <td>${formatCurrency(b.total_price)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function displayAllBookings(bookings) {
+      const tbody = document.getElementById('allBookingsBody');
+      if (bookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8">No reservations.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong>${b.guest_name}</strong></td>
+          <td>${b.guest_email}</td>
+          <td>${b.check_in}</td>
+          <td>${b.check_out}</td>
+          <td>${b.num_guests}</td>
+          <td>${formatCurrency(b.total_price)}</td>
+          <td><span style="font-weight:700; color: ${b.status === 'confirmed' ? 'var(--success)' : 'var(--clay)'}">${b.status.toUpperCase()}</span></td>
+          <td>
+            <div class="action-buttons">
+              ${b.status !== 'confirmed' ? `<button class="btn btn-secondary" onclick="changeBookingStatus('${b.id}', 'confirmed')">Confirm</button>` : ''}
+              ${b.status !== 'cancelled' ? `<button class="btn btn-secondary btn-danger" onclick="changeBookingStatus('${b.id}', 'cancelled')">Cancel</button>` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function changeBookingStatus(bookingId, status) {
+      if (!confirm(`Are you sure you want to change status to ${status}?`)) return;
+      try {
+        await updateBookingStatus(bookingId, status);
+        await loadDashboardData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to update booking status.');
+      }
+    }
+
+    function exportReservationsToCSV() {
+      if (allBookings.length === 0) {
+        alert('No reservations to export.');
+        return;
+      }
+      const headers = ['Guest Name', 'Email', 'Phone', 'Check In', 'Check Out', 'Guests', 'Total Price', 'Status', 'Created At'];
+      const rows = allBookings.map(b => [
+        `"${b.guest_name}"`,
+        `"${b.guest_email}"`,
+        `"${b.guest_phone || ''}"`,
+        `"${b.check_in}"`,
+        `"${b.check_out}"`,
+        b.num_guests,
+        b.total_price,
+        `"${b.status}"`,
+        `"${b.created_at}"`
+      ]);
+      const csvContent = "\ufeff" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "toiwo_residence_reservations.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // ============================================
+    // iCAL AND CALENDAR SYNC
+    // ============================================
+
+    function loadSettingsForm() {
+      const settings = currentAdminSettings || {};
+      
+      // Load standard fields
+      document.getElementById('galleryUrls').value = (settings.gallery_images || []).join('\n');
+      
+      // Load import URLs
+      document.getElementById('airbnbImportUrl').value = settings.airbnb_ical_import_url || '';
+      document.getElementById('bookingImportUrl').value = settings.booking_ical_import_url || '';
+
+      // Export URLs
+      const origin = window.location.origin;
+      const airbnbExportUUID = settings.airbnb_ical_export_uuid || 'gen-uuid-here';
+      const bookingExportUUID = settings.booking_ical_export_uuid || 'gen-uuid-here';
+
+      document.getElementById('airbnbExportUrl').value = `${origin}/api/ical?export_uuid=${airbnbExportUUID}`;
+      document.getElementById('bookingExportUrl').value = `${origin}/api/ical?export_uuid=${bookingExportUUID}`;
+      
+      previewGallery();
+    }
+
+    async function handleICalUrlsSubmit(event) {
+      event.preventDefault();
+      if (!currentPropertyId) return;
+
+      const airbnbUrl = document.getElementById('airbnbImportUrl').value.trim();
+      const bookingUrl = document.getElementById('bookingImportUrl').value.trim();
+
+      try {
+        await updateAdminSettings(currentPropertyId, {
+          airbnb_ical_import_url: airbnbUrl,
+          booking_ical_import_url: bookingUrl
+        });
+        alert('iCal Import links saved successfully!');
+        await loadDashboardData();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to save import URLs.');
+      }
+    }
+
+    async function triggerICalSync() {
+      if (!currentPropertyId) return;
+      const statusEl = document.getElementById('syncStatus');
+      statusEl.textContent = 'Syncing calendars...';
+      try {
+        const resp = await fetch(`/api/ical?sync=true&property_id=${currentPropertyId}`);
+        const result = await resp.json();
+        if (result.success) {
+          statusEl.innerHTML = `<span style="color:var(--success);">Sync complete! Synced external calendar dates.</span>`;
+          await loadDashboardData();
+        } else {
+          statusEl.innerHTML = `<span style="color:var(--error);">Sync failed: ${result.error || 'Unknown error'}</span>`;
+        }
+      } catch (e) {
+        console.error(e);
+        statusEl.innerHTML = `<span style="color:var(--error);">Sync failed: ${e.message}</span>`;
+      }
+    }
+
+    // ============================================
+    // MESSAGES
+    // ============================================
+
+    function displayMessages(messages) {
+      const tbody = document.getElementById('messagesBody');
+      if (messages.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">No guest messages.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = messages.map(m => `
+        <tr>
+          <td><strong>${m.sender_name}</strong></td>
+          <td><a href="mailto:${m.sender_email}">${m.sender_email}</a></td>
+          <td>${formatDate(m.created_at)}</td>
+          <td>${m.message}</td>
+          <td>
+            <a href="mailto:${m.sender_email}?subject=Regarding your inquiry at Toiwo Residence" class="btn btn-secondary" style="font-size:11px; padding: 4px 8px;">Reply</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ============================================
+    // WEBSITE CONTENT MANAGER (CMS)
+    // ============================================
+
+    let cmsContentData = {};
+    let cmsGalleryList = [];
+    let cmsAmenitiesList = [];
+    let cmsReviewsList = [];
+
+    function showCmsFeedback(elemId, msg, isSuccess = true) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? '✓ ' : '✗ '}${msg}</span>`;
+      setTimeout(() => { if (el) el.innerHTML = ''; }, 4000);
+    }
+
+    async function loadCmsData() {
+      try {
+        let content = {};
+        if (typeof getAllSiteContent === 'function') {
+          content = await getAllSiteContent();
+        }
+        if (!content || Object.keys(content).length === 0) {
+          const res = await fetch('/api/content');
+          if (res.ok) content = await res.json();
+        }
+        cmsContentData = content || {};
+
+        // 1. Hero
+        const hero = cmsContentData.hero || {};
+        const prop = cmsContentData.property || {};
+        document.getElementById('cmsHeroLocationTag').value = hero.location_tag || '';
+        document.getElementById('cmsPropertyPrice').value = prop.price_per_night || 180;
+        document.getElementById('cmsHeroHeadline').value = hero.headline || '';
+        document.getElementById('cmsHeroSubHeadline').value = hero.sub_headline || '';
+        document.getElementById('cmsHeroCtaPrimary').value = hero.cta_primary_label || '';
+        document.getElementById('cmsHeroCtaSecondary').value = hero.cta_secondary_label || '';
+
+        // 2. About
+        const about = cmsContentData.about || {};
+        document.getElementById('cmsAboutEyebrow').value = about.eyebrow || '';
+        document.getElementById('cmsAboutCaption').value = about.photo_caption || '';
+        document.getElementById('cmsAboutHeadline').value = about.headline || '';
+        document.getElementById('cmsAboutLead').value = about.lead || '';
+        document.getElementById('cmsAboutBody').value = about.body || '';
+        document.getElementById('cmsAboutPills').value = Array.isArray(about.pills) ? about.pills.join(', ') : (about.pills || '');
+
+        // 3. Property Specs
+        document.getElementById('cmsPropBedrooms').value = prop.bedrooms || 4;
+        document.getElementById('cmsPropBeds').value = prop.beds || 4;
+        document.getElementById('cmsPropBathrooms').value = prop.bathrooms || 3;
+        document.getElementById('cmsPropMaxGuests').value = prop.max_guests || 8;
+
+        // 4. Gallery
+        cmsGalleryList = Array.isArray(cmsContentData.gallery) ? [...cmsContentData.gallery] : [];
+        if (cmsGalleryList.length === 0 && currentAdminSettings?.gallery_images?.length > 0) {
+          cmsGalleryList = currentAdminSettings.gallery_images.map((url, i) => ({ url, caption: `Photo ${i + 1}` }));
+        }
+        renderCmsGallery();
+
+        // 5. Amenities
+        cmsAmenitiesList = Array.isArray(cmsContentData.amenities) ? [...cmsContentData.amenities] : [];
+        renderCmsAmenities();
+
+        // 6. Reviews
+        cmsReviewsList = Array.isArray(cmsContentData.reviews) ? [...cmsContentData.reviews] : [];
+        renderCmsReviews();
+
+        // 7. Contact & Social
+        const contact = cmsContentData.contact || {};
+        const social = cmsContentData.social || {};
+        document.getElementById('cmsContactPhone').value = contact.phone || '';
+        document.getElementById('cmsContactWhatsApp').value = contact.whatsapp || '';
+        document.getElementById('cmsContactEmail').value = contact.email || '';
+        document.getElementById('cmsSocialInstagram').value = social.instagram || '';
+        document.getElementById('cmsSocialFacebook').value = social.facebook || '';
+        document.getElementById('cmsSocialWhatsApp').value = social.whatsapp || '';
+
+        // 8. Footer
+        const footer = cmsContentData.footer || {};
+        document.getElementById('cmsFooterTagline').value = footer.tagline || '';
+        document.getElementById('cmsFooterCopyright').value = footer.copyright || '';
+
+      } catch (err) {
+        console.error('Error loading CMS data:', err);
+      }
+    }
+
+    // --- Gallery Functions ---
+    function renderCmsGallery() {
+      const container = document.getElementById('cmsGalleryContainer');
+      if (!container) return;
+      if (cmsGalleryList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No photos in gallery. Click "+ Add Photo" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsGalleryList.map((item, idx) => `
+        <div style="display:flex; gap:12px; align-items:center; background:var(--sand); padding:10px 14px; border-radius:8px; border:1px solid var(--line); flex-wrap:wrap;">
+          <div style="width:70px; height:50px; border-radius:6px; background:#e0dbd5; background-image:url('${item.url || ''}'); background-size:cover; background-position:center; flex-shrink:0; border:1px solid var(--line);"></div>
+          <div style="flex:2; min-width:200px;">
+            <input type="text" placeholder="Image URL (e.g. /pics/room.jpg or https://...)" value="${escapeHtml(item.url || '')}" oninput="updateCmsGalleryItem(${idx}, 'url', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <input type="text" placeholder="Caption (e.g. Living Room)" value="${escapeHtml(item.caption || '')}" oninput="updateCmsGalleryItem(${idx}, 'caption', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▲</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▼</button>
+            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addCmsGalleryItem(url = '', caption = '') {
+      cmsGalleryList.push({ url, caption });
+      renderCmsGallery();
+    }
+
+    function updateCmsGalleryItem(idx, key, val) {
+      if (cmsGalleryList[idx]) {
+        cmsGalleryList[idx][key] = val;
+        if (key === 'url') {
+          // live update thumbnail
+          const container = document.getElementById('cmsGalleryContainer');
+          const thumb = container?.children[idx]?.querySelector('div');
+          if (thumb) thumb.style.backgroundImage = `url('${val}')`;
+        }
+      }
+    }
+
+    function moveCmsGalleryItem(idx, dir) {
+      const targetIdx = idx + dir;
+      if (targetIdx < 0 || targetIdx >= cmsGalleryList.length) return;
+      const temp = cmsGalleryList[idx];
+      cmsGalleryList[idx] = cmsGalleryList[targetIdx];
+      cmsGalleryList[targetIdx] = temp;
+      renderCmsGallery();
+    }
+
+    function removeCmsGalleryItem(idx) {
+      cmsGalleryList.splice(idx, 1);
+      renderCmsGallery();
+    }
+
+    // --- Amenities Functions ---
+    function renderCmsAmenities() {
+      const container = document.getElementById('cmsAmenitiesContainer');
+      if (!container) return;
+      if (cmsAmenitiesList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No amenities added. Click "+ Add Amenity" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsAmenitiesList.map((item, idx) => `
+        <div style="display:flex; gap:10px; align-items:center; background:var(--sand); padding:8px 12px; border-radius:8px; border:1px solid var(--line); flex-wrap:wrap;">
+          <div style="width:180px; flex-shrink:0;">
+            <input type="text" placeholder="Amenity Name (e.g. Fast Wi-Fi)" value="${escapeHtml(item.name || '')}" oninput="updateCmsAmenityItem(${idx}, 'name', this.value)" style="font-size:13px; padding:6px 10px;" />
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <input type="text" placeholder="Description (e.g. Reliable internet for work & streaming)" value="${escapeHtml(item.description || '')}" oninput="updateCmsAmenityItem(${idx}, 'description', this.value)" style="font-size:13px; padding:6px 10px;" />
+          </div>
+          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addCmsAmenityItem(name = '', description = '') {
+      cmsAmenitiesList.push({ name, description });
+      renderCmsAmenities();
+    }
+
+    function updateCmsAmenityItem(idx, key, val) {
+      if (cmsAmenitiesList[idx]) cmsAmenitiesList[idx][key] = val;
+    }
+
+    function removeCmsAmenityItem(idx) {
+      cmsAmenitiesList.splice(idx, 1);
+      renderCmsAmenities();
+    }
+
+    // --- Reviews Functions ---
+    function renderCmsReviews() {
+      const container = document.getElementById('cmsReviewsContainer');
+      if (!container) return;
+      if (cmsReviewsList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No reviews added. Click "+ Add Review" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsReviewsList.map((item, idx) => `
+        <div style="background:var(--sand); padding:14px; border-radius:8px; border:1px solid var(--line); display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" placeholder="Author Name (e.g. Jemma M.)" value="${escapeHtml(item.author || '')}" oninput="updateCmsReviewItem(${idx}, 'author', this.value)" style="font-size:13px; width:160px; padding:6px 10px;" />
+              <input type="text" placeholder="Trip Type (e.g. Family stay)" value="${escapeHtml(item.trip_type || '')}" oninput="updateCmsReviewItem(${idx}, 'trip_type', this.value)" style="font-size:13px; width:150px; padding:6px 10px;" />
+              <select onchange="updateCmsReviewItem(${idx}, 'stars', parseInt(this.value))" style="font-size:13px; width:100px; padding:6px 10px;">
+                <option value="5" ${item.stars === 5 ? 'selected' : ''}>★★★★★ (5)</option>
+                <option value="4" ${item.stars === 4 ? 'selected' : ''}>★★★★☆ (4)</option>
+                <option value="3" ${item.stars === 3 ? 'selected' : ''}>★★★☆☆ (3)</option>
+              </select>
+              <input type="text" placeholder="Initials (e.g. JM)" value="${escapeHtml(item.initials || '')}" oninput="updateCmsReviewItem(${idx}, 'initials', this.value)" style="font-size:13px; width:70px; padding:6px 10px;" />
+            </div>
+            <button type="button" class="btn btn-danger" onclick="removeCmsReviewItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">Delete</button>
+          </div>
+          <textarea rows="2" placeholder="Guest quote / testimonial text..." oninput="updateCmsReviewItem(${idx}, 'quote', this.value)" style="font-size:13px; padding:6px 10px;">${escapeHtml(item.quote || '')}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addCmsReviewItem(quote = '', author = '', trip_type = 'Family stay', stars = 5, initials = '') {
+      cmsReviewsList.push({ quote, author, trip_type, stars, initials });
+      renderCmsReviews();
+    }
+
+    function updateCmsReviewItem(idx, key, val) {
+      if (cmsReviewsList[idx]) cmsReviewsList[idx][key] = val;
+    }
+
+    function removeCmsReviewItem(idx) {
+      cmsReviewsList.splice(idx, 1);
+      renderCmsReviews();
+    }
+
+    function escapeHtml(str) {
+      if (typeof str !== 'string') return str || '';
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // --- Save Handlers ---
+
+    async function saveCmsHero() {
+      try {
+        const location_tag = document.getElementById('cmsHeroLocationTag').value.trim();
+        const headline = document.getElementById('cmsHeroHeadline').value.trim();
+        const sub_headline = document.getElementById('cmsHeroSubHeadline').value.trim();
+        const cta_primary_label = document.getElementById('cmsHeroCtaPrimary').value.trim();
+        const cta_secondary_label = document.getElementById('cmsHeroCtaSecondary').value.trim();
+        const price = parseFloat(document.getElementById('cmsPropertyPrice').value) || 180;
+
+        await saveSiteContentSection('hero', { location_tag, headline, sub_headline, cta_primary_label, cta_secondary_label });
+        
+        // Also update property price in property section
+        const existingProp = cmsContentData.property || {};
+        await saveSiteContentSection('property', { ...existingProp, price_per_night: price });
+        
+        // If currentPropertyId exists, update the properties table too
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { price_per_night: price });
+        }
+
+        showCmsFeedback('cmsHeroStatus', 'Hero section & price saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsHeroStatus', 'Error saving hero section: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsAbout() {
+      try {
+        const eyebrow = document.getElementById('cmsAboutEyebrow').value.trim();
+        const photo_caption = document.getElementById('cmsAboutCaption').value.trim();
+        const headline = document.getElementById('cmsAboutHeadline').value.trim();
+        const lead = document.getElementById('cmsAboutLead').value.trim();
+        const body = document.getElementById('cmsAboutBody').value.trim();
+        const pillsRaw = document.getElementById('cmsAboutPills').value;
+        const pills = pillsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+        await saveSiteContentSection('about', { eyebrow, photo_caption, headline, lead, body, pills });
+        showCmsFeedback('cmsAboutStatus', 'About section saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsAboutStatus', 'Error saving about section: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsPropertySpecs() {
+      try {
+        const bedrooms = parseInt(document.getElementById('cmsPropBedrooms').value) || 4;
+        const beds = parseInt(document.getElementById('cmsPropBeds').value) || 4;
+        const bathrooms = parseInt(document.getElementById('cmsPropBathrooms').value) || 3;
+        const max_guests = parseInt(document.getElementById('cmsPropMaxGuests').value) || 8;
+        const price_per_night = parseFloat(document.getElementById('cmsPropertyPrice')?.value) || 180;
+
+        const specData = { name: "Toiwo Residence", location: "Ilboru, Arusha, Tanzania", bedrooms, beds, bathrooms, max_guests, price_per_night };
+        await saveSiteContentSection('property', specData);
+
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { bedrooms, beds, bathrooms, max_guests, price_per_night });
+        }
+
+        showCmsFeedback('cmsPropStatus', 'Property essentials saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsPropStatus', 'Error saving specs: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsGallery() {
+      try {
+        const cleanList = cmsGalleryList.filter(item => item.url && item.url.trim());
+        await saveSiteContentSection('gallery', cleanList);
+
+        // Also update admin_settings gallery_images for sync
+        if (currentPropertyId) {
+          const urls = cleanList.map(item => item.url.trim());
+          await updateAdminSettings(currentPropertyId, { gallery_images: urls });
+        }
+
+        showCmsFeedback('cmsGalleryStatus', `Gallery saved (${cleanList.length} photos)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsGalleryStatus', 'Error saving gallery: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsAmenities() {
+      try {
+        const cleanList = cmsAmenitiesList.filter(item => item.name && item.name.trim());
+        await saveSiteContentSection('amenities', cleanList);
+
+        if (currentPropertyId) {
+          const names = cleanList.map(item => item.name.trim());
+          await updatePropertyDetails(currentPropertyId, { amenities: names });
+        }
+
+        showCmsFeedback('cmsAmenitiesStatus', `Amenities saved (${cleanList.length} items)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsAmenitiesStatus', 'Error saving amenities: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsReviews() {
+      try {
+        const cleanList = cmsReviewsList.filter(item => item.quote && item.quote.trim());
+        await saveSiteContentSection('reviews', cleanList);
+        showCmsFeedback('cmsReviewsStatus', `Reviews saved (${cleanList.length} reviews)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsReviewsStatus', 'Error saving reviews: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsContactAndSocial() {
+      try {
+        const phone = document.getElementById('cmsContactPhone').value.trim();
+        const whatsapp = document.getElementById('cmsContactWhatsApp').value.trim();
+        const email = document.getElementById('cmsContactEmail').value.trim();
+        const instagram = document.getElementById('cmsSocialInstagram').value.trim();
+        const facebook = document.getElementById('cmsSocialFacebook').value.trim();
+        const waSocial = document.getElementById('cmsSocialWhatsApp').value.trim();
+
+        await saveSiteContentSection('contact', { phone, whatsapp, email });
+        await saveSiteContentSection('social', { instagram, facebook, whatsapp: waSocial });
+
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { host_phone: phone, host_whatsapp: whatsapp, host_email: email });
+          await updateAdminSettings(currentPropertyId, { contact_phone: phone, contact_whatsapp: whatsapp, contact_email: email });
+        }
+
+        showCmsFeedback('cmsContactStatus', 'Contact details & social links saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsContactStatus', 'Error saving contact info: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsFooter() {
+      try {
+        const tagline = document.getElementById('cmsFooterTagline').value.trim();
+        const copyright = document.getElementById('cmsFooterCopyright').value.trim();
+
+        await saveSiteContentSection('footer', { tagline, copyright });
+        showCmsFeedback('cmsFooterStatus', 'Footer content saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsFooterStatus', 'Error saving footer: ' + err.message, false);
+      }
+    }
+
+    // ============================================
+    // UI TAB SWITCHER
+    // ============================================
+
+    function switchTab(event, tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const target = document.getElementById(tabName);
+      if (target) target.classList.add('active');
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('load', async () => {
+      if (typeof getCurrentUser !== 'function') {
+        return;
+      }
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          await initAdminPanel(user.email);
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
+      }
+    });
+  </script>
 </body>
 </html>
