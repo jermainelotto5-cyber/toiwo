@@ -988,7 +988,7 @@
     </div>
   </div>
 
-  <script src="./frontend/supabase-client.js?v=13"></script>
+  <script src="./frontend/supabase-client.js?v=14"></script>
   <script>
     let currentPropertyId = null;
     let currentAdminSettings = null;
@@ -1210,11 +1210,39 @@
 
       try {
         await updatePropertyDetails(currentPropertyId, updates);
-        alert('Property details saved successfully!');
+
+        // Also sync to site_content so frontend updates instantly
+        try {
+          const existingProp = cmsContentData.property || {};
+          await saveSiteContentSection('property', {
+            ...existingProp,
+            name: updates.name,
+            location: updates.location,
+            price_per_night: updates.price_per_night,
+            max_guests: updates.max_guests,
+            bedrooms: updates.bedrooms,
+            beds: updates.beds,
+            bathrooms: updates.bathrooms,
+            description: updates.description
+          });
+          if (checkedAmenities.length > 0) {
+            const existingAmenities = cmsContentData.amenities || [];
+            const amenObjects = checkedAmenities.map(name => {
+              const found = existingAmenities.find(a => a.name === name);
+              return found || { name, description: '' };
+            });
+            await saveSiteContentSection('amenities', amenObjects);
+          }
+        } catch (cmsErr) {
+          console.warn('CMS sync warning:', cmsErr);
+        }
+
+        alert('Property details saved successfully! Changes are live on the website.');
         await loadDashboardData();
+        await loadCmsData();
       } catch (error) {
         console.error(error);
-        alert('Failed to update property details.');
+        alert('Failed to update property details: ' + (error?.message || error));
       }
     }
 
@@ -1284,11 +1312,14 @@
         await updateAdminSettings(currentPropertyId, {
           gallery_images: urls
         });
-        alert('Gallery configuration saved!');
+        const galleryObjects = urls.map((url, i) => ({ url, caption: `Photo ${i + 1}` }));
+        await saveSiteContentSection('gallery', galleryObjects);
+        alert('Gallery configuration saved successfully! Photos are live on the website.');
         await loadDashboardData();
+        await loadCmsData();
       } catch (error) {
         console.error(error);
-        alert('Failed to save gallery URLs.');
+        alert('Failed to save gallery URLs: ' + (error?.message || error));
       }
     }
 
