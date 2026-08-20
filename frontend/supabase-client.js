@@ -1,5 +1,7 @@
-﻿// =====================================// Supabase Client Setup & Helper Functions
-// =====================================
+// ============================================
+// Supabase Client Setup & Helper Functions
+// ============================================
+
 // Initialize Supabase Client
 const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1NzU3NjQsImV4cCI6MjA5OTE1MTc2NH0.cIuu86DwNQzHPvzyWoc6Hu3dEz8YTdE84MTi4fLhfRc';
@@ -60,8 +62,10 @@ if (supabaseClient) {
   window.supabaseClient = supabaseClient;
 }
 
-// =====================================// PROPERTY FUNCTIONS
-// =====================================
+// ============================================
+// PROPERTY FUNCTIONS
+// ============================================
+
 async function getProperty(propertyId = null) {
   try {
     let query = supabaseClient.from('properties').select('*');
@@ -92,8 +96,10 @@ async function getPropertyByName(name = 'Toiwo Residence') {
   }
 }
 
-// =====================================// ADMIN SETTINGS FUNCTIONS
-// =====================================
+// ============================================
+// ADMIN SETTINGS FUNCTIONS
+// ============================================
+
 async function getAdminSettings(propertyId) {
   try {
     const { data, error } = await supabaseClient
@@ -111,52 +117,28 @@ async function getAdminSettings(propertyId) {
 
 async function updateAdminSettings(propertyId, updates) {
   try {
-    const currentUser = await getCurrentUser();
     const payload = {
       property_id: propertyId,
-      admin_email: updates.admin_email || currentUser?.email || 'jermainelotto5@gmail.com',
       ...updates,
       updated_at: new Date().toISOString()
     };
-
-    const { data: existing, error: readError } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from('admin_settings')
-      .select('*')
-      .eq('property_id', propertyId)
-      .maybeSingle();
-
-    if (readError && readError.code !== 'PGRST116') {
-      throw readError;
-    }
-
-    let result;
-    if (existing && existing.id) {
-      const { data, error } = await supabaseClient
-        .from('admin_settings')
-        .update(payload)
-        .eq('id', existing.id)
-        .select()
-        .single();
-      if (error) throw error;
-      result = data;
-    } else {
-      const { data, error } = await supabaseClient
-        .from('admin_settings')
-        .insert([payload])
-        .select()
-        .single();
-      if (error) throw error;
-      result = data;
-    }
-
-    return result;
+      .upsert(payload, { onConflict: 'property_id' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   } catch (error) {
     console.error('Error updating admin settings:', error);
     throw error;
   }
 }
-// =====================================\n// BOOKING FUNCTIONS
-// =====================================
+
+// ============================================
+// BOOKING FUNCTIONS
+// ============================================
+
 async function checkAvailability(propertyId, checkIn, checkOut) {
   try {
     const { data, error } = await supabaseClient
@@ -236,8 +218,10 @@ async function updateBookingStatus(bookingId, status) {
   }
 }
 
-// =====================================// BLOCKED DATES FUNCTIONS
-// =====================================
+// ============================================
+// BLOCKED DATES FUNCTIONS
+// ============================================
+
 async function getBlockedDates(propertyId) {
   try {
     const { data, error } = await supabaseClient
@@ -281,8 +265,10 @@ async function removeBlockedDate(blockedDateId) {
   }
 }
 
-// =====================================// CONTACT MESSAGE FUNCTIONS
-// =====================================
+// ============================================
+// CONTACT MESSAGE FUNCTIONS
+// ============================================
+
 async function createContactMessage(propertyId, senderName, senderEmail, message) {
   try {
     const { data, error } = await supabaseClient
@@ -318,8 +304,10 @@ async function getContactMessages(propertyId) {
   }
 }
 
-// =====================================// AUTHENTICATION FUNCTIONS
-// =====================================
+// ============================================
+// AUTHENTICATION FUNCTIONS
+// ============================================
+
 async function signUpAdmin(email, password) {
   try {
     const { data, error } = await supabaseClient.auth.signUp({
@@ -386,8 +374,10 @@ async function getCurrentUser() {
   }
 }
 
-// =====================================// UTILITY FUNCTIONS
-// =====================================
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
 function calculateNights(checkIn, checkOut) {
   const checkInDate = new Date(checkIn);
   const checkOutDate = new Date(checkOut);
@@ -417,8 +407,10 @@ function formatDate(dateString) {
   });
 }
 
-// =====================================// PRICING RULES FUNCTIONS
-// =====================================
+// ============================================
+// PRICING RULES FUNCTIONS
+// ============================================
+
 async function getPricingRules(propertyId) {
   try {
     const { data, error } = await supabaseClient
@@ -463,8 +455,10 @@ async function removePricingRule(ruleId) {
   }
 }
 
-// =====================================// PROPERTY UPDATE FUNCTIONS
-// =====================================
+// ============================================
+// PROPERTY UPDATE FUNCTIONS
+// ============================================
+
 async function updatePropertyDetails(propertyId, updates) {
   try {
     const { data, error } = await supabaseClient
@@ -481,8 +475,10 @@ async function updatePropertyDetails(propertyId, updates) {
   }
 }
 
-// =====================================// SITE CONTENT (CMS) FUNCTIONS
-// =====================================
+// ============================================
+// SITE CONTENT (CMS) FUNCTIONS
+// ============================================
+
 async function getAllSiteContent() {
   try {
     const { data, error } = await supabaseClient
@@ -536,3 +532,5 @@ async function uploadPhotoToStorage(file) {
     throw error;
   }
 }
+
+
