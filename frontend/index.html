@@ -1,14 +1,21 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Toiwo Residence â€” Private Home in Ilboru, Arusha</title>
+    <title>Toiwo Residence &mdash; Private Home in Ilboru, Arusha</title>
     <meta name="description" content="A private four-bedroom residence in Ilboru, Arusha. Ideal for families, groups, and safari stopovers. Comfortable, peaceful, and ready for your stay." />
     <meta name="keywords" content="Arusha accommodation, private villa, Ilboru, Tanzania holiday rental" />
-    <meta property="og:title" content="Toiwo Residence â€” Private Home in Ilboru, Arusha" />
+    <meta property="og:title" content="Toiwo Residence &mdash; Private Home in Ilboru, Arusha" />
     <meta property="og:description" content="A private four-bedroom residence in Ilboru, Arusha. Ideal for families, groups, and safari stopovers." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://toiwo-residence.vercel.app/" />
+    <meta property="og:image" content="https://toiwo-residence.vercel.app/pics/hero-new.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Toiwo Residence — Private Home in Ilboru, Arusha" />
+    <meta name="twitter:description" content="A private four-bedroom residence in Ilboru, Arusha. Ideal for families, groups, and safari stopovers." />
+    <meta name="twitter:image" content="https://toiwo-residence.vercel.app/pics/hero-new.jpg" />
+    <link rel="icon" href="/pics/hero-new.jpg" type="image/jpeg" />
     <meta name="theme-color" content="#f6f1e7" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -159,7 +166,7 @@
       .about p { font-size: 16px; color: var(--ink-soft); margin-bottom: 16px; }
       .for-whom { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
       .pill { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--olive-deep); background: var(--sand); }
-      .about-photo { border-radius: 22px; min-height: 420px; background: linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url("/pics/exterior-entrance.jpg") center/cover; box-shadow: var(--shadow); position: relative; }
+      .about-photo { border-radius: 22px; min-height: 420px; background: linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url("/pics/hero-new.jpg") center/cover; box-shadow: var(--shadow); position: relative; }
       .about-photo .cap { position: absolute; left: 20px; right: 20px; bottom: 20px; background: rgba(35,41,31,0.5); color: var(--white); padding: 12px 16px; border-radius: 12px; font-family: "Fraunces", serif; }
       .gallery { background: var(--sand-deep); }
       .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; flex-wrap: wrap; }
@@ -167,20 +174,25 @@
       .section-head .sub { color: var(--ink-soft); font-size: 16px; max-width: 420px; }
       .gallery-note { margin-bottom: 16px; font-size: 14px; color: var(--ink-soft); }
       .gal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-      .gal-item { border-radius: 16px; min-height: 180px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 16px; color: var(--white); background-size: cover; background-position: center; }
-      .gal-item span { backdrop-filter: blur(4px); background: rgba(24, 26, 18, 0.38); padding: 6px 12px; border-radius: 8px; font-family: "Fraunces", serif; font-size: 14px; }
+      .gal-item { border-radius: 16px; min-height: 180px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 16px; color: var(--white); cursor: pointer; transition: transform 0.2s; }
+      .gal-item:hover { transform: scale(1.02); z-index: 2; }
+      .gal-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .gal-item span { position: relative; z-index: 1; backdrop-filter: blur(4px); background: rgba(24, 26, 18, 0.38); padding: 6px 12px; border-radius: 8px; font-family: "Fraunces", serif; font-size: 14px; }
       .amenities { background: var(--white); }
       .amen-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-      .amen-item { background: var(--white); padding: 28px 22px; display: flex; flex-direction: column; gap: 12px; }
-      .amen-icon { width: 40px; height: 40px; border-radius: 11px; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; color: var(--clay-deep); }
-      .amen-item strong { font-size: 15px; }
-      .amen-item p { font-size: 13.5px; color: var(--ink-soft); }
+      .amen-item { background: var(--white); padding: 28px 22px; }
+      .amen-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+      .amen-item .amen-check { color: var(--clay-deep); font-weight: 700; margin-right: 4px; }
+      .amen-item strong { font-size: 15px; color: var(--ink); }
       .details { background: var(--olive-deep); color: var(--sand); }
       .details h2 { color: var(--sand); }
       .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-      .detail-card { background: rgba(246, 241, 231, 0.06); border: 1px solid rgba(246,241,231,0.16); border-radius: var(--radius-sm); padding: 22px; }
-      .detail-card .num { font-family: "Fraunces", serif; font-size: 34px; color: var(--gold); }
-      .detail-card .label { font-size: 13.5px; color: rgba(246,241,231,0.76); }
+      .detail-card { background: rgba(246, 241, 231, 0.06); border: 1px solid rgba(246,241,231,0.16); border-radius: var(--radius-sm); padding: 22px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+      .detail-card .num { font-family: "Fraunces", serif; font-size: 34px; color: var(--gold); line-height: 1; }
+      .detail-card .label { font-size: 15px; color: rgba(246,241,231,0.86); }
+      .ccard a { color: var(--clay); font-weight: 600; }
+      .ccard a:hover { text-decoration: underline; }
+      .rev-card .who-meta { font-size: 14px; color: var(--ink-soft); }
       .reviews { background: var(--sand); }
       .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
       .rev-card { background: var(--white); border-radius: var(--radius); padding: 24px; border: 1px solid var(--line); box-shadow: 0 12px 30px -20px rgba(35,41,31,0.25); }
@@ -220,6 +232,7 @@
       .admin-panel .actions { display: flex; gap: 10px; flex-wrap: wrap; }
       .contact { background: var(--white); }
       .contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; }
+      .contact-copy { max-width: 480px; }
       .contact-cards { display: flex; flex-direction: column; gap: 16px; }
       .ccard { border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
       .footer { background: var(--ink); color: rgba(246,241,231,0.8); padding: 62px 0 24px; }
@@ -241,10 +254,22 @@
         header.scrolled .nav-toggle span { background: var(--ink); }
       }
       @media (max-width: 700px) {
+        .wrap { padding: 0 18px; }
+        .hero-ctas { flex-direction: column; }
+        .hero-ctas .btn { width: 100%; }
         .book-bar { grid-template-columns: 1fr 1fr; }
         .book-field { border-right: none; border-bottom: 1px solid var(--line); }
         .book-bar .btn-primary { grid-column: 1 / -1; width: 100%; }
         .book-card .row, .admin-panel .grid, .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 480px) {
+        section { padding: 80px 0; }
+        .hero h1 { font-size: clamp(36px, 16vw, 52px); }
+        .hero-lede { font-size: 16px; }
+        .book-bar { grid-template-columns: 1fr; }
+        .book-field { border-bottom: 1px solid var(--line); }
+        .section-head { align-items: flex-start; }
+        .foot-bottom { flex-direction: column; }
       }
     </style>
   </head>
@@ -259,7 +284,6 @@
           <a href="#reviews">Reviews</a>
           <a href="#booking">Booking</a>
           <a href="#contact">Contact</a>
-          <a href="/admin.html" class="btn btn-outline" style="padding: 12px 20px;">Admin Login</a>
           <a class="btn btn-ghost" href="#booking">Check Availability</a>
         </nav>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">
@@ -271,12 +295,12 @@
     <main id="top">
       <section class="hero">
         <div class="wrap hero-inner">
-          <div class="hero-tag">Ilboru Â· Arusha, Tanzania</div>
-          <h1>ComfortHome with a calm local feel.</h1>
-          <p class="hero-lede">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
+          <div class="hero-tag" id="heroLocationTag">Ilboru · Arusha, Tanzania</div>
+          <h1 id="heroHeadline">A private retreat with the warmth of home.</h1>
+          <p class="hero-lede" id="heroSubHeadline">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
           <div class="hero-ctas">
-            <a href="#booking" class="btn btn-primary">Book Your Stay</a>
-            <a href="#gallery" class="btn btn-ghost">View the House</a>
+            <a href="#booking" class="btn btn-primary" id="heroCtaPrimary">Book Your Stay</a>
+            <a href="#gallery" class="btn btn-ghost" id="heroCtaSecondary">View the House</a>
           </div>
           <div class="book-bar">
             <div class="book-field">
@@ -304,11 +328,11 @@
       <section class="about" id="about">
         <div class="wrap about-grid">
           <div>
-            <div class="eyebrow">The House</div>
-            <h2>A home that feels like it was waiting for you.</h2>
-            <p class="lead">Set behind a gated garden in the residential quiet of Ilboru, Toiwo Residence offers privacy, comfort, and the kind of calm that makes stays feel longer than they are.</p>
-            <p>Arched doorways, warm wood details, and a shaded courtyard create a home that is both elegant and easygoing. Four bedrooms, generous living spaces, and a terrace for outdoor dining make it ideal for families, couples, and safari groups.</p>
-            <div class="for-whom">
+            <div class="eyebrow" id="aboutEyebrow">The House</div>
+            <h2 id="aboutHeadline">A home that feels like it was waiting for you.</h2>
+            <p class="lead" id="aboutLead">Set behind a gated garden in the residential quiet of Ilboru, Toiwo Residence offers privacy, comfort, and the kind of calm that makes stays feel longer than they are.</p>
+            <p id="aboutBody">Arched doorways, warm wood details, and a shaded courtyard create a home that is both elegant and easygoing. Four bedrooms, generous living spaces, and a terrace for outdoor dining make it ideal for families, couples, and safari groups.</p>
+            <div class="for-whom" id="aboutPills">
               <span class="pill">Families</span>
               <span class="pill">Groups of friends</span>
               <span class="pill">Couples</span>
@@ -316,7 +340,7 @@
             </div>
           </div>
           <div class="about-photo">
-            <div class="cap">The courtyard â€” a gentle, welcoming start to the day.</div>
+            <div class="cap" id="aboutCaption">The courtyard — a gentle, welcoming start to the day.</div>
           </div>
         </div>
       </section>
@@ -326,36 +350,18 @@
           <div class="section-head">
             <div>
               <div class="eyebrow">Gallery</div>
-              <h2>Photos from your listing pages, ready to swap.</h2>
+              <h2>Step inside Toiwo Residence.</h2>
             </div>
-            <p class="sub">This section is ready for your Airbnb or Booking.com photos. Replace the image URLs below with real listing images when you have them.</p>
+            <p class="sub">A curated look at the rooms, courtyard, and outdoor spaces that make every stay feel personal.</p>
           </div>
-          <p class="gallery-note">Tip: use a few high-quality photos from your Airbnb or Booking.com listing, then paste their URLs in the admin section below.</p>
           <div class="gal-grid" id="galleryGrid">
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Courtyard entrance</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Living room</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Kitchen</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Bedroom</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Garden terrace</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Outdoor dining</span></div>
-</div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Living room</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Kitchen</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Bedroom</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Garden terrace</span></div>
-  <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg');"><span>Outdoor dining</span></div>
-</div>
-  <div class="gal-item" style="background-image: url('/pics/living-room.jpg');"><span>Living room</span></div>
-  <div class="gal-item" style="background-image: url('/pics/kitchen.jpg');"><span>Kitchen</span></div>
-  <div class="gal-item" style="background-image: url('/pics/bedroom.jpg');"><span>Bedroom</span></div>
-  <div class="gal-item" style="background-image: url('/pics/outdoor-lounge.jpg');"><span>Garden terrace</span></div>
-  <div class="gal-item" style="background-image: url('/pics/night-exterior.jpg');"><span>Outdoor dining</span></div>
-</div>
-            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Living room</span></div>
-            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Kitchen</span></div>
-            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Bedroom</span></div>
-            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Garden terrace</span></div>
-            <div class="gal-item" style="background-image: url('/pics/gallery-replace.jpg);"><span>Outdoor dining</span></div>
+            <div class="gal-item"><img src="/pics/exterior-day.jpg" alt="Exterior" loading="lazy" /><span>Exterior</span></div>
+            <div class="gal-item"><img src="/pics/living-room.jpg" alt="Living Room" loading="lazy" /><span>Living Room</span></div>
+            <div class="gal-item"><img src="/pics/dining-room.jpg" alt="Dining Room" loading="lazy" /><span>Dining Room</span></div>
+            <div class="gal-item"><img src="/pics/night-exterior.jpg" alt="Night Exterior" loading="lazy" /><span>Night Exterior</span></div>
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <button id="seeAllGalleryBtn" class="btn btn-outline">See All Photos</button>
           </div>
         </div>
       </section>
@@ -370,46 +376,14 @@
             <p class="sub">Stay comfortable and settled with a practical layout and thoughtful touches.</p>
           </div>
           <div class="amen-grid">
-            <div class="amen-item">
-              <div class="amen-icon">â—ˆ</div>
-              <strong>Fast Wi-Fi</strong>
-              <p>Reliable internet for work, streaming, and staying in touch.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â–¤</div>
-              <strong>Full Kitchen</strong>
-              <p>Everything needed for simple meals, coffee, and family dinners.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â›Š</div>
-              <strong>Private Parking</strong>
-              <p>Safe parking inside the gated compound.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â™¨</div>
-              <strong>Hot Water</strong>
-              <p>Comfortable hot showers and daily convenience.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â–­</div>
-              <strong>Flat-Screen TV</strong>
-              <p>Easy evenings in after a day out.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â†»</div>
-              <strong>Washing Machine</strong>
-              <p>Helpful for longer stays and safari trips.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">â˜¾</div>
-              <strong>Night Security</strong>
-              <p>Peace of mind for arrivals and late evenings.</p>
-            </div>
-            <div class="amen-item">
-              <div class="amen-icon">âœ¤</div>
-              <strong>Private Garden</strong>
-              <p>Shade, quiet, and outdoor space to relax.</p>
-            </div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Fast Wi-Fi</strong> – Reliable internet for work, streaming, and staying in touch.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Full Kitchen</strong> – Everything needed for simple meals, coffee, and family dinners.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Private Parking</strong> – Safe parking inside the gated compound.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Hot Water</strong> – Comfortable hot showers and daily convenience.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Flat-Screen TV</strong> – Easy evenings in after a day out.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Washing Machine</strong> – Helpful for longer stays and safari trips.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Night Security</strong> – Peace of mind for arrivals and late evenings.</p></div>
+            <div class="amen-item"><p><span class="amen-check">✓</span> <strong>Private Garden</strong> – Shade, quiet, and outdoor space to relax.</p></div>
           </div>
         </div>
       </section>
@@ -422,38 +396,42 @@
               <h2>The essentials, at a glance.</h2>
             </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-card"><div class="num">4</div><div class="label">Bedrooms</div></div>
-            <div class="detail-card"><div class="num">4</div><div class="label">Beds</div></div>
-            <div class="detail-card"><div class="num">3</div><div class="label">Bathrooms</div></div>
-            <div class="detail-card"><div class="num">8</div><div class="label">Max Guests</div></div>
+          <div class="detail-grid" id="detailsGrid">
+            <div class="detail-card"><div class="num" id="detailBedrooms">4</div><div class="label">Bedrooms</div></div>
+            <div class="detail-card"><div class="num" id="detailBeds">4</div><div class="label">Beds</div></div>
+            <div class="detail-card"><div class="num" id="detailBathrooms">3</div><div class="label">Bathrooms</div></div>
+            <div class="detail-card"><div class="num" id="detailMaxGuests">8</div><div class="label">Max Guests</div></div>
           </div>
         </div>
       </section>
 
       <section class="reviews" id="reviews">
         <div class="wrap">
-          <div class="section-head">
-            <div>
-              <div class="eyebrow">Guest Reviews</div>
-              <h2>Warm words from travelers who stayed here.</h2>
-            </div>
-          </div>
-          <div class="rev-grid">
+          <div class="section-head"><div><div class="eyebrow">Guest Reviews</div><h2>What our guests say</h2></div></div>
+          <div class="rev-grid" id="reviewsGrid">
             <div class="rev-card">
-              <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
-              <p>â€œBeautiful, calm, and very comfortable for our family stay.â€</p>
-              <div class="who"><div class="avatar">N</div><div><strong>Natalia</strong><span>Family stay</span></div></div>
+              <div class="stars">★★★★★</div>
+              <p>"An oasis of calm — thoughtful touches and genuine hospitality."</p>
+              <div class="who">
+                <div class="avatar">JM</div>
+                <div class="who-meta"><strong>Jemma M.</strong> – Family stay</div>
+              </div>
             </div>
             <div class="rev-card">
-              <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
-              <p>â€œThe garden, the quiet, and the easy check-in made everything simple.â€</p>
-              <div class="who"><div class="avatar">D</div><div><strong>David</strong><span>Couple stay</span></div></div>
+              <div class="stars">★★★★★</div>
+              <p>"Perfect base for our safari — comfortable, quiet, and beautifully hosted."</p>
+              <div class="who">
+                <div class="avatar">RK</div>
+                <div class="who-meta"><strong>Rashid K.</strong> – Explorer</div>
+              </div>
             </div>
             <div class="rev-card">
-              <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
-              <p>â€œPerfect for a group trip and very easy to reach from town.â€</p>
-              <div class="who"><div class="avatar">A</div><div><strong>Amara</strong><span>Group trip</span></div></div>
+              <div class="stars">★★★★★</div>
+              <p>"The garden and the morning light were unforgettable — we'll be back."</p>
+              <div class="who">
+                <div class="avatar">AL</div>
+                <div class="who-meta"><strong>Alice L.</strong> – Couple</div>
+              </div>
             </div>
           </div>
         </div>
@@ -465,7 +443,7 @@
             <div class="eyebrow" style="color: var(--gold);">Booking</div>
             <h2>Reserve your dates today.</h2>
             <p>Choose your dates, send your details, and complete your payment once the booking is ready.</p>
-            <div class="price-tag"><span class="amt">$180</span><span class="per">/ night Â· whole house</span></div>
+            <div class="price-tag"><span class="amt" id="heroPrice">$180</span><span class="per">/ night &middot; whole house</span></div>
             <p>Payment integration is placed below the form so you can swap in Selcom, M-Pesa, Tigo Pesa, Stripe, or another provider whenever you are ready.</p>
           </div>
           <div class="book-card">
@@ -524,14 +502,14 @@
 
       <section class="contact" id="contact">
         <div class="wrap contact-grid">
-          <div>
+          <div class="contact-copy">
             <div class="eyebrow">Contact</div>
             <h2>We usually reply quickly.</h2>
             <p>Questions about pricing, dates, or the property? Send a note and we will reply as soon as possible.</p>
             <div class="contact-cards">
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">â˜</div><div><strong>Call</strong><span id="contactPhoneText">+255 71 865 4332</span></div></div>
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">âœ†</div><div><strong>WhatsApp</strong><span id="contactWhatsAppText">+255 71 865 4332</span></div></div>
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">âœ‰</div><div><strong>Email</strong><span id="contactEmailText">jermainelotto5@gmail.com</span></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">📞</div><div><strong>Call</strong><br /><a href="tel:+255718654332" id="contactPhoneText">+255 71 865 4332</a></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">💬</div><div><strong>WhatsApp</strong><br /><a href="https://wa.me/255718654332" id="contactWhatsAppText" target="_blank" rel="noopener">+255 71 865 4332</a></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">✉</div><div><strong>Email</strong><br /><a href="mailto:jermainelotto5@gmail.com" id="contactEmailText">jermainelotto5@gmail.com</a></div></div>
             </div>
           </div>
           <div class="contact-form" style="background: var(--sand); border: 1px solid var(--line); border-radius: 24px; padding: 24px;">
@@ -554,7 +532,7 @@
         <div class="foot-grid">
           <div>
             <div class="foot-logo">Toiwo <span>Residence</span></div>
-            <p>A private four-bedroom home in Ilboru, Arusha â€” calm, spacious, and ready for your stay.</p>
+            <p id="footerTagline">A private four-bedroom home in Ilboru, Arusha &mdash; calm, spacious, and ready for your stay.</p>
           </div>
           <div>
             <h5>Explore</h5>
@@ -564,27 +542,73 @@
             <h5>Guests</h5>
             <ul><li><a href="#reviews">Reviews</a></li><li><a href="#amenities">Amenities</a></li><li><a href="#contact">Contact</a></li></ul>
           </div>
-          <div>
-            <h5>Admin</h5>
-            <ul><li><a href="/admin">Dashboard</a></li><li><a href="/admin">Manage bookings</a></li><li><a href="/admin">Settings</a></li></ul>
-          </div>
+
           <div>
             <h5>Follow</h5>
-            <ul><li><a href="https://instagram.com/toiworesidence.arusha" target="_blank">Instagram</a></li><li><a href="https://facebook.com/toiworesidence" target="_blank">Facebook</a></li><li><a href="https://wa.me/255718654332" target="_blank">WhatsApp</a></li></ul>
+            <ul><li><a href="https://instagram.com/toiworesidence.arusha" target="_blank" id="footerInstagram">Instagram</a></li><li><a href="https://facebook.com/toiworesidence" target="_blank" id="footerFacebook">Facebook</a></li><li><a href="https://wa.me/255718654332" target="_blank" id="footerWhatsApp">WhatsApp</a></li></ul>
           </div>
         </div>
         <div class="foot-bottom">
-          <span>Â© 2026 Toiwo Residence</span>
+          <span id="footerCopyright">&copy; 2026 Toiwo Residence</span>
           <span>Designed for restful stays in Arusha.</span>
         </div>
       </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="main.js"></script>
+    <script src="./supabase.min.js"></script>
+    <script src="./supabase-client.js?v=14"></script>
+    <script src="./main.js?v=14"></script>
+    <div id="lightbox" class="lightbox">
+      <span class="lightbox-close">&times;</span>
+      <img id="lightbox-img" src="">
+    </div>
+    <style>
+      .lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+      .lightbox.active { display: flex; opacity: 1; }
+      .lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      .lightbox-close { position: absolute; top: 30px; right: 40px; color: #fff; font-size: 40px; cursor: pointer; user-select: none; }
+      .gal-extra { display: none; }
+      .gal-grid.show-all .gal-extra { display: flex; }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightbox-img');
+        const closeBtn = document.querySelector('.lightbox-close');
+        const galleryGrid = document.getElementById('galleryGrid');
+        
+        if (galleryGrid) {
+          galleryGrid.addEventListener('click', (e) => {
+            const item = e.target.closest('.gal-item');
+            if (item) {
+              const img = item.querySelector('img');
+              if (img) {
+                lbImg.src = img.src;
+                lbImg.alt = img.alt || '';
+                lightbox.classList.add('active');
+              }
+            }
+          });
+
+          const seeAllBtn = document.getElementById('seeAllGalleryBtn');
+          if (seeAllBtn) {
+            seeAllBtn.addEventListener('click', () => {
+              galleryGrid.classList.add('show-all');
+              seeAllBtn.style.display = 'none';
+            });
+          }
+        }
+        
+        closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
+        lightbox.addEventListener('click', (e) => {
+          if (e.target === lightbox) lightbox.classList.remove('active');
+        });
+      });
+    </script>
   </body>
 </html>
+
+
 
 
 
