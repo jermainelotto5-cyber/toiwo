@@ -8,10 +8,28 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 // Custom fetch: routes all Supabase requests through our Vercel proxy
 // so the browser never directly contacts supabase.co (bypassing network blocks)
+const extractHeaders = (headers) => {
+  if (!headers) return {};
+  const obj = {};
+  if (typeof headers.forEach === 'function') {
+    headers.forEach((val, key) => { obj[key] = val; });
+    return obj;
+  }
+  if (typeof headers.entries === 'function') {
+    for (const [k, v] of headers.entries()) { obj[k] = v; }
+    return obj;
+  }
+  if (Array.isArray(headers)) {
+    return Object.fromEntries(headers);
+  }
+  if (typeof headers === 'object') {
+    return { ...headers };
+  }
+  return {};
+};
+
 const proxyFetch = async (url, options = {}) => {
-  const outgoingHeaders = options.headers instanceof Headers
-    ? Object.fromEntries(options.headers.entries())
-    : (options.headers || {});
+  const outgoingHeaders = extractHeaders(options.headers);
 
   return fetch('/api/supabase-proxy', {
     method: 'POST',

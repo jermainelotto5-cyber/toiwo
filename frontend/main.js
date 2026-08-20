@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadSiteContent() {
   try {
-    const res = await fetch('/api/content');
+    const res = await fetch('/api/content?t=' + Date.now());
     if (res.ok) {
       siteContent = await res.json();
       applySiteContent();
