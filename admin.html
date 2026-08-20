@@ -516,6 +516,220 @@
         </div>
       </div>
 
+      <!-- Tab: Website Content (CMS) -->
+      <div id="webcontent" class="tab-content">
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="margin:0;">Website Content Manager</h3>
+              <p style="color: var(--ink-soft); margin: 4px 0 0 0; font-size: 14px;">Edit all text, photos, amenities, reviews, and contact info on the public website.</p>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">↺ Refresh Content</button>
+          </div>
+        </div>
+
+        <!-- Section: Hero & Header -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">🏠 Hero Section (Top of Page)</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsHero()">Save Hero</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Location Tag</label>
+              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru · Arusha, Tanzania" />
+            </div>
+            <div class="form-group">
+              <label>Price per Night (USD)</label>
+              <input type="number" id="cmsPropertyPrice" placeholder="180" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Main Headline</label>
+            <input type="text" id="cmsHeroHeadline" placeholder="A private retreat with the warmth of home." />
+          </div>
+          <div class="form-group">
+            <label>Sub-headline / Description</label>
+            <textarea id="cmsHeroSubHeadline" rows="2" placeholder="A four-bedroom residence in Ilboru..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Primary Button Label</label>
+              <input type="text" id="cmsHeroCtaPrimary" placeholder="Book Your Stay" />
+            </div>
+            <div class="form-group">
+              <label>Secondary Button Label</label>
+              <input type="text" id="cmsHeroCtaSecondary" placeholder="View the House" />
+            </div>
+          </div>
+          <div id="cmsHeroStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: About -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📖 About Section</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsAbout()">Save About</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Eyebrow Label</label>
+              <input type="text" id="cmsAboutEyebrow" placeholder="The House" />
+            </div>
+            <div class="form-group">
+              <label>Photo Caption</label>
+              <input type="text" id="cmsAboutCaption" placeholder="The courtyard — a gentle, welcoming start..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Section Headline</label>
+            <input type="text" id="cmsAboutHeadline" placeholder="A home that feels like it was waiting for you." />
+          </div>
+          <div class="form-group">
+            <label>Lead Paragraph</label>
+            <textarea id="cmsAboutLead" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Body Paragraph</label>
+            <textarea id="cmsAboutBody" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>"Ideal For" Badges (comma separated)</label>
+            <input type="text" id="cmsAboutPills" placeholder="Families, Groups of friends, Couples, Safari stopovers" />
+          </div>
+          <div id="cmsAboutStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Property Specs -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📊 Property Essentials</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsPropertySpecs()">Save Specs</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Bedrooms</label>
+              <input type="number" id="cmsPropBedrooms" value="4" />
+            </div>
+            <div class="form-group">
+              <label>Beds</label>
+              <input type="number" id="cmsPropBeds" value="4" />
+            </div>
+            <div class="form-group">
+              <label>Bathrooms</label>
+              <input type="number" id="cmsPropBathrooms" value="3" />
+            </div>
+            <div class="form-group">
+              <label>Max Guests</label>
+              <input type="number" id="cmsPropMaxGuests" value="8" />
+            </div>
+          </div>
+          <div id="cmsPropStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Gallery Photos -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">🖼️ Gallery Photos</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Add, remove, or change photo URLs and captions shown on the website.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsGalleryItem()">+ Add Photo</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsGallery()">Save Gallery</button>
+            </div>
+          </div>
+          <div id="cmsGalleryContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          <div id="cmsGalleryStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Amenities -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">✨ Amenities</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Manage the features and amenities displayed on the website.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsAmenityItem()">+ Add Amenity</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsAmenities()">Save Amenities</button>
+            </div>
+          </div>
+          <div id="cmsAmenitiesContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+          <div id="cmsAmenitiesStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Guest Reviews -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin:0; font-size: 17px;">⭐ Guest Reviews</h4>
+              <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Showcase guest testimonials and ratings on the homepage.</p>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary" onclick="addCmsReviewItem()">+ Add Review</button>
+              <button type="button" class="btn btn-primary" onclick="saveCmsReviews()">Save Reviews</button>
+            </div>
+          </div>
+          <div id="cmsReviewsContainer" style="display: flex; flex-direction: column; gap: 14px;"></div>
+          <div id="cmsReviewsStatus" style="font-size: 13px; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Section: Contact & Social Links -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">📞 Contact & Social Links</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsContactAndSocial()">Save Contact & Social</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" id="cmsContactPhone" placeholder="+255718654332" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Number</label>
+              <input type="text" id="cmsContactWhatsApp" placeholder="+255718654332" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="cmsContactEmail" placeholder="jermainelotto5@gmail.com" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Instagram URL</label>
+              <input type="url" id="cmsSocialInstagram" placeholder="https://instagram.com/toiworesidence.arusha" />
+            </div>
+            <div class="form-group">
+              <label>Facebook URL</label>
+              <input type="url" id="cmsSocialFacebook" placeholder="https://facebook.com/toiworesidence" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Direct Link</label>
+              <input type="url" id="cmsSocialWhatsApp" placeholder="https://wa.me/255718654332" />
+            </div>
+          </div>
+          <div id="cmsContactStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Section: Footer -->
+        <div class="section-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <h4 style="margin:0; font-size: 17px;">🦶 Footer Content</h4>
+            <button type="button" class="btn btn-primary" onclick="saveCmsFooter()">Save Footer</button>
+          </div>
+          <div class="form-group">
+            <label>Footer Tagline</label>
+            <input type="text" id="cmsFooterTagline" placeholder="A private four-bedroom home in Ilboru, Arusha..." />
+          </div>
+          <div class="form-group">
+            <label>Copyright Text</label>
+            <input type="text" id="cmsFooterCopyright" placeholder="2026 Toiwo Residence" />
+          </div>
+          <div id="cmsFooterStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+      </div>
+
       <!-- Tab: Content & Photos -->
       <div id="content" class="tab-content">
         <div class="section-box">
@@ -665,7 +879,8 @@
           <button class="tab-btn active" onclick="switchTab(event, 'overview')">Overview</button>
           <button class="tab-btn" onclick="switchTab(event, 'bookings')">Bookings</button>
           <button class="tab-btn" onclick="switchTab(event, 'calendar')">Pricing & Blocks</button>
-          <button class="tab-btn" onclick="switchTab(event, 'content')">Content & Photos</button>
+          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">Website Content</button>
+          <button class="tab-btn" onclick="switchTab(event, 'content')">Property Details</button>
           <button class="tab-btn" onclick="switchTab(event, 'ical')">Calendar Sync (iCal)</button>
           <button class="tab-btn" onclick="switchTab(event, 'messages')">Messages</button>
         </div>
@@ -673,7 +888,7 @@
     </div>
   </div>
 
-  <script src="./frontend/supabase-client.js?v=9"></script>
+  <script src="./frontend/supabase-client.js?v=10"></script>
   <script>
     let currentPropertyId = null;
     let currentAdminSettings = null;
@@ -768,6 +983,9 @@
       // Populate forms
       loadSettingsForm();
       loadPropertyForm(property);
+      
+      // Load website CMS data
+      await loadCmsData();
       
       // Load tables & pricing
       await loadDashboardData();
@@ -1262,6 +1480,385 @@
           </td>
         </tr>
       `).join('');
+    }
+
+    // ============================================
+    // WEBSITE CONTENT MANAGER (CMS)
+    // ============================================
+
+    let cmsContentData = {};
+    let cmsGalleryList = [];
+    let cmsAmenitiesList = [];
+    let cmsReviewsList = [];
+
+    function showCmsFeedback(elemId, msg, isSuccess = true) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? '✓ ' : '✗ '}${msg}</span>`;
+      setTimeout(() => { if (el) el.innerHTML = ''; }, 4000);
+    }
+
+    async function loadCmsData() {
+      try {
+        let content = {};
+        if (typeof getAllSiteContent === 'function') {
+          content = await getAllSiteContent();
+        }
+        if (!content || Object.keys(content).length === 0) {
+          const res = await fetch('/api/content');
+          if (res.ok) content = await res.json();
+        }
+        cmsContentData = content || {};
+
+        // 1. Hero
+        const hero = cmsContentData.hero || {};
+        const prop = cmsContentData.property || {};
+        document.getElementById('cmsHeroLocationTag').value = hero.location_tag || '';
+        document.getElementById('cmsPropertyPrice').value = prop.price_per_night || 180;
+        document.getElementById('cmsHeroHeadline').value = hero.headline || '';
+        document.getElementById('cmsHeroSubHeadline').value = hero.sub_headline || '';
+        document.getElementById('cmsHeroCtaPrimary').value = hero.cta_primary_label || '';
+        document.getElementById('cmsHeroCtaSecondary').value = hero.cta_secondary_label || '';
+
+        // 2. About
+        const about = cmsContentData.about || {};
+        document.getElementById('cmsAboutEyebrow').value = about.eyebrow || '';
+        document.getElementById('cmsAboutCaption').value = about.photo_caption || '';
+        document.getElementById('cmsAboutHeadline').value = about.headline || '';
+        document.getElementById('cmsAboutLead').value = about.lead || '';
+        document.getElementById('cmsAboutBody').value = about.body || '';
+        document.getElementById('cmsAboutPills').value = Array.isArray(about.pills) ? about.pills.join(', ') : (about.pills || '');
+
+        // 3. Property Specs
+        document.getElementById('cmsPropBedrooms').value = prop.bedrooms || 4;
+        document.getElementById('cmsPropBeds').value = prop.beds || 4;
+        document.getElementById('cmsPropBathrooms').value = prop.bathrooms || 3;
+        document.getElementById('cmsPropMaxGuests').value = prop.max_guests || 8;
+
+        // 4. Gallery
+        cmsGalleryList = Array.isArray(cmsContentData.gallery) ? [...cmsContentData.gallery] : [];
+        if (cmsGalleryList.length === 0 && currentAdminSettings?.gallery_images?.length > 0) {
+          cmsGalleryList = currentAdminSettings.gallery_images.map((url, i) => ({ url, caption: `Photo ${i + 1}` }));
+        }
+        renderCmsGallery();
+
+        // 5. Amenities
+        cmsAmenitiesList = Array.isArray(cmsContentData.amenities) ? [...cmsContentData.amenities] : [];
+        renderCmsAmenities();
+
+        // 6. Reviews
+        cmsReviewsList = Array.isArray(cmsContentData.reviews) ? [...cmsContentData.reviews] : [];
+        renderCmsReviews();
+
+        // 7. Contact & Social
+        const contact = cmsContentData.contact || {};
+        const social = cmsContentData.social || {};
+        document.getElementById('cmsContactPhone').value = contact.phone || '';
+        document.getElementById('cmsContactWhatsApp').value = contact.whatsapp || '';
+        document.getElementById('cmsContactEmail').value = contact.email || '';
+        document.getElementById('cmsSocialInstagram').value = social.instagram || '';
+        document.getElementById('cmsSocialFacebook').value = social.facebook || '';
+        document.getElementById('cmsSocialWhatsApp').value = social.whatsapp || '';
+
+        // 8. Footer
+        const footer = cmsContentData.footer || {};
+        document.getElementById('cmsFooterTagline').value = footer.tagline || '';
+        document.getElementById('cmsFooterCopyright').value = footer.copyright || '';
+
+      } catch (err) {
+        console.error('Error loading CMS data:', err);
+      }
+    }
+
+    // --- Gallery Functions ---
+    function renderCmsGallery() {
+      const container = document.getElementById('cmsGalleryContainer');
+      if (!container) return;
+      if (cmsGalleryList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No photos in gallery. Click "+ Add Photo" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsGalleryList.map((item, idx) => `
+        <div style="display:flex; gap:12px; align-items:center; background:var(--sand); padding:10px 14px; border-radius:8px; border:1px solid var(--line); flex-wrap:wrap;">
+          <div style="width:70px; height:50px; border-radius:6px; background:#e0dbd5; background-image:url('${item.url || ''}'); background-size:cover; background-position:center; flex-shrink:0; border:1px solid var(--line);"></div>
+          <div style="flex:2; min-width:200px;">
+            <input type="text" placeholder="Image URL (e.g. /pics/room.jpg or https://...)" value="${escapeHtml(item.url || '')}" oninput="updateCmsGalleryItem(${idx}, 'url', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <input type="text" placeholder="Caption (e.g. Living Room)" value="${escapeHtml(item.caption || '')}" oninput="updateCmsGalleryItem(${idx}, 'caption', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▲</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▼</button>
+            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addCmsGalleryItem(url = '', caption = '') {
+      cmsGalleryList.push({ url, caption });
+      renderCmsGallery();
+    }
+
+    function updateCmsGalleryItem(idx, key, val) {
+      if (cmsGalleryList[idx]) {
+        cmsGalleryList[idx][key] = val;
+        if (key === 'url') {
+          // live update thumbnail
+          const container = document.getElementById('cmsGalleryContainer');
+          const thumb = container?.children[idx]?.querySelector('div');
+          if (thumb) thumb.style.backgroundImage = `url('${val}')`;
+        }
+      }
+    }
+
+    function moveCmsGalleryItem(idx, dir) {
+      const targetIdx = idx + dir;
+      if (targetIdx < 0 || targetIdx >= cmsGalleryList.length) return;
+      const temp = cmsGalleryList[idx];
+      cmsGalleryList[idx] = cmsGalleryList[targetIdx];
+      cmsGalleryList[targetIdx] = temp;
+      renderCmsGallery();
+    }
+
+    function removeCmsGalleryItem(idx) {
+      cmsGalleryList.splice(idx, 1);
+      renderCmsGallery();
+    }
+
+    // --- Amenities Functions ---
+    function renderCmsAmenities() {
+      const container = document.getElementById('cmsAmenitiesContainer');
+      if (!container) return;
+      if (cmsAmenitiesList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No amenities added. Click "+ Add Amenity" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsAmenitiesList.map((item, idx) => `
+        <div style="display:flex; gap:10px; align-items:center; background:var(--sand); padding:8px 12px; border-radius:8px; border:1px solid var(--line); flex-wrap:wrap;">
+          <div style="width:180px; flex-shrink:0;">
+            <input type="text" placeholder="Amenity Name (e.g. Fast Wi-Fi)" value="${escapeHtml(item.name || '')}" oninput="updateCmsAmenityItem(${idx}, 'name', this.value)" style="font-size:13px; padding:6px 10px;" />
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <input type="text" placeholder="Description (e.g. Reliable internet for work & streaming)" value="${escapeHtml(item.description || '')}" oninput="updateCmsAmenityItem(${idx}, 'description', this.value)" style="font-size:13px; padding:6px 10px;" />
+          </div>
+          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addCmsAmenityItem(name = '', description = '') {
+      cmsAmenitiesList.push({ name, description });
+      renderCmsAmenities();
+    }
+
+    function updateCmsAmenityItem(idx, key, val) {
+      if (cmsAmenitiesList[idx]) cmsAmenitiesList[idx][key] = val;
+    }
+
+    function removeCmsAmenityItem(idx) {
+      cmsAmenitiesList.splice(idx, 1);
+      renderCmsAmenities();
+    }
+
+    // --- Reviews Functions ---
+    function renderCmsReviews() {
+      const container = document.getElementById('cmsReviewsContainer');
+      if (!container) return;
+      if (cmsReviewsList.length === 0) {
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No reviews added. Click "+ Add Review" to add one.</p>';
+        return;
+      }
+      container.innerHTML = cmsReviewsList.map((item, idx) => `
+        <div style="background:var(--sand); padding:14px; border-radius:8px; border:1px solid var(--line); display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" placeholder="Author Name (e.g. Jemma M.)" value="${escapeHtml(item.author || '')}" oninput="updateCmsReviewItem(${idx}, 'author', this.value)" style="font-size:13px; width:160px; padding:6px 10px;" />
+              <input type="text" placeholder="Trip Type (e.g. Family stay)" value="${escapeHtml(item.trip_type || '')}" oninput="updateCmsReviewItem(${idx}, 'trip_type', this.value)" style="font-size:13px; width:150px; padding:6px 10px;" />
+              <select onchange="updateCmsReviewItem(${idx}, 'stars', parseInt(this.value))" style="font-size:13px; width:100px; padding:6px 10px;">
+                <option value="5" ${item.stars === 5 ? 'selected' : ''}>★★★★★ (5)</option>
+                <option value="4" ${item.stars === 4 ? 'selected' : ''}>★★★★☆ (4)</option>
+                <option value="3" ${item.stars === 3 ? 'selected' : ''}>★★★☆☆ (3)</option>
+              </select>
+              <input type="text" placeholder="Initials (e.g. JM)" value="${escapeHtml(item.initials || '')}" oninput="updateCmsReviewItem(${idx}, 'initials', this.value)" style="font-size:13px; width:70px; padding:6px 10px;" />
+            </div>
+            <button type="button" class="btn btn-danger" onclick="removeCmsReviewItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">Delete</button>
+          </div>
+          <textarea rows="2" placeholder="Guest quote / testimonial text..." oninput="updateCmsReviewItem(${idx}, 'quote', this.value)" style="font-size:13px; padding:6px 10px;">${escapeHtml(item.quote || '')}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addCmsReviewItem(quote = '', author = '', trip_type = 'Family stay', stars = 5, initials = '') {
+      cmsReviewsList.push({ quote, author, trip_type, stars, initials });
+      renderCmsReviews();
+    }
+
+    function updateCmsReviewItem(idx, key, val) {
+      if (cmsReviewsList[idx]) cmsReviewsList[idx][key] = val;
+    }
+
+    function removeCmsReviewItem(idx) {
+      cmsReviewsList.splice(idx, 1);
+      renderCmsReviews();
+    }
+
+    function escapeHtml(str) {
+      if (typeof str !== 'string') return str || '';
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // --- Save Handlers ---
+
+    async function saveCmsHero() {
+      try {
+        const location_tag = document.getElementById('cmsHeroLocationTag').value.trim();
+        const headline = document.getElementById('cmsHeroHeadline').value.trim();
+        const sub_headline = document.getElementById('cmsHeroSubHeadline').value.trim();
+        const cta_primary_label = document.getElementById('cmsHeroCtaPrimary').value.trim();
+        const cta_secondary_label = document.getElementById('cmsHeroCtaSecondary').value.trim();
+        const price = parseFloat(document.getElementById('cmsPropertyPrice').value) || 180;
+
+        await saveSiteContentSection('hero', { location_tag, headline, sub_headline, cta_primary_label, cta_secondary_label });
+        
+        // Also update property price in property section
+        const existingProp = cmsContentData.property || {};
+        await saveSiteContentSection('property', { ...existingProp, price_per_night: price });
+        
+        // If currentPropertyId exists, update the properties table too
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { price_per_night: price });
+        }
+
+        showCmsFeedback('cmsHeroStatus', 'Hero section & price saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsHeroStatus', 'Error saving hero section: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsAbout() {
+      try {
+        const eyebrow = document.getElementById('cmsAboutEyebrow').value.trim();
+        const photo_caption = document.getElementById('cmsAboutCaption').value.trim();
+        const headline = document.getElementById('cmsAboutHeadline').value.trim();
+        const lead = document.getElementById('cmsAboutLead').value.trim();
+        const body = document.getElementById('cmsAboutBody').value.trim();
+        const pillsRaw = document.getElementById('cmsAboutPills').value;
+        const pills = pillsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+        await saveSiteContentSection('about', { eyebrow, photo_caption, headline, lead, body, pills });
+        showCmsFeedback('cmsAboutStatus', 'About section saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsAboutStatus', 'Error saving about section: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsPropertySpecs() {
+      try {
+        const bedrooms = parseInt(document.getElementById('cmsPropBedrooms').value) || 4;
+        const beds = parseInt(document.getElementById('cmsPropBeds').value) || 4;
+        const bathrooms = parseInt(document.getElementById('cmsPropBathrooms').value) || 3;
+        const max_guests = parseInt(document.getElementById('cmsPropMaxGuests').value) || 8;
+        const price_per_night = parseFloat(document.getElementById('cmsPropertyPrice')?.value) || 180;
+
+        const specData = { name: "Toiwo Residence", location: "Ilboru, Arusha, Tanzania", bedrooms, beds, bathrooms, max_guests, price_per_night };
+        await saveSiteContentSection('property', specData);
+
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { bedrooms, beds, bathrooms, max_guests, price_per_night });
+        }
+
+        showCmsFeedback('cmsPropStatus', 'Property essentials saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsPropStatus', 'Error saving specs: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsGallery() {
+      try {
+        const cleanList = cmsGalleryList.filter(item => item.url && item.url.trim());
+        await saveSiteContentSection('gallery', cleanList);
+
+        // Also update admin_settings gallery_images for sync
+        if (currentPropertyId) {
+          const urls = cleanList.map(item => item.url.trim());
+          await updateAdminSettings(currentPropertyId, { gallery_images: urls });
+        }
+
+        showCmsFeedback('cmsGalleryStatus', `Gallery saved (${cleanList.length} photos)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsGalleryStatus', 'Error saving gallery: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsAmenities() {
+      try {
+        const cleanList = cmsAmenitiesList.filter(item => item.name && item.name.trim());
+        await saveSiteContentSection('amenities', cleanList);
+
+        if (currentPropertyId) {
+          const names = cleanList.map(item => item.name.trim());
+          await updatePropertyDetails(currentPropertyId, { amenities: names });
+        }
+
+        showCmsFeedback('cmsAmenitiesStatus', `Amenities saved (${cleanList.length} items)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsAmenitiesStatus', 'Error saving amenities: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsReviews() {
+      try {
+        const cleanList = cmsReviewsList.filter(item => item.quote && item.quote.trim());
+        await saveSiteContentSection('reviews', cleanList);
+        showCmsFeedback('cmsReviewsStatus', `Reviews saved (${cleanList.length} reviews)!`);
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsReviewsStatus', 'Error saving reviews: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsContactAndSocial() {
+      try {
+        const phone = document.getElementById('cmsContactPhone').value.trim();
+        const whatsapp = document.getElementById('cmsContactWhatsApp').value.trim();
+        const email = document.getElementById('cmsContactEmail').value.trim();
+        const instagram = document.getElementById('cmsSocialInstagram').value.trim();
+        const facebook = document.getElementById('cmsSocialFacebook').value.trim();
+        const waSocial = document.getElementById('cmsSocialWhatsApp').value.trim();
+
+        await saveSiteContentSection('contact', { phone, whatsapp, email });
+        await saveSiteContentSection('social', { instagram, facebook, whatsapp: waSocial });
+
+        if (currentPropertyId) {
+          await updatePropertyDetails(currentPropertyId, { host_phone: phone, host_whatsapp: whatsapp, host_email: email });
+          await updateAdminSettings(currentPropertyId, { contact_phone: phone, contact_whatsapp: whatsapp, contact_email: email });
+        }
+
+        showCmsFeedback('cmsContactStatus', 'Contact details & social links saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsContactStatus', 'Error saving contact info: ' + err.message, false);
+      }
+    }
+
+    async function saveCmsFooter() {
+      try {
+        const tagline = document.getElementById('cmsFooterTagline').value.trim();
+        const copyright = document.getElementById('cmsFooterCopyright').value.trim();
+
+        await saveSiteContentSection('footer', { tagline, copyright });
+        showCmsFeedback('cmsFooterStatus', 'Footer content saved successfully!');
+      } catch (err) {
+        console.error(err);
+        showCmsFeedback('cmsFooterStatus', 'Error saving footer: ' + err.message, false);
+      }
     }
 
     // ============================================

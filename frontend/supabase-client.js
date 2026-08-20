@@ -458,8 +458,43 @@ async function updatePropertyDetails(propertyId, updates) {
 }
 
 // ============================================
-// SUPABASE STORAGE PHOTO UPLOAD
+// SITE CONTENT (CMS) FUNCTIONS
 // ============================================
+
+async function getAllSiteContent() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('site_content')
+      .select('section, content');
+    if (error) throw error;
+    const result = {};
+    (data || []).forEach(row => {
+      result[row.section] = row.content;
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching site content:', error);
+    return {};
+  }
+}
+
+async function saveSiteContentSection(section, content) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('site_content')
+      .upsert({
+        section: section,
+        content: content,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'section' })
+      .select();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(`Error saving site content for section ${section}:`, error);
+    throw error;
+  }
+}
 
 async function uploadPhotoToStorage(file) {
   try {
@@ -479,4 +514,5 @@ async function uploadPhotoToStorage(file) {
     throw error;
   }
 }
+
 

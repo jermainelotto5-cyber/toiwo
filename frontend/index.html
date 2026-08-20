@@ -295,12 +295,12 @@
     <main id="top">
       <section class="hero">
         <div class="wrap hero-inner">
-          <div class="hero-tag">Ilboru · Arusha, Tanzania</div>
-          <h1>A private retreat with the warmth of home.</h1>
-          <p class="hero-lede">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
+          <div class="hero-tag" id="heroLocationTag">Ilboru · Arusha, Tanzania</div>
+          <h1 id="heroHeadline">A private retreat with the warmth of home.</h1>
+          <p class="hero-lede" id="heroSubHeadline">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
           <div class="hero-ctas">
-            <a href="#booking" class="btn btn-primary">Book Your Stay</a>
-            <a href="#gallery" class="btn btn-ghost">View the House</a>
+            <a href="#booking" class="btn btn-primary" id="heroCtaPrimary">Book Your Stay</a>
+            <a href="#gallery" class="btn btn-ghost" id="heroCtaSecondary">View the House</a>
           </div>
           <div class="book-bar">
             <div class="book-field">
@@ -328,11 +328,11 @@
       <section class="about" id="about">
         <div class="wrap about-grid">
           <div>
-            <div class="eyebrow">The House</div>
-            <h2>A home that feels like it was waiting for you.</h2>
-            <p class="lead">Set behind a gated garden in the residential quiet of Ilboru, Toiwo Residence offers privacy, comfort, and the kind of calm that makes stays feel longer than they are.</p>
-            <p>Arched doorways, warm wood details, and a shaded courtyard create a home that is both elegant and easygoing. Four bedrooms, generous living spaces, and a terrace for outdoor dining make it ideal for families, couples, and safari groups.</p>
-            <div class="for-whom">
+            <div class="eyebrow" id="aboutEyebrow">The House</div>
+            <h2 id="aboutHeadline">A home that feels like it was waiting for you.</h2>
+            <p class="lead" id="aboutLead">Set behind a gated garden in the residential quiet of Ilboru, Toiwo Residence offers privacy, comfort, and the kind of calm that makes stays feel longer than they are.</p>
+            <p id="aboutBody">Arched doorways, warm wood details, and a shaded courtyard create a home that is both elegant and easygoing. Four bedrooms, generous living spaces, and a terrace for outdoor dining make it ideal for families, couples, and safari groups.</p>
+            <div class="for-whom" id="aboutPills">
               <span class="pill">Families</span>
               <span class="pill">Groups of friends</span>
               <span class="pill">Couples</span>
@@ -340,7 +340,7 @@
             </div>
           </div>
           <div class="about-photo">
-            <div class="cap">The courtyard — a gentle, welcoming start to the day.</div>
+            <div class="cap" id="aboutCaption">The courtyard — a gentle, welcoming start to the day.</div>
           </div>
         </div>
       </section>
@@ -396,11 +396,11 @@
               <h2>The essentials, at a glance.</h2>
             </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-card"><div class="num">4</div><div class="label">Bedrooms</div></div>
-            <div class="detail-card"><div class="num">4</div><div class="label">Beds</div></div>
-            <div class="detail-card"><div class="num">3</div><div class="label">Bathrooms</div></div>
-            <div class="detail-card"><div class="num">8</div><div class="label">Max Guests</div></div>
+          <div class="detail-grid" id="detailsGrid">
+            <div class="detail-card"><div class="num" id="detailBedrooms">4</div><div class="label">Bedrooms</div></div>
+            <div class="detail-card"><div class="num" id="detailBeds">4</div><div class="label">Beds</div></div>
+            <div class="detail-card"><div class="num" id="detailBathrooms">3</div><div class="label">Bathrooms</div></div>
+            <div class="detail-card"><div class="num" id="detailMaxGuests">8</div><div class="label">Max Guests</div></div>
           </div>
         </div>
       </section>
@@ -532,7 +532,7 @@
         <div class="foot-grid">
           <div>
             <div class="foot-logo">Toiwo <span>Residence</span></div>
-            <p>A private four-bedroom home in Ilboru, Arusha &mdash; calm, spacious, and ready for your stay.</p>
+            <p id="footerTagline">A private four-bedroom home in Ilboru, Arusha &mdash; calm, spacious, and ready for your stay.</p>
           </div>
           <div>
             <h5>Explore</h5>
@@ -545,19 +545,19 @@
 
           <div>
             <h5>Follow</h5>
-            <ul><li><a href="https://instagram.com/toiworesidence.arusha" target="_blank">Instagram</a></li><li><a href="https://facebook.com/toiworesidence" target="_blank">Facebook</a></li><li><a href="https://wa.me/255718654332" target="_blank">WhatsApp</a></li></ul>
+            <ul><li><a href="https://instagram.com/toiworesidence.arusha" target="_blank" id="footerInstagram">Instagram</a></li><li><a href="https://facebook.com/toiworesidence" target="_blank" id="footerFacebook">Facebook</a></li><li><a href="https://wa.me/255718654332" target="_blank" id="footerWhatsApp">WhatsApp</a></li></ul>
           </div>
         </div>
         <div class="foot-bottom">
-          <span>&copy; 2026 Toiwo Residence</span>
+          <span id="footerCopyright">&copy; 2026 Toiwo Residence</span>
           <span>Designed for restful stays in Arusha.</span>
         </div>
       </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="main.js"></script>
+    <script src="./supabase.min.js"></script>
+    <script src="./supabase-client.js?v=10"></script>
+    <script src="./main.js?v=10"></script>
     <div id="lightbox" class="lightbox">
       <span class="lightbox-close">&times;</span>
       <img id="lightbox-img" src="">
