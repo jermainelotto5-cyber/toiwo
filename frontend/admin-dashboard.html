@@ -1,0 +1,25 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard — Toiwo Residence</title>
+</head>
+<body>
+  <h1>Admin Dashboard (Skeleton)</h1>
+  <div id="auth"></div>
+  <div id="content" style="display:none">
+    <h2>Photos</h2>
+    <input type="file" id="photoInput" />
+    <button id="uploadBtn">Upload</button>
+    <div id="photos"></div>
+    <h2>Content</h2>
+    <textarea id="siteContent" rows="6" cols="60"></textarea>
+    <button id="saveContent">Save</button>
+    <h2>Calendar Sync (Manual)</h2>
+    <textarea id="icals" placeholder="One iCal URL per line" rows="4" cols="80"></textarea>
+    <button id="importIcal">Import iCal</button>
+  </div>
+  <script src="/frontend/admin-dashboard.js"></script>
+</body>
+</html>
