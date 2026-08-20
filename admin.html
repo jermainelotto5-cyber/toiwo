@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,7 +6,7 @@
   <title>Toiwo Residence - Admin Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase bundled locally — no external CDN needed -->
+  <!-- Supabase bundled locally â€” no external CDN needed -->
   <script src="./frontend/supabase.min.js"></script>
   <style>
     :root {
@@ -454,13 +454,13 @@
 
       <div class="dashboard-shell">
         <aside class="tabs" role="tablist" aria-label="Admin sections">
-          <button class="tab-btn active" onclick="switchTab(event, 'overview')">📊 Overview</button>
-          <button class="tab-btn" onclick="switchTab(event, 'bookings')">📅 Bookings</button>
-          <button class="tab-btn" onclick="switchTab(event, 'calendar')">💲 Pricing & Blocks</button>
-          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">🌐 Website Content</button>
-          <button class="tab-btn" onclick="switchTab(event, 'content')">🏠 Property Details</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ical')">🔄 Calendar Sync</button>
-          <button class="tab-btn" onclick="switchTab(event, 'messages')">✉️ Messages</button>
+          <button class="tab-btn active" onclick="switchTab(event, 'overview')">ðŸ“Š Overview</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bookings')">ðŸ“… Bookings</button>
+          <button class="tab-btn" onclick="switchTab(event, 'calendar')">ðŸ’² Pricing & Blocks</button>
+          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">ðŸŒ Website Content</button>
+          <button class="tab-btn" onclick="switchTab(event, 'content')">ðŸ  Property Details</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ical')">ðŸ”„ Calendar Sync</button>
+          <button class="tab-btn" onclick="switchTab(event, 'messages')">âœ‰ï¸ Messages</button>
         </aside>
 
         <div class="dashboard-main">
@@ -635,20 +635,20 @@
               <h3 style="margin:0;">Website Content Manager</h3>
               <p style="color: var(--ink-soft); margin: 4px 0 0 0; font-size: 14px;">Edit all text, photos, amenities, reviews, and contact info on the public website.</p>
             </div>
-            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">↺ Refresh Content</button>
+            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">â†º Refresh Content</button>
           </div>
         </div>
 
         <!-- Section: Hero & Header -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">🏠 Hero Section (Top of Page)</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ  Hero Section (Top of Page)</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsHero()">Save Hero</button>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Location Tag</label>
-              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru · Arusha, Tanzania" />
+              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru Â· Arusha, Tanzania" />
             </div>
             <div class="form-group">
               <label>Price per Night (USD)</label>
@@ -679,7 +679,7 @@
         <!-- Section: About -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📖 About Section</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ“– About Section</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsAbout()">Save About</button>
           </div>
           <div class="form-row">
@@ -689,7 +689,7 @@
             </div>
             <div class="form-group">
               <label>Photo Caption</label>
-              <input type="text" id="cmsAboutCaption" placeholder="The courtyard — a gentle, welcoming start..." />
+              <input type="text" id="cmsAboutCaption" placeholder="The courtyard â€” a gentle, welcoming start..." />
             </div>
           </div>
           <div class="form-group">
@@ -714,7 +714,7 @@
         <!-- Section: Property Specs -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📊 Property Essentials</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ“Š Property Essentials</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsPropertySpecs()">Save Specs</button>
           </div>
           <div class="form-row">
@@ -742,7 +742,7 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">🖼️ Gallery Photos</h4>
+              <h4 style="margin:0; font-size: 17px;">ðŸ–¼ï¸ Gallery Photos</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Add, remove, or change photo URLs and captions shown on the website.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -758,7 +758,7 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">✨ Amenities</h4>
+              <h4 style="margin:0; font-size: 17px;">âœ¨ Amenities</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Manage the features and amenities displayed on the website.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -774,7 +774,7 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">⭐ Guest Reviews</h4>
+              <h4 style="margin:0; font-size: 17px;">â­ Guest Reviews</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Showcase guest testimonials and ratings on the homepage.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -789,7 +789,7 @@
         <!-- Section: Contact & Social Links -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📞 Contact & Social Links</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ“ž Contact & Social Links</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsContactAndSocial()">Save Contact & Social</button>
           </div>
           <div class="form-row">
@@ -826,7 +826,7 @@
         <!-- Section: Footer -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">🦶 Footer Content</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ¦¶ Footer Content</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsFooter()">Save Footer</button>
           </div>
           <div class="form-group">
@@ -1140,10 +1140,10 @@
       }
       statusEl.innerHTML = `
         <div style="display:grid; gap: 10px;">
-          <div><strong>${property.name || 'Toiwo Residence'}</strong> · ${property.location || 'Ilboru, Arusha'}</div>
+          <div><strong>${property.name || 'Toiwo Residence'}</strong> Â· ${property.location || 'Ilboru, Arusha'}</div>
           <div>${property.description || 'A peaceful residence for discerning travellers.'}</div>
           <div><strong>Base Rate:</strong> ${formatCurrency(property.price_per_night || 0)} / night</div>
-          <div><strong>Guests:</strong> ${property.max_guests || 0} · <strong>Bedrooms:</strong> ${property.bedrooms || 0} · <strong>Beds:</strong> ${property.beds || 0} · <strong>Baths:</strong> ${property.bathrooms || 0}</div>
+          <div><strong>Guests:</strong> ${property.max_guests || 0} Â· <strong>Bedrooms:</strong> ${property.bedrooms || 0} Â· <strong>Beds:</strong> ${property.beds || 0} Â· <strong>Baths:</strong> ${property.bathrooms || 0}</div>
         </div>
       `;
     }
@@ -1251,21 +1251,43 @@
     // ============================================
 
     async function handlePhotoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-      const progressEl = document.getElementById('uploadProgress');
-      progressEl.textContent = 'Uploading to storage...';
+  const progressEl = document.getElementById('uploadProgress');
+  progressEl.textContent = 'Uploading to storage...';
 
-      try {
-        const publicUrl = await uploadPhotoToStorage(file);
-        progressEl.innerHTML = `<span style="color:var(--success);">Upload Successful!</span>`;
-        
-        // Append URL
+  try {
+    const publicUrl = await uploadPhotoToStorage(file);
+    progressEl.innerHTML = `<span style="color:var(--success);">Upload Successful!</span>`;
+
+    // Append URL
+    const textEl = document.getElementById('galleryUrls');
+    textEl.value += (textEl.value ? '\n' : '') + publicUrl;
+    previewGallery();
+  } catch (error) {
+    console.warn('Upload to storage failed, falling back to local data URL:', error && error.message);
+    // Fallback: convert to data URL and embed directly so it appears in the gallery immediately
+    try {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        progressEl.innerHTML = `<span style="color:var(--success);">Upload fallback: embedded locally</span>`;
         const textEl = document.getElementById('galleryUrls');
-        textEl.value += (textEl.value ? '\n' : '') + publicUrl;
+        textEl.value += (textEl.value ? '\n' : '') + dataUrl;
         previewGallery();
-      } catch (error) {
+      };
+      reader.onerror = function(e) {
+        progressEl.innerHTML = `<span style="color:var(--error);">Failed to read file for fallback: ${e?.message || 'unknown'}</span>`;
+        console.error('FileReader error:', e);
+      };
+      reader.readAsDataURL(file);
+    } catch (fbErr) {
+      progressEl.innerHTML = `<span style="color:var(--error);">Failed to upload: ${error.message}</span>`;
+      console.error('Fallback upload failed:', fbErr);
+    }
+  }
+} catch (error) {
         progressEl.innerHTML = `<span style="color:var(--error);">Failed to upload: ${error.message}</span>`;
         console.error(error);
       }
@@ -1639,7 +1661,7 @@
     function showCmsFeedback(elemId, msg, isSuccess = true) {
       const el = document.getElementById(elemId);
       if (!el) return;
-      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? '✓ ' : '✗ '}${msg}</span>`;
+      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? 'âœ“ ' : 'âœ— '}${msg}</span>`;
       setTimeout(() => { if (el) el.innerHTML = ''; }, 4000);
     }
 
@@ -1733,9 +1755,9 @@
             <input type="text" placeholder="Caption (e.g. Living Room)" value="${escapeHtml(item.caption || '')}" oninput="updateCmsGalleryItem(${idx}, 'caption', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
           </div>
           <div style="display:flex; gap:6px;">
-            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▲</button>
-            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▼</button>
-            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">â–²</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">â–¼</button>
+            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">âœ•</button>
           </div>
         </div>
       `).join('');
@@ -1788,7 +1810,7 @@
           <div style="flex:1; min-width:200px;">
             <input type="text" placeholder="Description (e.g. Reliable internet for work & streaming)" value="${escapeHtml(item.description || '')}" oninput="updateCmsAmenityItem(${idx}, 'description', this.value)" style="font-size:13px; padding:6px 10px;" />
           </div>
-          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
+          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">âœ•</button>
         </div>
       `).join('');
     }
@@ -1822,9 +1844,9 @@
               <input type="text" placeholder="Author Name (e.g. Jemma M.)" value="${escapeHtml(item.author || '')}" oninput="updateCmsReviewItem(${idx}, 'author', this.value)" style="font-size:13px; width:160px; padding:6px 10px;" />
               <input type="text" placeholder="Trip Type (e.g. Family stay)" value="${escapeHtml(item.trip_type || '')}" oninput="updateCmsReviewItem(${idx}, 'trip_type', this.value)" style="font-size:13px; width:150px; padding:6px 10px;" />
               <select onchange="updateCmsReviewItem(${idx}, 'stars', parseInt(this.value))" style="font-size:13px; width:100px; padding:6px 10px;">
-                <option value="5" ${item.stars === 5 ? 'selected' : ''}>★★★★★ (5)</option>
-                <option value="4" ${item.stars === 4 ? 'selected' : ''}>★★★★☆ (4)</option>
-                <option value="3" ${item.stars === 3 ? 'selected' : ''}>★★★☆☆ (3)</option>
+                <option value="5" ${item.stars === 5 ? 'selected' : ''}>â˜…â˜…â˜…â˜…â˜… (5)</option>
+                <option value="4" ${item.stars === 4 ? 'selected' : ''}>â˜…â˜…â˜…â˜…â˜† (4)</option>
+                <option value="3" ${item.stars === 3 ? 'selected' : ''}>â˜…â˜…â˜…â˜†â˜† (3)</option>
               </select>
               <input type="text" placeholder="Initials (e.g. JM)" value="${escapeHtml(item.initials || '')}" oninput="updateCmsReviewItem(${idx}, 'initials', this.value)" style="font-size:13px; width:70px; padding:6px 10px;" />
             </div>
@@ -2035,3 +2057,4 @@
   </script>
 </body>
 </html>
+
