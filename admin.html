@@ -7,38 +7,39 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Supabase bundled locally â€” no external CDN needed -->
-  <script src="./frontend/supabase.min.js">    // --- Temporary local admin sign-in fallback (remove after restoring server auth) ---
-    async function signInAdmin(email, password) {
-      try {
-        // If Supabase client isn't available (proxy down or keys missing), allow a local fallback
-        if (!window.supabaseClient && !window.supabase) {
-          console.warn('Supabase client not available — using local fallback for admin sign-in.');
-          const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
-          const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
-          if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
-            return { session: { access_token: 'local-fallback-token' }, user: { email: FALLBACK_ADMIN_EMAIL } };
-          }
-          throw new Error('Supabase client unavailable and fallback credentials did not match.');
-        }
-
-        const client = window.supabaseClient || window.supabase;
-        if (!client) throw new Error('Supabase client not available');
-
-        const { data, error } = await client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        return data;
-      } catch (error) {
-        console.error('Error signing in:', error);
-        // If server sign-in failed but credentials match the fallback, allow local sign-in
+  <script src="./frontend/supabase.min.js"></script>
+<script>
+  // --- Temporary local admin sign-in fallback (remove after restoring server auth) ---
+  async function signInAdmin(email, password) {
+    try {
+      // If Supabase client isn't available (proxy down or keys missing), allow a local fallback
+      if (!window.supabaseClient && !window.supabase) {
+        console.warn('Supabase client not available — using local fallback for admin sign-in.');
         const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
         const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
         if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
-          console.warn('Falling back to local admin sign-in for', email);
           return { session: { access_token: 'local-fallback-token' }, user: { email: FALLBACK_ADMIN_EMAIL } };
         }
-        throw error;
+        throw new Error('Supabase client unavailable and fallback credentials did not match.');
       }
+
+      const client = window.supabaseClient || window.supabase;
+      if (!client) throw new Error('Supabase client not available');
+
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error signing in:', error);
+      const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
+      const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
+      if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
+        console.warn('Falling back to local admin sign-in for', email);
+        return { session: { access_token: 'local-fallback-token' }, user: { email: FALLBACK_ADMIN_EMAIL } };
+      }
+      throw error;
     }
+  }
 </script>
   <style>
     :root {
@@ -2153,5 +2154,6 @@
 </script>
 </body>
 </html>
+
 
 
