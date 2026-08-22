@@ -6,7 +6,7 @@
   <title>Toiwo Residence - Admin Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase bundled locally â€” no external CDN needed -->
+  <!-- Supabase bundled locally — no external CDN needed -->
   <script src="./frontend/supabase.min.js"></script>
 <script>
   // --- Temporary local admin sign-in fallback (remove after restoring server auth) ---
@@ -487,13 +487,13 @@
 
       <div class="dashboard-shell">
         <aside class="tabs" role="tablist" aria-label="Admin sections">
-          <button class="tab-btn active" onclick="switchTab(event, 'overview')">ðŸ“Š Overview</button>
-          <button class="tab-btn" onclick="switchTab(event, 'bookings')">ðŸ“… Bookings</button>
-          <button class="tab-btn" onclick="switchTab(event, 'calendar')">ðŸ’² Pricing & Blocks</button>
-          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">ðŸŒ Website Content</button>
-          <button class="tab-btn" onclick="switchTab(event, 'content')">ðŸ  Property Details</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ical')">ðŸ”„ Calendar Sync</button>
-          <button class="tab-btn" onclick="switchTab(event, 'messages')">âœ‰ï¸ Messages</button>
+          <button class="tab-btn active" onclick="switchTab(event, 'overview')">📊 Overview</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bookings')">📅 Bookings</button>
+          <button class="tab-btn" onclick="switchTab(event, 'calendar')">💵 Pricing & Blocks</button>
+          <button class="tab-btn" onclick="switchTab(event, 'webcontent')">🌐 Website Content</button>
+          <button class="tab-btn" onclick="switchTab(event, 'content')">🏡 Property Details</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ical')">🔄 Calendar Sync</button>
+          <button class="tab-btn" onclick="switchTab(event, 'messages')">✉️ Messages</button>
         </aside>
 
         <div class="dashboard-main">
@@ -668,20 +668,20 @@
               <h3 style="margin:0;">Website Content Manager</h3>
               <p style="color: var(--ink-soft); margin: 4px 0 0 0; font-size: 14px;">Edit all text, photos, amenities, reviews, and contact info on the public website.</p>
             </div>
-            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">â†º Refresh Content</button>
+            <button type="button" class="btn btn-secondary" onclick="loadCmsData()" style="font-size: 13px;">↺ Refresh Content</button>
           </div>
         </div>
 
         <!-- Section: Hero & Header -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ  Hero Section (Top of Page)</h4>
+            <h4 style="margin:0; font-size: 17px;">ðŸ  🏡 Hero Section (Top of Page)</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsHero()">Save Hero</button>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Location Tag</label>
-              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru Â· Arusha, Tanzania" />
+              <input type="text" id="cmsHeroLocationTag" placeholder="Ilboru · Arusha, Tanzania" />
             </div>
             <div class="form-group">
               <label>Price per Night (USD)</label>
@@ -712,7 +712,7 @@
         <!-- Section: About -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ“– About Section</h4>
+            <h4 style="margin:0; font-size: 17px;">📖 📖 About Section</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsAbout()">Save About</button>
           </div>
           <div class="form-row">
@@ -722,7 +722,7 @@
             </div>
             <div class="form-group">
               <label>Photo Caption</label>
-              <input type="text" id="cmsAboutCaption" placeholder="The courtyard â€” a gentle, welcoming start..." />
+              <input type="text" id="cmsAboutCaption" placeholder="The courtyard — a gentle, welcoming start..." />
             </div>
           </div>
           <div class="form-group">
@@ -747,7 +747,7 @@
         <!-- Section: Property Specs -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ“Š Property Essentials</h4>
+            <h4 style="margin:0; font-size: 17px;">📊 📊 Property Essentials</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsPropertySpecs()">Save Specs</button>
           </div>
           <div class="form-row">
@@ -771,11 +771,11 @@
           <div id="cmsPropStatus" style="font-size: 13px; margin-top: 8px;"></div>
         </div>
 
-        <!-- Section: Gallery Photos -->
+        <!-- Section: 🖼️ Gallery Photos -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">ðŸ–¼ï¸ Gallery Photos</h4>
+              <h4 style="margin:0; font-size: 17px;">ðŸ–¼ï¸ 🖼️ Gallery Photos</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Add, remove, or change photo URLs and captions shown on the website.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -791,7 +791,7 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">âœ¨ Amenities</h4>
+              <h4 style="margin:0; font-size: 17px;">✨ Amenities</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Manage the features and amenities displayed on the website.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -803,11 +803,11 @@
           <div id="cmsAmenitiesStatus" style="font-size: 13px; margin-top: 12px;"></div>
         </div>
 
-        <!-- Section: Guest Reviews -->
+        <!-- Section: ⭐ Guest Reviews -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">â­ Guest Reviews</h4>
+              <h4 style="margin:0; font-size: 17px;">â­ ⭐ Guest Reviews</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Showcase guest testimonials and ratings on the homepage.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -819,10 +819,10 @@
           <div id="cmsReviewsStatus" style="font-size: 13px; margin-top: 12px;"></div>
         </div>
 
-        <!-- Section: Contact & Social Links -->
+        <!-- Section: 📞 Contact & Social Links -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ“ž Contact & Social Links</h4>
+            <h4 style="margin:0; font-size: 17px;">📞 📞 Contact & Social Links</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsContactAndSocial()">Save Contact & Social</button>
           </div>
           <div class="form-row">
@@ -859,7 +859,7 @@
         <!-- Section: Footer -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ¦¶ Footer Content</h4>
+            <h4 style="margin:0; font-size: 17px;">🦶 🦶 Footer Content</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsFooter()">Save Footer</button>
           </div>
           <div class="form-group">
@@ -1207,10 +1207,10 @@
       }
       statusEl.innerHTML = `
         <div style="display:grid; gap: 10px;">
-          <div><strong>${property.name || 'Toiwo Residence'}</strong> Â· ${property.location || 'Ilboru, Arusha'}</div>
+          <div><strong>${property.name || 'Toiwo Residence'}</strong> · ${property.location || 'Ilboru, Arusha'}</div>
           <div>${property.description || 'A peaceful residence for discerning travellers.'}</div>
           <div><strong>Base Rate:</strong> ${formatCurrency(property.price_per_night || 0)} / night</div>
-          <div><strong>Guests:</strong> ${property.max_guests || 0} Â· <strong>Bedrooms:</strong> ${property.bedrooms || 0} Â· <strong>Beds:</strong> ${property.beds || 0} Â· <strong>Baths:</strong> ${property.bathrooms || 0}</div>
+          <div><strong>Guests:</strong> ${property.max_guests || 0} · <strong>Bedrooms:</strong> ${property.bedrooms || 0} · <strong>Beds:</strong> ${property.beds || 0} · <strong>Baths:</strong> ${property.bathrooms || 0}</div>
         </div>
       `;
     }
@@ -1639,10 +1639,29 @@
       document.getElementById('airbnbImportUrl').value = settings.airbnb_ical_import_url || '';
       document.getElementById('bookingImportUrl').value = settings.booking_ical_import_url || '';
 
-      // Export URLs
+      // Export URLs - auto-generate UUIDs if missing
       const origin = window.location.origin;
-      const airbnbExportUUID = settings.airbnb_ical_export_uuid || 'gen-uuid-here';
-      const bookingExportUUID = settings.booking_ical_export_uuid || 'gen-uuid-here';
+      let airbnbExportUUID = settings.airbnb_ical_export_uuid;
+      let bookingExportUUID = settings.booking_ical_export_uuid;
+      let needsSave = false;
+
+      if (!airbnbExportUUID) {
+        airbnbExportUUID = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'ab-' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        settings.airbnb_ical_export_uuid = airbnbExportUUID;
+        needsSave = true;
+      }
+      if (!bookingExportUUID) {
+        bookingExportUUID = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'bk-' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        settings.booking_ical_export_uuid = bookingExportUUID;
+        needsSave = true;
+      }
+
+      if (needsSave && currentPropertyId) {
+        updateAdminSettings(currentPropertyId, {
+          airbnb_ical_export_uuid: airbnbExportUUID,
+          booking_ical_export_uuid: bookingExportUUID
+        }).catch(err => console.error('Auto-saving export UUIDs error:', err));
+      }
 
       document.getElementById('airbnbExportUrl').value = `${origin}/api/ical?export_uuid=${airbnbExportUUID}`;
       document.getElementById('bookingExportUrl').value = `${origin}/api/ical?export_uuid=${bookingExportUUID}`;
