@@ -145,6 +145,7 @@ async function initializeApp() {
     if (currentProperty) {
       currentAdminSettings = await getAdminSettings(currentProperty.id);
       renderPropertyData();
+    await initAvailabilityCalendar();
     }
     // Only render gallery from DB if no CMS gallery was set
     if (!siteContent.gallery || siteContent.gallery.length === 0) {
@@ -432,4 +433,169 @@ function setupEventListeners() {
   if (checkOutEl) { checkOutEl.addEventListener('change', updateTotalPrice); checkOutEl.addEventListener('input', updateTotalPrice); }
 
   updateTotalPrice();
+}
+
+// ============================================
+// AIRBNB-STYLE AVAILABILITY CALENDAR
+// ============================================
+
+let allBlockedDateStrings = [];
+let calendarCurrentMonth = new Date().getMonth();
+let calendarCurrentYear = new Date().getFullYear();
+let selectedCheckInDate = null;
+let selectedCheckOutDate = null;
+
+async function initAvailabilityCalendar() {
+  const container = document.getElementById('availabilityCalendarContainer');
+  if (!container) return;
+
+  try {
+    const propId = currentProperty?.id || '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
+    const dates = await getBlockedDates(propId) || [];
+    const allBookings = await getAllBookings(propId) || [];
+    
+    // Expand confirmed bookings into date strings
+    const bookingDates = [];
+    allBookings.forEach(b => {
+      if (b.status === 'confirmed' || b.status === 'pending') {
+        let curr = new Date(b.check_in);
+        const end = new Date(b.check_out);
+        while (curr < end) {
+          bookingDates.push(curr.toISOString().split('T')[0]);
+          curr.setDate(curr.getDate() + 1);
+        }
+      }
+    });
+    
+    allBlockedDateStrings = Array.from(new Set([...dates, ...bookingDates]));
+  } catch (e) {
+    console.warn('Could not load blocked dates for calendar widget:', e);
+  }
+
+  renderAvailabilityCalendar();
+}
+
+function renderAvailabilityCalendar() {
+  const container = document.getElementById('availabilityCalendarContainer');
+  if (!container) return;
+
+  const firstDay = new Date(calendarCurrentYear, calendarCurrentMonth, 1);
+  const lastDay = new Date(calendarCurrentYear, calendarCurrentMonth + 1, 0);
+  const startingDay = firstDay.getDay();
+  const monthDays = lastDay.getDate();
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthName = monthNames[calendarCurrentMonth];
+
+  let daysHtml = '';
+  for (let i = 0; i < startingDay; i++) {
+    daysHtml += '<div class="cal-day empty"></div>';
+  }
+
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  for (let day = 1; day <= monthDays; day++) {
+    const d = new Date(calendarCurrentYear, calendarCurrentMonth, day);
+    const dateStr = d.toISOString().split('T')[0];
+    const isPast = dateStr < todayStr;
+    const isBooked = allBlockedDateStrings.includes(dateStr) || isPast;
+
+    let dayClass = isBooked ? 'booked' : 'available';
+    if (selectedCheckInDate === dateStr) dayClass += ' selected-start';
+    else if (selectedCheckOutDate === dateStr) dayClass += ' selected-end';
+    else if (selectedCheckInDate && selectedCheckOutDate && dateStr > selectedCheckInDate && dateStr < selectedCheckOutDate) {
+      dayClass += ' selected-range';
+    }
+
+    daysHtml += `
+      <div class="cal-day ${dayClass}" data-date="${dateStr}" ${!isBooked ? `onclick="handleCalendarDayClick('${dateStr}')"` : ''}>
+        ${day}
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="availability-calendar-box">
+      <div class="cal-header">
+        <button type="button" class="cal-nav-btn" onclick="changeCalendarMonth(-1)">‹ Prev</button>
+        <div class="cal-month-title">${monthName} ${calendarCurrentYear}</div>
+        <button type="button" class="cal-nav-btn" onclick="changeCalendarMonth(1)">Next ›</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-day-header">Su</div>
+        <div class="cal-day-header">Mo</div>
+        <div class="cal-day-header">Tu</div>
+        <div class="cal-day-header">We</div>
+        <div class="cal-day-header">Th</div>
+        <div class="cal-day-header">Fr</div>
+        <div class="cal-day-header">Sa</div>
+        ${daysHtml}
+      </div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><span class="cal-dot available"></span> Available</div>
+        <div class="cal-legend-item"><span class="cal-dot booked"></span> Booked / Taken</div>
+        <div class="cal-legend-item"><span class="cal-dot selected"></span> Selected</div>
+      </div>
+      <div id="calendarNotice" style="font-size: 13px; font-weight: 600; text-align: center; margin-top: 10px; color: var(--clay);"></div>
+    </div>
+  `;
+}
+
+function changeCalendarMonth(delta) {
+  calendarCurrentMonth += delta;
+  if (calendarCurrentMonth > 11) {
+    calendarCurrentMonth = 0;
+    calendarCurrentYear++;
+  } else if (calendarCurrentMonth < 0) {
+    calendarCurrentMonth = 11;
+    calendarCurrentYear--;
+  }
+  renderAvailabilityCalendar();
+}
+
+function handleCalendarDayClick(dateStr) {
+  const noticeEl = document.getElementById('calendarNotice');
+
+  if (!selectedCheckInDate || (selectedCheckInDate && selectedCheckOutDate)) {
+    selectedCheckInDate = dateStr;
+    selectedCheckOutDate = null;
+    const inEl = document.getElementById('bookingCheckIn');
+    const outEl = document.getElementById('bookingCheckOut');
+    if (inEl) inEl.value = dateStr;
+    if (outEl) outEl.value = '';
+    if (noticeEl) noticeEl.textContent = 'Now click check-out date on calendar';
+  } else if (selectedCheckInDate && !selectedCheckOutDate) {
+    if (dateStr <= selectedCheckInDate) {
+      selectedCheckInDate = dateStr;
+      const inEl = document.getElementById('bookingCheckIn');
+      if (inEl) inEl.value = dateStr;
+      if (noticeEl) noticeEl.textContent = 'Now click check-out date on calendar';
+    } else {
+      let curr = new Date(selectedCheckInDate);
+      const end = new Date(dateStr);
+      let hasConflict = false;
+
+      while (curr < end) {
+        const checkStr = curr.toISOString().split('T')[0];
+        if (allBlockedDateStrings.includes(checkStr)) {
+          hasConflict = true;
+          break;
+        }
+        curr.setDate(curr.getDate() + 1);
+      }
+
+      if (hasConflict) {
+        if (noticeEl) noticeEl.textContent = '⚠️ Range includes booked dates. Pick open dates.';
+        return;
+      }
+
+      selectedCheckOutDate = dateStr;
+      const outEl = document.getElementById('bookingCheckOut');
+      if (outEl) outEl.value = dateStr;
+      if (noticeEl) noticeEl.textContent = '✓ Dates selected! Complete details below to reserve.';
+      updateTotalPrice();
+    }
+  }
+
+  renderAvailabilityCalendar();
 }

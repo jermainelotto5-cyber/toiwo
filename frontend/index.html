@@ -271,7 +271,134 @@
         .section-head { align-items: flex-start; }
         .foot-bottom { flex-direction: column; }
       }
-    </style>
+    
+/* Airbnb Style Availability Calendar */
+.availability-calendar-box {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.cal-month-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+}
+.cal-nav-btn {
+  background: var(--sand);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink);
+  transition: background 0.2s;
+}
+.cal-nav-btn:hover {
+  background: #e5dfd5;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.cal-day-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  padding-bottom: 6px;
+  text-transform: uppercase;
+}
+.cal-day {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.cal-day.empty {
+  cursor: default;
+}
+.cal-day.available {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  color: var(--ink);
+}
+.cal-day.available:hover {
+  border-color: var(--clay);
+  background: #fdf8f4;
+  color: var(--clay);
+}
+.cal-day.booked {
+  background: #e9ecef;
+  color: #adb5bd;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  opacity: 0.7;
+  border: 1px solid transparent;
+}
+.cal-day.booked::after {
+  content: '✕';
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 7.5px;
+  color: var(--error);
+  text-decoration: none;
+}
+.cal-day.selected-start, .cal-day.selected-end {
+  background: var(--clay) !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(166, 80, 44, 0.4);
+}
+.cal-day.selected-range {
+  background: #fef3c7 !important;
+  color: var(--clay-deep) !important;
+  border-radius: 0 !important;
+}
+.cal-legend {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--ink-soft);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.cal-dot.available { background: var(--white); border: 1.5px solid var(--clay); }
+.cal-dot.booked { background: #adb5bd; }
+.cal-dot.selected { background: var(--clay); }
+
+</style>
   </head>
   <body>
     <header id="siteHeader">
@@ -320,7 +447,7 @@
                 <option>8 adults</option>
               </select>
             </div>
-            <a href="#booking" class="btn btn-primary">Check Availability</a>
+            <button type="button" class="btn btn-primary" onclick="checkAvailabilityFromHero()">Check Availability</button>
           </div>
         </div>
       </section>
@@ -447,6 +574,8 @@
             <p>Payment integration is placed below the form so you can swap in Selcom, M-Pesa, Tigo Pesa, Stripe, or another provider whenever you are ready.</p>
           </div>
           <div class="book-card">
+            <!-- Airbnb-Style Availability Calendar -->
+            <div id="availabilityCalendarContainer"></div>
             <div class="row">
               <div class="field">
                 <label>Check-in</label>
