@@ -307,26 +307,55 @@ function showBookingConfirmation(booking, totalPrice, nights) {
 }
 
 async function checkAvailabilityFromHero() {
-  const checkIn = document.getElementById('heroCheckIn').value;
-  const checkOut = document.getElementById('heroCheckOut').value;
+  const checkIn = document.getElementById('heroCheckIn')?.value;
+  const checkOut = document.getElementById('heroCheckOut')?.value;
+  const guests = document.getElementById('heroGuests')?.value;
 
-  if (!checkIn || !checkOut) { alert('Please select check-in and check-out dates.'); return; }
-  if (new Date(checkOut) <= new Date(checkIn)) { alert('Check-out date must be after check-in date.'); return; }
-
-  try {
-    const isAvailable = await checkAvailability(currentProperty.id, checkIn, checkOut);
-    if (isAvailable) {
-      document.getElementById('bookingCheckIn').value = checkIn;
-      document.getElementById('bookingCheckOut').value = checkOut;
-      document.getElementById('bookingGuests').value = document.getElementById('heroGuests').value;
-      document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-    } else {
-      alert('These dates are not available. Please choose different dates.');
-    }
-  } catch (error) {
-    console.error('Error checking availability:', error);
-    alert('Error checking availability.');
+  if (document.getElementById('bookingGuests') && guests) {
+    document.getElementById('bookingGuests').value = guests;
   }
+
+  if (!checkIn || !checkOut) {
+    // Open big calendar modal to pick dates
+    openCalendarModal();
+    return;
+  }
+
+  if (new Date(checkOut) <= new Date(checkIn)) {
+    alert('Check-out date must be after check-in date.');
+    return;
+  }
+
+  document.getElementById('bookingCheckIn').value = checkIn;
+  document.getElementById('bookingCheckOut').value = checkOut;
+
+  const isAvail = checkRangeAvailability(checkIn, checkOut);
+
+  if (!isAvail) {
+    // Dates are booked! Pop up Big Calendar Modal
+    openCalendarModal();
+    const sub = document.getElementById('modalSelectedDatesSub');
+    if (sub) sub.innerHTML = '<span style="color:var(--error); font-weight:700;">⚠️ Selected dates (' + checkIn + ' to ' + checkOut + ') are ALREADY BOOKED!</span> See taken dates in red/gray below.';
+  } else {
+    // Available! Scroll to booking form and update total
+    updateTotalPrice();
+    const bookSec = document.getElementById('booking');
+    if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function checkRangeAvailability(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return true;
+  let curr = new Date(checkIn);
+  const end = new Date(checkOut);
+  while (curr < end) {
+    const dateStr = curr.toISOString().split('T')[0];
+    if (allBlockedDateStrings.includes(dateStr)) {
+      return false; // Found a booked date
+    }
+    curr.setDate(curr.getDate() + 1);
+  }
+  return true;
 }
 
 document.addEventListener('change', (e) => {
@@ -362,18 +391,34 @@ function updateTotalPrice() {
   const checkOut = document.getElementById('bookingCheckOut')?.value;
   const subtotalEl = document.getElementById('subtotalPrice');
   const totalEl = document.getElementById('totalPrice');
+  const msgEl = document.getElementById('bookingMessage');
 
   if (!checkIn || !checkOut || new Date(checkOut) <= new Date(checkIn)) {
     if (subtotalEl) subtotalEl.textContent = '$0';
     if (totalEl) totalEl.textContent = '$0';
+    if (msgEl) msgEl.style.display = 'none';
     return;
+  }
+
+  // Check if dates are available
+  const isAvail = checkRangeAvailability(checkIn, checkOut);
+  if (!isAvail) {
+    if (subtotalEl) subtotalEl.textContent = '$0';
+    if (totalEl) totalEl.textContent = '$0';
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.innerHTML = '<span style="color:var(--error); font-weight:700;">⚠️ Selected dates are ALREADY BOOKED!</span> Opening calendar...';
+    }
+    openCalendarModal();
+    return;
+  } else {
+    if (msgEl) msgEl.style.display = 'none';
   }
 
   const rate = siteContent.property?.price_per_night || NIGHTLY_RATE;
   const nights = calculateNights(checkIn, checkOut);
   const total = nights * rate;
   const formatted = formatCurrency(total);
-
   if (subtotalEl) subtotalEl.textContent = formatted;
   if (totalEl) totalEl.textContent = formatted;
 }
