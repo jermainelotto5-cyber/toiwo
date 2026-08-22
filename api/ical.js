@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1NzU3NjQsImV4cCI6MjA5OTE1MTc2NH0.cIuu86DwNQzHPvzyWoc6Hu3dEz8YTdE84MTi4fLhfRc';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzU3NTc2NCwiZXhwIjoyMDk5MTUxNzY0fQ.Jc2ivNcjUQYqdlMsCby4PDDCpvkwSDew8xQdvxv66mE';
 
 module.exports = async (req, res) => {
   // Enable CORS
