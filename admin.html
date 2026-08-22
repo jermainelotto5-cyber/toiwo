@@ -675,7 +675,7 @@
         <!-- Section: Hero & Header -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">ðŸ  🏡 Hero Section (Top of Page)</h4>
+            <h4 style="margin:0; font-size: 17px;">🏡 Hero Section (Top of Page)</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsHero()">Save Hero</button>
           </div>
           <div class="form-row">
@@ -712,7 +712,7 @@
         <!-- Section: About -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📖 📖 About Section</h4>
+            <h4 style="margin:0; font-size: 17px;">📖 About Section</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsAbout()">Save About</button>
           </div>
           <div class="form-row">
@@ -747,7 +747,7 @@
         <!-- Section: Property Specs -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📊 📊 Property Essentials</h4>
+            <h4 style="margin:0; font-size: 17px;">📊 Property Essentials</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsPropertySpecs()">Save Specs</button>
           </div>
           <div class="form-row">
@@ -775,11 +775,13 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">ðŸ–¼ï¸ 🖼️ Gallery Photos</h4>
+              <h4 style="margin:0; font-size: 17px;">🖼️ Gallery Photos</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Add, remove, or change photo URLs and captions shown on the website.</p>
             </div>
             <div style="display:flex; gap: 8px;">
-              <button type="button" class="btn btn-secondary" onclick="addCmsGalleryItem()">+ Add Photo</button>
+              <button type="button" class="btn btn-secondary" onclick="triggerDeviceGalleryUpload()">📁 Choose / Upload Photo</button>
+              <input type="file" id="cmsDeviceFileInput" accept="image/*" multiple style="display:none;" onchange="handleCmsDeviceFileUpload(event)" />
+              <button type="button" class="btn btn-secondary" onclick="addCmsGalleryItem()">+ Add URL Row</button>
               <button type="button" class="btn btn-primary" onclick="saveCmsGallery()">Save Gallery</button>
             </div>
           </div>
@@ -807,7 +809,7 @@
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <div>
-              <h4 style="margin:0; font-size: 17px;">â­ ⭐ Guest Reviews</h4>
+              <h4 style="margin:0; font-size: 17px;">⭐ Guest Reviews</h4>
               <p style="color: var(--ink-soft); font-size: 13px; margin: 4px 0 0 0;">Showcase guest testimonials and ratings on the homepage.</p>
             </div>
             <div style="display:flex; gap: 8px;">
@@ -822,7 +824,7 @@
         <!-- Section: 📞 Contact & Social Links -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">📞 📞 Contact & Social Links</h4>
+            <h4 style="margin:0; font-size: 17px;">📞 Contact & Social Links</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsContactAndSocial()">Save Contact & Social</button>
           </div>
           <div class="form-row">
@@ -859,7 +861,7 @@
         <!-- Section: Footer -->
         <div class="section-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-            <h4 style="margin:0; font-size: 17px;">🦶 🦶 Footer Content</h4>
+            <h4 style="margin:0; font-size: 17px;">🦶 Footer Content</h4>
             <button type="button" class="btn btn-primary" onclick="saveCmsFooter()">Save Footer</button>
           </div>
           <div class="form-group">
@@ -1743,7 +1745,7 @@
     function showCmsFeedback(elemId, msg, isSuccess = true) {
       const el = document.getElementById(elemId);
       if (!el) return;
-      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? 'âœ“ ' : 'âœ— '}${msg}</span>`;
+      el.innerHTML = `<span style="color: ${isSuccess ? 'var(--success)' : 'var(--error)'}; font-weight: 600;">${isSuccess ? '✓ ' : '✕ '}${msg}</span>`;
       setTimeout(() => { if (el) el.innerHTML = ''; }, 4000);
     }
 
@@ -1820,29 +1822,95 @@
     }
 
     // --- Gallery Functions ---
-    function renderCmsGallery() {
+        function renderCmsGallery() {
       const container = document.getElementById('cmsGalleryContainer');
       if (!container) return;
       if (cmsGalleryList.length === 0) {
-        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No photos in gallery. Click "+ Add Photo" to add one.</p>';
+        container.innerHTML = '<p style="color:var(--ink-soft); font-size:14px; margin:0;">No photos in gallery. Click "📁 Choose / Upload Photo" to select photos from your device.</p>';
         return;
       }
       container.innerHTML = cmsGalleryList.map((item, idx) => `
         <div style="display:flex; gap:12px; align-items:center; background:var(--sand); padding:10px 14px; border-radius:8px; border:1px solid var(--line); flex-wrap:wrap;">
-          <div style="width:70px; height:50px; border-radius:6px; background:#e0dbd5; background-image:url('${item.url || ''}'); background-size:cover; background-position:center; flex-shrink:0; border:1px solid var(--line);"></div>
-          <div style="flex:2; min-width:200px;">
-            <input type="text" placeholder="Image URL (e.g. /pics/room.jpg or https://...)" value="${escapeHtml(item.url || '')}" oninput="updateCmsGalleryItem(${idx}, 'url', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+          <div onclick="triggerItemFileUpload(${idx})" title="Click to choose photo from device" style="width:70px; height:50px; border-radius:6px; background:#e0dbd5; background-image:url('${item.url || ''}'); background-size:cover; background-position:center; flex-shrink:0; border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+            ${!item.url ? '<span style="font-size:10px; color:#666; font-weight:600; text-align:center; padding:2px;">Select File</span>' : ''}
+          </div>
+          <div style="flex:2; min-width:200px; display:flex; gap:6px; flex-direction:column;">
+            <div style="display:flex; gap:6px;">
+              <input type="text" placeholder="Image URL (e.g. /pics/room.jpg or https://...)" value="${escapeHtml(item.url || '')}" oninput="updateCmsGalleryItem(${idx}, 'url', this.value)" style="font-size:13px; padding:6px 10px; flex:1;" />
+              <button type="button" class="btn btn-secondary" onclick="triggerItemFileUpload(${idx})" style="padding:6px 10px; font-size:12px; white-space:nowrap;">Choose File</button>
+            </div>
           </div>
           <div style="flex:1; min-width:140px;">
-            <input type="text" placeholder="Caption (e.g. Living Room)" value="${escapeHtml(item.caption || '')}" oninput="updateCmsGalleryItem(${idx}, 'caption', this.value)" style="font-size:13px; padding:6px 10px; margin-bottom:4px;" />
+            <input type="text" placeholder="Caption (e.g. Living Room)" value="${escapeHtml(item.caption || '')}" oninput="updateCmsGalleryItem(${idx}, 'caption', this.value)" style="font-size:13px; padding:6px 10px;" />
           </div>
           <div style="display:flex; gap:6px;">
-            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">â–²</button>
-            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">â–¼</button>
-            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">âœ•</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▲</button>
+            <button type="button" class="btn btn-secondary" onclick="moveCmsGalleryItem(${idx}, 1)" ${idx === cmsGalleryList.length - 1 ? 'disabled' : ''} style="padding:4px 8px; font-size:12px;">▼</button>
+            <button type="button" class="btn btn-danger" onclick="removeCmsGalleryItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
           </div>
         </div>
       `).join('');
+    }
+
+    function triggerDeviceGalleryUpload() {
+      const input = document.getElementById('cmsDeviceFileInput');
+      if (input) input.click();
+    }
+
+    function triggerItemFileUpload(idx) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        showCmsFeedback('cmsGalleryStatus', 'Reading file from device...');
+        const url = await uploadOrConvertCmsPhoto(file);
+        if (url) {
+          updateCmsGalleryItem(idx, 'url', url);
+          if (!cmsGalleryList[idx].caption || cmsGalleryList[idx].caption === 'Photo') {
+            updateCmsGalleryItem(idx, 'caption', file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' '));
+          }
+          renderCmsGallery();
+          showCmsFeedback('cmsGalleryStatus', 'Photo selected successfully!');
+        }
+      };
+      input.click();
+    }
+
+    async function handleCmsDeviceFileUpload(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+      showCmsFeedback('cmsGalleryStatus', `Uploading ${files.length} photo(s)...`);
+
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        const url = await uploadOrConvertCmsPhoto(f);
+        if (url) {
+          const caption = f.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+          addCmsGalleryItem(url, caption);
+        }
+      }
+      renderCmsGallery();
+      showCmsFeedback('cmsGalleryStatus', `Added ${files.length} photo(s)! Click Save Gallery to publish to website.`);
+      event.target.value = '';
+    }
+
+    async function uploadOrConvertCmsPhoto(file) {
+      try {
+        if (typeof uploadPhotoToStorage === 'function') {
+          const publicUrl = await uploadPhotoToStorage(file);
+          if (publicUrl) return publicUrl;
+        }
+      } catch (err) {
+        console.warn('Storage upload warning, using fallback data URL:', err);
+      }
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
     }
 
     function addCmsGalleryItem(url = '', caption = '') {
@@ -1892,7 +1960,7 @@
           <div style="flex:1; min-width:200px;">
             <input type="text" placeholder="Description (e.g. Reliable internet for work & streaming)" value="${escapeHtml(item.description || '')}" oninput="updateCmsAmenityItem(${idx}, 'description', this.value)" style="font-size:13px; padding:6px 10px;" />
           </div>
-          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">âœ•</button>
+          <button type="button" class="btn btn-danger" onclick="removeCmsAmenityItem(${idx})" style="padding:4px 8px; font-size:12px; background:var(--error); color:#fff; border:none; border-radius:4px; cursor:pointer;">✕</button>
         </div>
       `).join('');
     }
@@ -1926,9 +1994,9 @@
               <input type="text" placeholder="Author Name (e.g. Jemma M.)" value="${escapeHtml(item.author || '')}" oninput="updateCmsReviewItem(${idx}, 'author', this.value)" style="font-size:13px; width:160px; padding:6px 10px;" />
               <input type="text" placeholder="Trip Type (e.g. Family stay)" value="${escapeHtml(item.trip_type || '')}" oninput="updateCmsReviewItem(${idx}, 'trip_type', this.value)" style="font-size:13px; width:150px; padding:6px 10px;" />
               <select onchange="updateCmsReviewItem(${idx}, 'stars', parseInt(this.value))" style="font-size:13px; width:100px; padding:6px 10px;">
-                <option value="5" ${item.stars === 5 ? 'selected' : ''}>â˜…â˜…â˜…â˜…â˜… (5)</option>
-                <option value="4" ${item.stars === 4 ? 'selected' : ''}>â˜…â˜…â˜…â˜…â˜† (4)</option>
-                <option value="3" ${item.stars === 3 ? 'selected' : ''}>â˜…â˜…â˜…â˜†â˜† (3)</option>
+                <option value="5" ${item.stars === 5 ? 'selected' : ''}>★★★★★ (5)</option>
+                <option value="4" ${item.stars === 4 ? 'selected' : ''}>★★★★† (4)</option>
+                <option value="3" ${item.stars === 3 ? 'selected' : ''}>★★★†† (3)</option>
               </select>
               <input type="text" placeholder="Initials (e.g. JM)" value="${escapeHtml(item.initials || '')}" oninput="updateCmsReviewItem(${idx}, 'initials', this.value)" style="font-size:13px; width:70px; padding:6px 10px;" />
             </div>
