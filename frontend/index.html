@@ -398,6 +398,86 @@
 .cal-dot.booked { background: #adb5bd; }
 .cal-dot.selected { background: var(--clay); }
 
+
+/* Big Airbnb Style Availability Calendar Modal */
+.cal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.cal-modal-container {
+  background: var(--white);
+  border-radius: 20px;
+  max-width: 860px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+.cal-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1.5px solid var(--line);
+}
+.cal-modal-close {
+  background: var(--sand);
+  border: 1px solid var(--line);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--ink);
+  transition: background 0.2s;
+}
+.cal-modal-close:hover {
+  background: #e2ddd3;
+}
+.cal-modal-body {
+  padding: 24px;
+  flex: 1;
+}
+.cal-modal-footer {
+  padding: 16px 24px;
+  border-top: 1.5px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fbf9f5;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.modal-months-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 720px) {
+  .modal-months-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
   </head>
   <body>
@@ -576,14 +656,15 @@
           <div class="book-card">
             <!-- Airbnb-Style Availability Calendar -->
             <div id="availabilityCalendarContainer"></div>
+            <button type="button" class="btn btn-secondary" onclick="openCalendarModal()" style="width: 100%; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">📅 Open Full Calendar View</button>
             <div class="row">
               <div class="field">
                 <label>Check-in</label>
-                <input type="date" id="bookingCheckIn" />
+                <input type="date" id="bookingCheckIn" onclick="openCalendarModal()" />
               </div>
               <div class="field">
                 <label>Check-out</label>
-                <input type="date" id="bookingCheckOut" />
+                <input type="date" id="bookingCheckOut" onclick="openCalendarModal()" />
               </div>
             </div>
             <div class="row">
@@ -734,7 +815,33 @@
         });
       });
     </script>
-  </body>
+  
+  <!-- Big Airbnb Style Availability Calendar Modal -->
+  <div id="calendarModal" class="cal-modal-overlay" style="display:none;" onclick="handleModalOverlayClick(event)">
+    <div class="cal-modal-container">
+      <div class="cal-modal-header">
+        <div>
+          <h3 style="margin:0; font-size: 20px; font-family: Fraunces, serif; color: var(--ink);">Select Your Dates</h3>
+          <p style="margin: 4px 0 0 0; color: var(--ink-soft); font-size: 13.5px;" id="modalSelectedDatesSub">Click open dates on the calendar to choose Check-in and Check-out.</p>
+        </div>
+        <button type="button" class="cal-modal-close" onclick="closeCalendarModal()">✕</button>
+      </div>
+
+      <div class="cal-modal-body">
+        <div id="modalCalendarContainer"></div>
+      </div>
+
+      <div class="cal-modal-footer">
+        <div style="font-size: 14px; font-weight: 600; color: var(--clay);" id="modalFooterSummary">Select dates</div>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="clearModalDates()">Clear Dates</button>
+          <button type="button" class="btn btn-primary" onclick="applyModalDates()">Apply Selected Dates</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
 </html>
 
 

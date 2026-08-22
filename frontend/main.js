@@ -177,7 +177,6 @@ function renderGallery(photos = []) {
   let photoList = [];
 
   if (Array.isArray(photos) && photos.length > 0) {
-    // Normalise: could be { url, caption } objects or plain strings
     photoList = photos.map((p, i) => ({
       src: typeof p === 'string' ? p : (p.url || p.src || ''),
       label: typeof p === 'string' ? `Photo ${i + 1}` : (p.caption || p.label || `Photo ${i + 1}`)
@@ -195,7 +194,22 @@ function renderGallery(photos = []) {
   if (seeAllBtn) {
     if (photoList.length > 4) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.onclick = () => { renderGalleryGrid(photoList); seeAllBtn.style.display = 'none'; };
+      seeAllBtn.textContent = `See All Photos (${photoList.length}) ▼`;
+      let isExpanded = false;
+
+      seeAllBtn.onclick = () => {
+        if (!isExpanded) {
+          renderGalleryGrid(photoList);
+          seeAllBtn.textContent = 'Show Less Photos ▲';
+          isExpanded = true;
+        } else {
+          renderGalleryGrid(photoList.slice(0, 4));
+          seeAllBtn.textContent = `See All Photos (${photoList.length}) ▼`;
+          isExpanded = false;
+          const galSection = document.getElementById('gallery');
+          if (galSection) galSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
     } else {
       seeAllBtn.style.display = 'none';
     }
@@ -598,4 +612,154 @@ function handleCalendarDayClick(dateStr) {
   }
 
   renderAvailabilityCalendar();
+}
+
+// ============================================
+// BIG MODAL AVAILABILITY CALENDAR (AIRBNB STYLE)
+// ============================================
+
+function openCalendarModal() {
+  const modal = document.getElementById('calendarModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    renderModalCalendar();
+  }
+}
+
+function closeCalendarModal() {
+  const modal = document.getElementById('calendarModal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+function handleModalOverlayClick(event) {
+  if (event.target && event.target.id === 'calendarModal') {
+    closeCalendarModal();
+  }
+}
+
+function renderModalCalendar() {
+  const container = document.getElementById('modalCalendarContainer');
+  if (!container) return;
+
+  const m1Month = calendarCurrentMonth;
+  const m1Year = calendarCurrentYear;
+  const m2Month = (calendarCurrentMonth === 11) ? 0 : calendarCurrentMonth + 1;
+  const m2Year = (calendarCurrentMonth === 11) ? calendarCurrentYear + 1 : calendarCurrentYear;
+
+  const htmlMonth1 = buildSingleMonthHtml(m1Year, m1Month);
+  const htmlMonth2 = buildSingleMonthHtml(m2Year, m2Month);
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <button type="button" class="cal-nav-btn" onclick="changeCalendarMonth(-1); renderModalCalendar();">‹ Prev Month</button>
+      <button type="button" class="cal-nav-btn" onclick="changeCalendarMonth(1); renderModalCalendar();">Next Month ›</button>
+    </div>
+    <div class="modal-months-row">
+      ${htmlMonth1}
+      ${htmlMonth2}
+    </div>
+    <div class="cal-legend" style="margin-top:20px;">
+      <div class="cal-legend-item"><span class="cal-dot available"></span> Available</div>
+      <div class="cal-legend-item"><span class="cal-dot booked"></span> Booked / Taken</div>
+      <div class="cal-legend-item"><span class="cal-dot selected"></span> Selected Range</div>
+    </div>
+  `;
+
+  updateModalSummaryText();
+}
+
+function buildSingleMonthHtml(year, month) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startingDay = firstDay.getDay();
+  const monthDays = lastDay.getDate();
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthName = monthNames[month];
+
+  let daysHtml = '';
+  for (let i = 0; i < startingDay; i++) {
+    daysHtml += '<div class="cal-day empty"></div>';
+  }
+
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  for (let day = 1; day <= monthDays; day++) {
+    const d = new Date(year, month, day);
+    const dateStr = d.toISOString().split('T')[0];
+    const isPast = dateStr < todayStr;
+    const isBooked = allBlockedDateStrings.includes(dateStr) || isPast;
+
+    let dayClass = isBooked ? 'booked' : 'available';
+    if (selectedCheckInDate === dateStr) dayClass += ' selected-start';
+    else if (selectedCheckOutDate === dateStr) dayClass += ' selected-end';
+    else if (selectedCheckInDate && selectedCheckOutDate && dateStr > selectedCheckInDate && dateStr < selectedCheckOutDate) {
+      dayClass += ' selected-range';
+    }
+
+    daysHtml += `
+      <div class="cal-day ${dayClass}" data-date="${dateStr}" ${!isBooked ? `onclick="handleCalendarDayClick('${dateStr}'); renderModalCalendar();"` : ''}>
+        ${day}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="availability-calendar-box" style="margin-bottom:0;">
+      <div class="cal-month-title" style="text-align:center; margin-bottom:12px;">${monthName} ${year}</div>
+      <div class="cal-grid">
+        <div class="cal-day-header">Su</div>
+        <div class="cal-day-header">Mo</div>
+        <div class="cal-day-header">Tu</div>
+        <div class="cal-day-header">We</div>
+        <div class="cal-day-header">Th</div>
+        <div class="cal-day-header">Fr</div>
+        <div class="cal-day-header">Sa</div>
+        ${daysHtml}
+      </div>
+    </div>
+  `;
+}
+
+function updateModalSummaryText() {
+  const footerSummary = document.getElementById('modalFooterSummary');
+  const headerSub = document.getElementById('modalSelectedDatesSub');
+
+  if (selectedCheckInDate && selectedCheckOutDate) {
+    const nights = calculateNights(selectedCheckInDate, selectedCheckOutDate);
+    const rate = siteContent.property?.price_per_night || NIGHTLY_RATE;
+    const total = nights * rate;
+    const text = `${selectedCheckInDate} → ${selectedCheckOutDate} (${nights} night${nights > 1 ? 's' : ''}) • $${total}`;
+    if (footerSummary) footerSummary.textContent = text;
+    if (headerSub) headerSub.textContent = `${nights} night stay selected. Click "Apply Selected Dates" to proceed.`;
+  } else if (selectedCheckInDate) {
+    if (footerSummary) footerSummary.textContent = `Check-in: ${selectedCheckInDate} — Select check-out date`;
+    if (headerSub) headerSub.textContent = 'Now click your check-out date on the calendar.';
+  } else {
+    if (footerSummary) footerSummary.textContent = 'No dates selected';
+    if (headerSub) headerSub.textContent = 'Click open dates on the calendar to choose Check-in and Check-out.';
+  }
+}
+
+function clearModalDates() {
+  selectedCheckInDate = null;
+  selectedCheckOutDate = null;
+  const inEl = document.getElementById('bookingCheckIn');
+  const outEl = document.getElementById('bookingCheckOut');
+  if (inEl) inEl.value = '';
+  if (outEl) outEl.value = '';
+  updateTotalPrice();
+  renderAvailabilityCalendar();
+  renderModalCalendar();
+}
+
+function applyModalDates() {
+  closeCalendarModal();
+  updateTotalPrice();
+  const bookSec = document.getElementById('booking');
+  if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
 }
