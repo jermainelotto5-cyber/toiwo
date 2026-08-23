@@ -88,9 +88,9 @@ module.exports = async (req, res) => {
       // Add manual blocks to iCal (single dates)
       // Group contiguous blocked dates by reason to make it cleaner, or just export them as individual days
       blocks.forEach(block => {
-        const start = block.blocked_date.replace(/-/g, '');
+        const start = block.date.replace(/-/g, '');
         // iCal DTEND for a date block is exclusive, so the next day
-        const d = new Date(block.blocked_date);
+        const d = new Date(block.date);
         d.setDate(d.getDate() + 1);
         const end = d.toISOString().split('T')[0].replace(/-/g, '');
 
@@ -117,7 +117,7 @@ module.exports = async (req, res) => {
     if (sync && property_id) {
       // Fetch settings to get import URLs
       const settingsResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/admin_settings?property_id=eq.${property_id}&select=*`,
+        `${SUPABASE_URL}/rest/v1/admin_settings?property_id=eq.${property_id}&order=updated_at.desc&select=*`,
         {
           headers: {
             'apikey': SUPABASE_KEY,
@@ -147,7 +147,7 @@ module.exports = async (req, res) => {
               property_id,
               blocked_date_start: evt.start,
               blocked_date_end: evt.end,
-              reason: 'Airbnb Sync Booked'
+              source: 'airbnb'
             });
           });
         } catch (e) {
@@ -166,7 +166,7 @@ module.exports = async (req, res) => {
               property_id,
               blocked_date_start: evt.start,
               blocked_date_end: evt.end,
-              reason: 'Booking.com Sync Booked'
+              source: 'booking'
             });
           });
         } catch (e) {
@@ -174,9 +174,9 @@ module.exports = async (req, res) => {
         }
       }
 
-      // Delete existing synced blocks (blocks with 'Sync Booked' in reason)
+      // Delete existing synced blocks for this property (airbnb + booking sources)
       await fetch(
-        `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${property_id}&reason=like.*Sync%20Booked`,
+        `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${property_id}&source=in.(airbnb,booking)`,
         {
           method: 'DELETE',
           headers: {
@@ -186,23 +186,24 @@ module.exports = async (req, res) => {
         }
       );
 
-      // Expand start/end ranges into individual daily blocks for the blocked_dates table
+      // Expand start/end ranges into individual daily blocked_dates rows
       const dailyBlocks = [];
       newBlocks.forEach(block => {
         let curr = new Date(block.blocked_date_start);
         const end = new Date(block.blocked_date_end);
-        // Exclude checkout day (end date is checkout/exclusive)
+        // Exclude checkout day (end date is exclusive in iCal)
         while (curr < end) {
           dailyBlocks.push({
             property_id: block.property_id,
-            blocked_date: curr.toISOString().split('T')[0],
-            reason: block.reason
+            date: curr.toISOString().split('T')[0],
+            source: block.source,
+            reason: block.source === 'airbnb' ? 'Airbnb booking' : 'Booking.com booking'
           });
           curr.setDate(curr.getDate() + 1);
         }
       });
 
-      // Bulk insert daily blocks
+      // Bulk upsert daily blocks (upsert handles duplicates gracefully)
       if (dailyBlocks.length > 0) {
         const insertResp = await fetch(
           `${SUPABASE_URL}/rest/v1/blocked_dates`,
@@ -212,16 +213,17 @@ module.exports = async (req, res) => {
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`,
               'Content-Type': 'application/json',
-              'Prefer': 'return=representation'
+              'Prefer': 'resolution=merge-duplicates,return=minimal'
             },
             body: JSON.stringify(dailyBlocks)
           }
         );
-        const insertData = await insertResp.json();
-        return res.status(200).json({ success: true, imported: dailyBlocks.length, data: insertData });
+        const insertStatus = insertResp.status;
+        const importedDates = dailyBlocks.map(b => b.date);
+        return res.status(200).json({ success: true, imported: dailyBlocks.length, insertStatus, importedDates });
       }
 
-      return res.status(200).json({ success: true, imported: 0 });
+      return res.status(200).json({ success: true, imported: 0, message: 'No events found in calendars' });
     }
 
     return res.status(400).send('Invalid request parameters.');

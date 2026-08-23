@@ -229,7 +229,7 @@ async function getBlockedDates(propertyId) {
       .select('*')
       .eq('property_id', propertyId);
     if (error) throw error;
-    return data.map(d => d.blocked_date);
+    return data.map(d => d.date);
   } catch (error) {
     console.error('Error fetching blocked dates:', error);
     return [];
