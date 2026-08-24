@@ -1,274 +1,158 @@
-const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzU3NTc2NCwiZXhwIjoyMDk5MTUxNzY0fQ.Jc2ivNcjUQYqdlMsCby4PDDCpvkwSDew8xQdvxv66mE';
+﻿const SUPABASE_URL = process.env.SUPABASE_URL || 'https://kzpdoxmooddkujtntvlf.supabase.co';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 module.exports = async (req, res) => {
-  // Enable CORS
+  // Basic CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  const { export_uuid, sync, property_id } = req.query;
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // ----------------------------------------------------
-    // CASE 1: EXPORT CALENDAR FEED
-    // ----------------------------------------------------
+    const { sync, property_id, export_uuid } = req.query || {};
+
+    // Ensure service key is present for any write/read operations
+    if (!SERVICE_KEY) {
+      return res.status(500).json({ success: false, error: 'SUPABASE_SERVICE_ROLE_KEY not set in environment.' });
+    }
+
+    // ------------- EXPORT (unchanged) -------------
     if (export_uuid) {
-      // Find property admin settings that match the export uuid
-      // We check both airbnb and booking export UUIDs
+      // serve an iCal feed based on bookings + blocked_dates
       const settingsResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/admin_settings?or=(airbnb_ical_export_uuid.eq.${export_uuid},booking_ical_export_uuid.eq.${export_uuid})&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
+        `${SUPABASE_URL}/rest/v1/admin_settings?or=(airbnb_ical_export_uuid.eq.${encodeURIComponent(export_uuid)},booking_ical_export_uuid.eq.${encodeURIComponent(export_uuid)})&select=*`,
+        { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
       );
-
+      if (!settingsResp.ok) return res.status(404).send('Calendar feed not found.');
       const settingsList = await settingsResp.json();
-      if (!settingsList || settingsList.length === 0) {
-        return res.status(404).send('Calendar feed not found.');
-      }
-
-      const settings = settingsList[0];
+      const settings = Array.isArray(settingsList) ? settingsList[0] : settingsList;
+      if (!settings) return res.status(404).send('Calendar feed not found.');
       const propId = settings.property_id;
 
-      // Fetch confirmed bookings for this property
-      const bookingsResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/bookings?property_id=eq.${propId}&status=eq.confirmed&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
-      const bookings = await bookingsResp.json();
+      // Fetch bookings and blocks
+      const [bookingsResp, blocksResp] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/bookings?property_id=eq.${propId}&status=eq.confirmed&select=*`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }),
+        fetch(`${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${propId}&select=*`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } })
+      ]);
+      const bookings = bookingsResp.ok ? await bookingsResp.json() : [];
+      const blocks = blocksResp.ok ? await blocksResp.json() : [];
 
-      // Fetch manual date blocks
-      const blocksResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${propId}&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
-      const blocks = await blocksResp.json();
-
-      // Build iCal text
-      let ics = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Toiwo Residence//Arusha Direct Bookings//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH'
-      ];
-
-      // Add bookings to iCal
+      const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Toiwo Residence//Bookings//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
       bookings.forEach(b => {
-        const start = b.check_in.replace(/-/g, '');
-        const end = b.check_out.replace(/-/g, '');
-        ics.push(
-          'BEGIN:VEVENT',
-          `UID:booking-${b.id}@toiwo-residence.app`,
-          `DTSTART;VALUE=DATE:${start}`,
-          `DTEND;VALUE=DATE:${end}`,
-          `SUMMARY:Toiwo Booking - ${b.guest_name}`,
-          'END:VEVENT'
-        );
+        const start = (b.check_in || '').replace(/-/g, '');
+        const end = (b.check_out || '').replace(/-/g, '');
+        ics.push('BEGIN:VEVENT', `UID:booking-${b.id}@toiwo-residence`, `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`, `SUMMARY:Toiwo Booking - ${b.guest_name || ''}`, 'END:VEVENT');
       });
-
-      // Add manual blocks to iCal (single dates)
-      // Group contiguous blocked dates by reason to make it cleaner, or just export them as individual days
       blocks.forEach(block => {
-        const start = block.date.replace(/-/g, '');
-        // iCal DTEND for a date block is exclusive, so the next day
-        const d = new Date(block.date);
+        const start = (block.blocked_date || '').replace(/-/g, '');
+        const d = new Date(block.blocked_date);
         d.setDate(d.getDate() + 1);
         const end = d.toISOString().split('T')[0].replace(/-/g, '');
-
-        ics.push(
-          'BEGIN:VEVENT',
-          `UID:block-${block.id}@toiwo-residence.app`,
-          `DTSTART;VALUE=DATE:${start}`,
-          `DTEND;VALUE=DATE:${end}`,
-          `SUMMARY:Blocked - ${block.reason || 'Manual Block'}`,
-          'END:VEVENT'
-        );
+        ics.push('BEGIN:VEVENT', `UID:block-${block.id}@toiwo-residence`, `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`, `SUMMARY:Blocked - ${block.reason || 'Manual'}`, 'END:VEVENT');
       });
-
       ics.push('END:VCALENDAR');
-      
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="calendar.ics"');
       return res.status(200).send(ics.join('\r\n'));
     }
 
-    // ----------------------------------------------------
-    // CASE 2: IMPORT/SYNC CALENDAR FEEDS
-    // ----------------------------------------------------
+    // ------------- SYNC IMPORT -------------
     if (sync && property_id) {
-      // Fetch settings to get import URLs
-      const settingsResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/admin_settings?property_id=eq.${property_id}&order=updated_at.desc&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
-      const settingsList = await settingsResp.json();
-      if (!settingsList || settingsList.length === 0) {
-        return res.status(404).json({ error: 'Settings not found' });
-      }
-      
-      const settings = settingsList[0];
-      const airbnbUrl = settings.airbnb_ical_import_url;
-      const bookingUrl = settings.booking_ical_import_url;
-
-      let newBlocks = [];
-
-      // Fetch & Parse Airbnb iCal
-      if (airbnbUrl && airbnbUrl.startsWith('http')) {
-        try {
-          const resp = await fetch(airbnbUrl);
-          const text = await resp.text();
-          const parsed = parseICal(text);
-          parsed.forEach(evt => {
-            newBlocks.push({
-              property_id,
-              blocked_date_start: evt.start,
-              blocked_date_end: evt.end,
-              source: 'airbnb'
-            });
-          });
-        } catch (e) {
-          console.error('Error fetching Airbnb iCal:', e);
-        }
-      }
-
-      // Fetch & Parse Booking.com iCal
-      if (bookingUrl && bookingUrl.startsWith('http')) {
-        try {
-          const resp = await fetch(bookingUrl);
-          const text = await resp.text();
-          const parsed = parseICal(text);
-          parsed.forEach(evt => {
-            newBlocks.push({
-              property_id,
-              blocked_date_start: evt.start,
-              blocked_date_end: evt.end,
-              source: 'booking'
-            });
-          });
-        } catch (e) {
-          console.error('Error fetching Booking.com iCal:', e);
-        }
-      }
-
-      // Delete existing synced blocks for this property (airbnb + booking sources)
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${property_id}&source=in.(airbnb,booking)`,
-        {
-          method: 'DELETE',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
-
-      // Expand start/end ranges into individual daily blocked_dates rows
-      const dailyBlocks = [];
-      newBlocks.forEach(block => {
-        let curr = new Date(block.blocked_date_start);
-        const end = new Date(block.blocked_date_end);
-        // Exclude checkout day (end date is exclusive in iCal)
-        while (curr < end) {
-          dailyBlocks.push({
-            property_id: block.property_id,
-            date: curr.toISOString().split('T')[0],
-            source: block.source,
-            reason: block.source === 'airbnb' ? 'Airbnb booking' : 'Booking.com booking'
-          });
-          curr.setDate(curr.getDate() + 1);
-        }
+      // Get admin settings for property to find external iCal URLs
+      const settingsResp = await fetch(`${SUPABASE_URL}/rest/v1/admin_settings?property_id=eq.${property_id}&select=*`, {
+        headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` }
       });
+      if (!settingsResp.ok) {
+        const txt = await settingsResp.text();
+        return res.status(502).json({ success: false, error: 'Failed to fetch admin_settings', details: txt });
+      }
+      const settingsList = await settingsResp.json();
+      const settings = Array.isArray(settingsList) ? settingsList[0] : settingsList;
+      if (!settings) return res.status(404).json({ success: false, error: 'No admin_settings for property' });
 
-      // Bulk upsert daily blocks (upsert handles duplicates gracefully)
-      if (dailyBlocks.length > 0) {
-        const insertResp = await fetch(
-          `${SUPABASE_URL}/rest/v1/blocked_dates`,
-          {
-            method: 'POST',
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json',
-              'Prefer': 'resolution=merge-duplicates,return=minimal'
-            },
-            body: JSON.stringify(dailyBlocks)
+      const importUrls = [];
+      if (settings.airbnb_ical_import_url) importUrls.push(settings.airbnb_ical_import_url);
+      if (settings.booking_ical_import_url) importUrls.push(settings.booking_ical_import_url);
+      if (importUrls.length === 0) return res.json({ success: true, message: 'No import URLs configured for this property.' });
+
+      // helper: lightweight iCal parse
+      function parseICalDates(icsText) {
+        if (!icsText) return [];
+        const events = [];
+        const lines = icsText.split(/\r?\n/);
+        let cur = null;
+        for (let rawLine of lines) {
+          const line = rawLine.trim();
+          if (line === 'BEGIN:VEVENT') cur = {};
+          else if (line === 'END:VEVENT') { if (cur && cur.dtstart) events.push({ start: cur.dtstart, end: cur.dtend || cur.dtstart }); cur = null; }
+          else if (cur) {
+            if (line.startsWith('DTSTART')) cur.dtstart = line.split(':').pop();
+            else if (line.startsWith('DTEND')) cur.dtend = line.split(':').pop();
           }
-        );
-        const insertStatus = insertResp.status;
-        const importedDates = dailyBlocks.map(b => b.date);
-        return res.status(200).json({ success: true, imported: dailyBlocks.length, insertStatus, importedDates });
+        }
+        // normalize YYYYMMDD or YYYYMMDDTHHMMSSZ to YYYY-MM-DD
+        return events.map(e => {
+          const toYMD = (v) => { if (!v) return null; const m = v.match(/^(\d{4})(\d{2})(\d{2})/); return m ? `${m[1]}-${m[2]}-${m[3]}` : null };
+          return { start: toYMD(e.start), end: toYMD(e.end) };
+        }).filter(e => e.start);
       }
 
-      return res.status(200).json({ success: true, imported: 0, message: 'No events found in calendars' });
+      function expandDates(start, end) {
+        const dates = [];
+        const s = new Date(start + 'T00:00:00Z');
+        const e = end ? new Date(end + 'T00:00:00Z') : new Date(s.getTime() + 24*3600*1000);
+        // Treat end as exclusive (typical iCal DTEND semantics)
+        for (let d = new Date(s); d < e; d.setUTCDate(d.getUTCDate() + 1)) dates.push(d.toISOString().split('T')[0]);
+        return dates;
+      }
+
+      const allDates = new Set();
+      // Fetch each iCal URL
+      for (const u of importUrls) {
+        try {
+          const resp = await fetch(u, { timeout: 15000 });
+          if (!resp.ok) { console.warn('iCal fetch failed', u, resp.status); continue; }
+          const txt = await resp.text();
+          const evts = parseICalDates(txt);
+          evts.forEach(ev => {
+            const dates = expandDates(ev.start, ev.end);
+            dates.forEach(d => allDates.add(d));
+          });
+        } catch (err) {
+          console.warn('iCal fetch/parse error for', u, err && err.message ? err.message : err);
+        }
+      }
+
+      // If no dates found, respond but clear previous external blocks
+      if (allDates.size === 0) {
+        // Optionally remove previous external-calendar blocks to keep state fresh
+        const deleteUrl = `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${property_id}&or=(reason.eq.external-calendar,reason.ilike.*Sync%20Booked)`;
+        await fetch(deleteUrl, { method: 'DELETE', headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+        return res.json({ success: true, message: 'No blocked dates found in external calendars.' });
+      }
+
+      // Delete previous external blocks (by reason marker) to avoid duplicates
+      const deleteUrl = `${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${property_id}&or=(reason.eq.external-calendar,reason.ilike.*Sync%20Booked)`;
+      await fetch(deleteUrl, { method: 'DELETE', headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+
+      // Insert new daily blocked_dates
+      const payload = Array.from(allDates).map(d => ({ property_id: property_id, blocked_date: d, reason: 'external-calendar' }));
+      const insertResp = await fetch(`${SUPABASE_URL}/rest/v1/blocked_dates`, {
+        method: 'POST',
+        headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+        body: JSON.stringify(payload)
+      });
+      if (!insertResp.ok) {
+        const txt = await insertResp.text();
+        return res.status(502).json({ success: false, error: 'Failed to insert blocked dates', details: txt });
+      }
+
+      return res.json({ success: true, message: `Imported ${payload.length} blocked dates from external calendars.` });
     }
 
-    return res.status(400).send('Invalid request parameters.');
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: error.message });
+    return res.status(400).json({ success: false, error: 'Invalid request. Provide ?sync=true&property_id=<id> or ?export_uuid=<uuid>' });
+  } catch (err) {
+    console.error('iCal handler error:', err);
+    return res.status(500).json({ success: false, error: err && err.message ? err.message : String(err) });
   }
 };
-
-// Simple lightweight iCal parser
-function parseICal(icsText) {
-  const events = [];
-  const lines = icsText.split(/\r?\n/);
-  let currentEvent = null;
-
-  for (let line of lines) {
-    line = line.trim();
-    if (line === 'BEGIN:VEVENT') {
-      currentEvent = {};
-    } else if (line === 'END:VEVENT') {
-      if (currentEvent && currentEvent.start && currentEvent.end) {
-        events.push(currentEvent);
-      }
-      currentEvent = null;
-    } else if (currentEvent) {
-      if (line.startsWith('DTSTART')) {
-        const val = line.split(':').pop();
-        currentEvent.start = parseICalDate(val);
-      } else if (line.startsWith('DTEND')) {
-        const val = line.split(':').pop();
-        currentEvent.end = parseICalDate(val);
-      } else if (line.startsWith('SUMMARY')) {
-        currentEvent.summary = line.split(':').slice(1).join(':');
-      }
-    }
-  }
-  return events;
-}
-
-function parseICalDate(dateStr) {
-  // Format could be: 20260810 or 20260810T110000Z or;VALUE=DATE:20260810
-  const clean = dateStr.replace(/[^0-9T]/g, '');
-  const y = clean.substring(0, 4);
-  const m = clean.substring(4, 6);
-  const d = clean.substring(6, 8);
-  return `${y}-${m}-${d}`;
-}
