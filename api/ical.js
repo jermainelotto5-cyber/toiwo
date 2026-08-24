@@ -1,5 +1,5 @@
 ﻿const SUPABASE_URL = process.env.SUPABASE_URL || 'https://kzpdoxmooddkujtntvlf.supabase.co';
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6cGRveG1vb2Rka3VqdG50dmxmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzU3NTc2NCwiZXhwIjoyMDk5MTUxNzY0fQ.Jc2ivNcjUQYqdlMsCby4PDDCpvkwSDew8xQdvxv66mE';
 
 module.exports = async (req, res) => {
   // Basic CORS
@@ -44,8 +44,10 @@ module.exports = async (req, res) => {
         ics.push('BEGIN:VEVENT', `UID:booking-${b.id}@toiwo-residence`, `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`, `SUMMARY:Toiwo Booking - ${b.guest_name || ''}`, 'END:VEVENT');
       });
       blocks.forEach(block => {
-        const start = (block.blocked_date || '').replace(/-/g, '');
-        const d = new Date(block.blocked_date);
+        const dateValue = block.date || block.blocked_date;
+        if (!dateValue) return;
+        const start = String(dateValue).replace(/-/g, '');
+        const d = new Date(dateValue);
         d.setDate(d.getDate() + 1);
         const end = d.toISOString().split('T')[0].replace(/-/g, '');
         ics.push('BEGIN:VEVENT', `UID:block-${block.id}@toiwo-residence`, `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`, `SUMMARY:Blocked - ${block.reason || 'Manual'}`, 'END:VEVENT');
@@ -57,7 +59,7 @@ module.exports = async (req, res) => {
     }
 
     // ------------- SYNC IMPORT -------------
-    if (sync && property_id) {
+    if (sync && property_id) {\n      // Validate property_id is a UUID (prevent SQL errors from invalid input)\n      const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;\n      if (!uuidRegex.test(String(property_id))) {\n        return res.status(400).json({ success: false, error: 'Invalid property_id format (expected UUID).' });\n      }
       // Get admin settings for property to find external iCal URLs
       const settingsResp = await fetch(`${SUPABASE_URL}/rest/v1/admin_settings?property_id=eq.${property_id}&select=*`, {
         headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` }
@@ -136,7 +138,7 @@ module.exports = async (req, res) => {
       await fetch(deleteUrl, { method: 'DELETE', headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
 
       // Insert new daily blocked_dates
-      const payload = Array.from(allDates).map(d => ({ property_id: property_id, blocked_date: d, reason: 'external-calendar' }));
+      const payload = Array.from(allDates).map(d => ({ property_id: property_id, date: d, reason: 'external-calendar' }));
       const insertResp = await fetch(`${SUPABASE_URL}/rest/v1/blocked_dates`, {
         method: 'POST',
         headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
@@ -156,3 +158,7 @@ module.exports = async (req, res) => {
     return res.status(500).json({ success: false, error: err && err.message ? err.message : String(err) });
   }
 };
+
+
+
+
