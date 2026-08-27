@@ -120,6 +120,7 @@ module.exports = async (req, res) => {
       }
 
       const allBlocksMap = new Map();
+      let successfulFeeds = 0;
       for (const item of importUrls) {
         try {
           const resp = await fetch(item.url, {
@@ -127,6 +128,7 @@ module.exports = async (req, res) => {
             headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
           });
           if (!resp.ok) continue;
+          successfulFeeds++;
           const txt = await resp.text();
           const evts = parseICalDates(txt);
           evts.forEach(ev => {
@@ -136,6 +138,17 @@ module.exports = async (req, res) => {
         } catch (err) {
           console.warn('iCal fetch error for', item.url, err.message);
         }
+      }
+
+      // Never turn a transient provider/network error into open inventory.
+      // Keep the last known external blocks until at least one configured
+      // feed has been read successfully.
+      if (successfulFeeds === 0) {
+        return res.status(502).json({
+          success: false,
+          imported: 0,
+          error: 'Could not read any configured external calendar feeds; existing blocked dates were preserved.'
+        });
       }
 
       // Store one row per unavailable night.  `blocked_date` is also the
