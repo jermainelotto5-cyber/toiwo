@@ -721,7 +721,6 @@ let selectedCheckOutDate = null;
 
 async function initAvailabilityCalendar({ syncExternal = true } = {}) {
   const container = document.getElementById('availabilityCalendarContainer');
-  if (!container) return;
 
   try {
     const propId = currentProperty?.id || '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
