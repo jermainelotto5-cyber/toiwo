@@ -820,13 +820,13 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=18"></script>
-    <script src="./main.js?v=18"></script>
+    <script src="./supabase-client.js?v=19"></script>
+    <script src="./main.js?v=19"></script>
     <div id="lightbox" class="lightbox">
       <button type="button" class="lightbox-close" aria-label="Close photo viewer">&times;</button>
-      <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#10094;</button>
+      <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#10094; Previous</button>
       <img id="lightbox-img" src="">
-      <button type="button" class="lightbox-nav lightbox-next" aria-label="Next photo">&#10095;</button>
+      <button type="button" class="lightbox-nav lightbox-next" aria-label="Next photo">Next &#10095;</button>
     </div>
     <style>
       .lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
@@ -834,10 +834,18 @@
       .lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
       .lightbox-close, .lightbox-nav { position: absolute; border: 0; color: #fff; background: rgba(0,0,0,0.55); cursor: pointer; user-select: none; z-index: 2; }
       .lightbox-close { top: 24px; right: 32px; font-size: 38px; line-height: 1; width: 48px; height: 48px; border-radius: 50%; }
-      .lightbox-nav { top: 50%; transform: translateY(-50%); font-size: 34px; line-height: 1; width: 54px; height: 64px; border-radius: 12px; }
+      .lightbox-nav { top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 700; line-height: 1; min-width: 96px; height: 54px; padding: 0 12px; border-radius: 12px; }
       .lightbox-prev { left: 24px; }
       .lightbox-next { right: 24px; }
       .lightbox-close:hover, .lightbox-nav:hover { background: var(--clay); }
+      @media (max-width: 700px) {
+        body { background-size: auto 100vh; background-position: center center; background-attachment: fixed; }
+        .lightbox img { max-width: 82%; max-height: 78%; }
+        .lightbox-nav { min-width: 82px; height: 50px; padding: 0 8px; }
+        .lightbox-prev { left: 8px; }
+        .lightbox-next { right: 8px; }
+        .lightbox-close { top: 14px; right: 14px; }
+      }
       .gal-extra { display: none; }
       .gal-grid.show-all .gal-extra { display: flex; }
     </style>
@@ -913,6 +921,7 @@
 
 </body>
 </html>
+
 
 
 
