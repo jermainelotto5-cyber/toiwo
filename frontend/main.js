@@ -320,6 +320,79 @@ function renderGallery(photos = []) {
     })).filter(p => p.src);
   }
 
+  const default16Photos = [
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+];
+  if (photoList.length < 5) {
+    const existingSrcs = new Set(photoList.map(p => p.src));
+    default16Photos.forEach(dp => {
+      if (!existingSrcs.has(dp.src)) photoList.push(dp);
+    });
+  }
+
   if (photoList.length === 0) {
     galleryGrid.innerHTML = '<p style="color:var(--ink-soft); padding: 20px;">No gallery photos yet. Add some in the Admin panel.</p>';
     return;
@@ -331,7 +404,7 @@ function renderGallery(photos = []) {
   if (seeAllBtn) {
     if (photoList.length > 4) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See More (${photoList.length}) ▼`;
+      seeAllBtn.textContent = `See More ▼`;
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
@@ -341,7 +414,7 @@ function renderGallery(photos = []) {
           isExpanded = true;
         } else {
           renderGalleryGrid(photoList.slice(0, 4));
-          seeAllBtn.textContent = `See More (${photoList.length}) ▼`;
+          seeAllBtn.textContent = `See More ▼`;
           isExpanded = false;
           const galSection = document.getElementById('gallery');
           if (galSection) galSection.scrollIntoView({ behavior: 'smooth' });
