@@ -229,10 +229,46 @@ async function getBlockedDates(propertyId) {
       .select('*')
       .eq('property_id', propertyId);
     if (error) throw error;
-    return data.map(d => d.date);
+    // `blocked_date` is the canonical field. The range handling keeps old
+    // imported records unavailable while the database migration is applied.
+    const dates = new Set();
+    (data || []).forEach(block => {
+      const singleDate = block.blocked_date || block.date;
+      if (singleDate) dates.add(String(singleDate).slice(0, 10));
+
+      if (block.start_date) {
+        const start = new Date(`${block.start_date}T00:00:00Z`);
+        const end = block.end_date
+          ? new Date(`${block.end_date}T00:00:00Z`)
+          : new Date(start.getTime() + 86400000);
+        for (let day = new Date(start); day < end; day.setUTCDate(day.getUTCDate() + 1)) {
+          dates.add(day.toISOString().slice(0, 10));
+        }
+      }
+    });
+    return Array.from(dates);
   } catch (error) {
     console.error('Error fetching blocked dates:', error);
     return [];
+  }
+}
+
+// Refresh external calendars before availability is shown or a direct booking
+// is accepted. The server holds the private iCal URLs; the browser only asks
+// it to update the property's cached blocked dates.
+async function syncExternalCalendars(propertyId) {
+  if (!propertyId) return false;
+  try {
+    const response = await fetch(`/api/ical?sync=true&property_id=${encodeURIComponent(propertyId)}&t=${Date.now()}`, {
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error(`Calendar sync returned ${response.status}`);
+    const result = await response.json();
+    if (!result.success) throw new Error(result.error || 'Calendar sync failed');
+    return true;
+  } catch (error) {
+    console.warn('External calendar refresh failed; using the latest saved availability.', error);
+    return false;
   }
 }
 
