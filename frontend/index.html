@@ -696,7 +696,6 @@
             <p>Choose your dates, send your details, and complete your payment once the booking is ready.</p>
             <div class="price-tag"><span class="amt" id="heroPrice">$180</span><span class="per">/ night &middot; whole house</span></div>
             <p>Payment integration is placed below the form so you can swap in Selcom, M-Pesa, Tigo Pesa, Stripe, or another provider whenever you are ready.</p>
-            <div id="availabilityCalendarContainer" aria-label="Availability calendar" style="margin-top: 24px;"></div>
           </div>
           <div class="book-card">
 
@@ -718,12 +717,6 @@
                   <option>4 adults</option>
                   <option>6 adults</option>
                   <option>8 adults</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Rooms</label>
-                <select>
-                  <option>1 room (whole house)</option>
                 </select>
               </div>
             </div>
@@ -809,8 +802,8 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=14"></script>
-    <script src="./main.js?v=14"></script>
+    <script src="./supabase-client.js?v=15"></script>
+    <script src="./main.js?v=15"></script>
     <div id="lightbox" class="lightbox">
       <span class="lightbox-close">&times;</span>
       <img id="lightbox-img" src="">
@@ -843,13 +836,6 @@
             }
           });
 
-          const seeAllBtn = document.getElementById('seeAllGalleryBtn');
-          if (seeAllBtn) {
-            seeAllBtn.addEventListener('click', () => {
-              galleryGrid.classList.add('show-all');
-              seeAllBtn.style.display = 'none';
-            });
-          }
         }
         
         closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
