@@ -49,6 +49,10 @@
         --shadow: 0 20px 50px -25px rgba(35, 41, 31, 0.35);
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
       html { scroll-behavior: smooth; }
       body {
         font-family: "Inter", sans-serif;
@@ -260,7 +264,9 @@
       .contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; }
       .contact-copy { max-width: 480px; }
       .contact-cards { display: flex; flex-direction: column; gap: 16px; }
-      .ccard { border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; }
+      .ccard { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; max-width: 100%; min-width: 0; overflow: hidden; }
+      .ccard div { min-width: 0; overflow-wrap: break-word; word-break: break-word; }
+      .ccard a { color: var(--clay); font-weight: 600; word-break: break-word; overflow-wrap: anywhere; }
       .footer { background: var(--ink); color: rgba(246,241,231,0.8); padding: 62px 0 24px; }
       .foot-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 34px; margin-bottom: 30px; }
       .foot-logo { font-family: "Fraunces", serif; font-size: 22px; color: var(--sand); margin-bottom: 12px; }
@@ -268,28 +274,40 @@
       footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
       footer h5 { color: var(--sand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
       .foot-bottom { border-top: 1px solid rgba(246, 241, 231, 0.14); padding-top: 20px; font-size: 13px; color: rgba(246,241,231,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+      .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
       @media (max-width: 900px) {
-        .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; }
+        .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; gap: 36px; }
         .amen-grid { grid-template-columns: repeat(2, 1fr); }
         .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr 1fr; }
-        nav { position: fixed; top: 0; right: -100%; height: 100vh; width: 78%; max-width: 320px; background: var(--white); flex-direction: column; align-items: flex-start; padding: 100px 32px 32px; gap: 24px; transition: right 0.35s ease; box-shadow: -10px 0 40px rgba(0,0,0,0.15); }
+        nav { position: fixed; top: 0; right: -100%; height: 100vh; width: 80%; max-width: 300px; background: var(--white); flex-direction: column; align-items: flex-start; padding: 90px 28px 28px; gap: 20px; transition: right 0.35s ease; box-shadow: -10px 0 40px rgba(0,0,0,0.2); z-index: 150; }
         nav.open { right: 0; }
-        nav a { color: var(--ink) !important; }
+        nav a { color: var(--ink) !important; font-size: 16px; }
         .nav-toggle { display: flex; flex-direction: column; gap: 5px; cursor: pointer; z-index: 200; background: none; border: none; padding: 6px; }
-        .nav-toggle span { width: 22px; height: 2px; background: var(--white); transition: background 0.3s ease; }
+        .nav-toggle span { width: 24px; height: 2.5px; background: var(--white); transition: background 0.3s ease; border-radius: 2px; }
         header.scrolled .nav-toggle span { background: var(--ink); }
       }
       @media (max-width: 700px) {
-        .wrap { padding: 0 18px; }
+        .wrap { padding: 0 16px; width: 100%; box-sizing: border-box; }
         .hero-ctas { flex-direction: column; }
         .hero-ctas .btn { width: 100%; }
-        .book-bar { grid-template-columns: 1fr 1fr; }
-        .book-field { border-right: none; border-bottom: 1px solid var(--line); }
-        .book-bar .btn-primary { grid-column: 1 / -1; width: 100%; }
-        .book-card .row, .admin-panel .grid, .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr; }
+        .book-bar { grid-template-columns: 1fr; padding: 14px; }
+        .book-field { border-right: none; border-bottom: 1px solid var(--line); padding: 8px 4px; }
+        .book-bar .btn-primary { width: 100%; margin-top: 8px; }
+        .book-card .row, .contact-row, .admin-panel .grid, .detail-grid, .rev-grid, .gal-grid, .foot-grid { grid-template-columns: 1fr !important; }
+        .contact-form { padding: 18px !important; width: 100%; box-sizing: border-box; }
+        .contact-cards { gap: 12px; width: 100%; }
+        .ccard { padding: 14px 16px; gap: 12px; width: 100%; box-sizing: border-box; }
+        .ccard a { font-size: 13.5px; word-break: break-all; }
       }
       @media (max-width: 480px) {
-        section { padding: 80px 0; }
+        section { padding: 60px 0; }
+        .hero h1 { font-size: clamp(30px, 10vw, 44px); }
+        .hero-lede { font-size: 15px; }
+        .section-head { align-items: flex-start; flex-direction: column; }
+        .foot-bottom { flex-direction: column; }
+        .book-card { padding: 18px; width: 100%; box-sizing: border-box; }
+        .about-photo { min-height: 280px; }
+      }
         .hero h1 { font-size: clamp(36px, 16vw, 52px); }
         .hero-lede { font-size: 16px; }
         .book-bar { grid-template-columns: 1fr; }
@@ -748,7 +766,7 @@
           </div>
           <div class="contact-form" style="background: var(--sand); border: 1px solid var(--line); border-radius: 24px; padding: 24px;">
             <form id="contactForm" onsubmit="submitContactForm(event)">
-              <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+              <div class="row contact-row">
                 <div class="field"><label>Name</label><input type="text" id="contactName" placeholder="Your name" required /></div>
                 <div class="field"><label>Email</label><input type="email" id="contactEmailInput" placeholder="you@email.com" required /></div>
               </div>
