@@ -57,8 +57,17 @@
       body {
         font-family: "Inter", sans-serif;
         color: var(--ink);
-        background: var(--sand);
+        /* Keep the residence image fixed behind every section while the page scrolls. */
+        background: var(--sand) url("/pics/toiwo-logo.jpg") center / cover fixed no-repeat;
         line-height: 1.6;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: rgba(246, 241, 231, 0.78);
       }
       h1, h2, h3, h4 {
         font-family: "Fraunces", serif;
@@ -89,6 +98,10 @@
         display: inline-block;
       }
       section { padding: 100px 0; }
+      .about { background: rgba(255, 253, 249, 0.92) !important; }
+      .gallery { background: rgba(237, 228, 211, 0.9) !important; }
+      .amenities, .contact { background: rgba(255, 253, 249, 0.92) !important; }
+      .reviews { background: rgba(246, 241, 231, 0.9) !important; }
       .btn {
         display: inline-flex;
         align-items: center;
@@ -802,8 +815,8 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=15"></script>
-    <script src="./main.js?v=15"></script>
+    <script src="./supabase-client.js?v=16"></script>
+    <script src="./main.js?v=16"></script>
     <div id="lightbox" class="lightbox">
       <span class="lightbox-close">&times;</span>
       <img id="lightbox-img" src="">
@@ -872,6 +885,7 @@
 
 </body>
 </html>
+
 
 
 
