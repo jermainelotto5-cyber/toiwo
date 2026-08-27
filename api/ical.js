@@ -138,9 +138,12 @@ module.exports = async (req, res) => {
         }
       }
 
+      // Store one row per unavailable night.  `blocked_date` is also the
+      // column used by the database availability function and the customer
+      // calendar, so imported dates are checked exactly like manual blocks.
       const dailyBlocks = Array.from(allBlocksMap.values()).map(b => ({
         property_id: property_id,
-        date: b.date,
+        blocked_date: b.date,
         source: b.source,
         reason: b.source === 'airbnb' ? 'Airbnb booking' : 'Booking.com booking'
       }));
