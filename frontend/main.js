@@ -48,6 +48,12 @@ function applySiteContent() {
   setText('aboutLead', about.lead);
   setText('aboutBody', about.body);
   setText('aboutCaption', about.photo_caption);
+  if (about.photo_url) {
+    const photoEl = document.getElementById('aboutPhotoEl');
+    if (photoEl) {
+      photoEl.style.backgroundImage = "linear-gradient(180deg, rgba(35, 41, 31, 0.15), rgba(35, 41, 31, 0.02)), url('" + about.photo_url + "')";
+    }
+  }
   if (about.pills && Array.isArray(about.pills)) {
     const pillsEl = document.getElementById('aboutPills');
     if (pillsEl) {

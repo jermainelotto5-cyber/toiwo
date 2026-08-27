@@ -1694,10 +1694,18 @@
     async function triggerICalSync() {
       if (!currentPropertyId) return;
       const statusEl = document.getElementById('syncStatus');
-      statusEl.textContent = 'Syncing calendars...';
+      statusEl.innerHTML = '<span style="color:var(--ink-soft);">⏳ Syncing from Airbnb &amp; Booking.com...</span>';
       try {
         const resp = await fetch(`/api/ical?sync=true&property_id=${currentPropertyId}`);
-        const result = await resp.json();
+        const rawText = await resp.text();
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch(pe) {
+          console.error('Server returned non-JSON:', rawText.substring(0, 200));
+          statusEl.innerHTML = '<span style="color:var(--error);">⚠️ Sync error: Server returned an unexpected response. Check backend API/logs.</span>';
+          return;
+        }
         if (result.success) {
           statusEl.innerHTML = `<span style="color:var(--success);">Sync complete! Synced external calendar dates.</span>`;
           await loadDashboardData();
@@ -1775,6 +1783,13 @@
         const about = cmsContentData.about || {};
         document.getElementById('cmsAboutEyebrow').value = about.eyebrow || '';
         document.getElementById('cmsAboutCaption').value = about.photo_caption || '';
+        if (document.getElementById('cmsAboutPhotoUrl')) {
+          document.getElementById('cmsAboutPhotoUrl').value = about.photo_url || '';
+          if (about.photo_url) {
+            const prev = document.getElementById('cmsAboutPhotoPreview');
+            if (prev) prev.innerHTML = '<img src="' + about.photo_url + '" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:4px;" />';
+          }
+        }
         document.getElementById('cmsAboutHeadline').value = about.headline || '';
         document.getElementById('cmsAboutLead').value = about.lead || '';
         document.getElementById('cmsAboutBody').value = about.body || '';
@@ -2093,6 +2108,23 @@
       }
     }
 
+    async function handleAboutPhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const previewEl = document.getElementById('cmsAboutPhotoPreview');
+      if (previewEl) previewEl.innerHTML = '<em style="color:#64748b;font-size:13px;">Uploading...</em>';
+      try {
+        const url = await uploadOrConvertCmsPhoto(file);
+        document.getElementById('cmsAboutPhotoUrl').value = url;
+        if (previewEl) previewEl.innerHTML = '<img src="' + url + '" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:4px;" />';
+        showCmsFeedback('cmsAboutStatus', 'Photo uploaded! Click Save About to apply.');
+      } catch(err) {
+        console.error(err);
+        if (previewEl) previewEl.innerHTML = '';
+        showCmsFeedback('cmsAboutStatus', 'Upload failed: ' + err.message, false);
+      }
+    }
+
     async function saveCmsAbout() {
       try {
         const eyebrow = document.getElementById('cmsAboutEyebrow').value.trim();
@@ -2103,7 +2135,8 @@
         const pillsRaw = document.getElementById('cmsAboutPills').value;
         const pills = pillsRaw.split(',').map(s => s.trim()).filter(Boolean);
 
-        await saveSiteContentSection('about', { eyebrow, photo_caption, headline, lead, body, pills });
+        const photo_url = document.getElementById('cmsAboutPhotoUrl') ? document.getElementById('cmsAboutPhotoUrl').value.trim() : '';
+        await saveSiteContentSection('about', { eyebrow, photo_caption, photo_url, headline, lead, body, pills });
         showCmsFeedback('cmsAboutStatus', 'About section saved successfully!');
       } catch (err) {
         console.error(err);

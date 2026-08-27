@@ -112,7 +112,7 @@ module.exports = async (req, res) => {
       // Fetch each iCal URL
       for (const u of importUrls) {
         try {
-          const resp = await fetch(u, { timeout: 15000 });
+          const resp = await fetch(u, { timeout: 15000, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' } });
           if (!resp.ok) { console.warn('iCal fetch failed', u, resp.status); continue; }
           const txt = await resp.text();
           const evts = parseICalDates(txt);
@@ -152,10 +152,18 @@ module.exports = async (req, res) => {
       return res.json({ success: true, message: `Imported ${payload.length} blocked dates from external calendars.` });
     }
 
+<<<<<<< HEAD
     return res.status(400).json({ success: false, error: 'Invalid request. Provide ?sync=true&property_id=<id> or ?export_uuid=<uuid>' });
   } catch (err) {
     console.error('iCal handler error:', err);
     return res.status(500).json({ success: false, error: err && err.message ? err.message : String(err) });
+=======
+    return res.status(400).json({ error: 'Invalid request parameters.' });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+>>>>>>> 2a1199b (Fix: add logo to top, photo management for welcome section in admin, fix iCal sync JSON error and mobile layout)
   }
 };
 
