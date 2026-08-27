@@ -478,6 +478,9 @@ async function submitBooking() {
   }
 
   try {
+    // Recheck Airbnb and Booking.com before the final database availability
+    // check so a newly imported reservation cannot be double-booked.
+    await syncExternalCalendars(currentProperty.id);
     const isAvailable = await checkAvailability(currentProperty.id, checkIn, checkOut);
     if (!isAvailable) {
       alert('These dates are not available. Please choose different dates.');
@@ -538,6 +541,8 @@ async function checkAvailabilityFromHero() {
 
   document.getElementById('bookingCheckIn').value = checkIn;
   document.getElementById('bookingCheckOut').value = checkOut;
+
+  await initAvailabilityCalendar({ syncExternal: true });
 
   const isAvail = checkRangeAvailability(checkIn, checkOut);
 
@@ -714,14 +719,17 @@ let calendarCurrentYear = new Date().getFullYear();
 let selectedCheckInDate = null;
 let selectedCheckOutDate = null;
 
-async function initAvailabilityCalendar() {
+async function initAvailabilityCalendar({ syncExternal = true } = {}) {
   const container = document.getElementById('availabilityCalendarContainer');
   if (!container) return;
 
   try {
     const propId = currentProperty?.id || '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
-    const dates = await getBlockedDates(propId) || [];
-    const allBookings = await getAllBookings(propId) || [];
+    if (syncExternal) await syncExternalCalendars(propId);
+    const [dates, allBookings] = await Promise.all([
+      getBlockedDates(propId),
+      getAllBookings(propId)
+    ]);
     
     // Expand confirmed bookings into date strings
     const bookingDates = [];
