@@ -60,7 +60,18 @@
         /* Keep the residence image fixed behind every section while the page scrolls. */
         background: var(--sand) url("/pics/toiwo-logo.jpg") center / cover fixed no-repeat;
         background-attachment: fixed;
+        position: relative;
+        isolation: isolate;
         line-height: 1.6;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        background: url("/pics/toiwo-logo.jpg") center / cover no-repeat;
+        transform: translateZ(0);
       }
       body::before {
         content: "";
@@ -820,8 +831,8 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=19"></script>
-    <script src="./main.js?v=19"></script>
+    <script src="./supabase-client.js?v=20"></script>
+    <script src="./main.js?v=20"></script>
     <div id="lightbox" class="lightbox">
       <button type="button" class="lightbox-close" aria-label="Close photo viewer">&times;</button>
       <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#10094; Previous</button>
@@ -922,6 +933,7 @@
 
 </body>
 </html>
+
 
 
 
