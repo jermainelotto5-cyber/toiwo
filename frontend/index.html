@@ -140,7 +140,31 @@
         display: flex;
         align-items: flex-end;
         color: var(--white);
-        background: linear-gradient(120deg, #6b7a54 0%, #a6502c 55%, #c89344 100%);
+        background: linear-gradient(135deg, #323b28 0%, #8c3f20 55%, #59250e 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("/pics/toiwo-logo.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        opacity: 0.32;
+        mix-blend-mode: overlay;
+        filter: contrast(1.15) brightness(1.1);
+        z-index: 1;
+        pointer-events: none;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(20, 24, 17, 0.45) 0%, rgba(20, 24, 17, 0.65) 70%, rgba(20, 24, 17, 0.85) 100%);
+        z-index: 1;
+        pointer-events: none;
       }
       .hero-inner { position: relative; z-index: 2; width: 100%; padding-bottom: 64px; }
       .hero-tag { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 22px; }
