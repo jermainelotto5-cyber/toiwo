@@ -839,7 +839,8 @@
       .lightbox-next { right: 24px; }
       .lightbox-close:hover, .lightbox-nav:hover { background: var(--clay); }
       @media (max-width: 700px) {
-        body { background-size: auto 100vh; background-position: center center; background-attachment: fixed; }
+        /* Keep the image visible on phones: cover the viewport without removing it. */
+        body { background-size: cover; background-position: center center; background-attachment: fixed; }
         .lightbox img { max-width: 82%; max-height: 78%; }
         .lightbox-nav { min-width: 82px; height: 50px; padding: 0 8px; }
         .lightbox-prev { left: 8px; }
