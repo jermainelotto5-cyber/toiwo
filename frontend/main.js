@@ -200,17 +200,17 @@ function renderGallery(photos = []) {
   if (seeAllBtn) {
     if (photoList.length > 4) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See All Photos (${photoList.length}) ▼`;
+      seeAllBtn.textContent = `See More (${photoList.length}) ▼`;
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
         if (!isExpanded) {
           renderGalleryGrid(photoList);
-          seeAllBtn.textContent = 'Show Less Photos ▲';
+          seeAllBtn.textContent = 'See Less ▲';
           isExpanded = true;
         } else {
           renderGalleryGrid(photoList.slice(0, 4));
-          seeAllBtn.textContent = `See All Photos (${photoList.length}) ▼`;
+          seeAllBtn.textContent = `See More (${photoList.length}) ▼`;
           isExpanded = false;
           const galSection = document.getElementById('gallery');
           if (galSection) galSection.scrollIntoView({ behavior: 'smooth' });
