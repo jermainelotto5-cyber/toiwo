@@ -125,14 +125,14 @@
         transition: background 0.35s ease, padding 0.35s ease;
       }
       header .wrap { display: flex; align-items: center; justify-content: space-between; }
-      .logo { font-family: "Fraunces", serif; font-size: 20px; color: var(--white); }
+      .logo { font-family: "Fraunces", serif; font-size: 22px; color: var(--white); font-weight: 600; text-decoration: none; }
       .logo span { color: var(--gold); }
       nav { display: flex; align-items: center; gap: 28px; }
       nav a { font-size: 14.5px; font-weight: 600; color: rgba(255, 253, 249, 0.86); }
       header.scrolled { background: rgba(246, 241, 231, 0.95); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); padding: 14px 0; }
-      header.scrolled .logo-text { color: var(--ink); }
-      header.scrolled .logo-text span { color: var(--clay); }
-      header.scrolled .logo-img { border-color: rgba(166,80,44,0.5); }
+      header.scrolled .logo { color: var(--ink); }
+      
+      
       header.scrolled nav a { color: var(--ink-soft); }
       .nav-toggle { display: none; }
       .hero {
@@ -509,10 +509,7 @@
   <body>
     <header id="siteHeader">
       <div class="wrap">
-        <a href="#top" class="logo">
-          <img src="/pics/toiwo-logo.jpg" alt="Toiwo Residence" class="logo-img" />
-          <div class="logo-text">Toiwo<span>Residence</span></div>
-        </a>
+        <a href="#top" class="logo">Toiwo <span>Residence</span></a>
         <nav id="siteNav">
           <a href="#about">About</a>
           <a href="#gallery">Gallery</a>
@@ -768,10 +765,7 @@
       <div class="wrap">
         <div class="foot-grid">
           <div>
-            <div class="foot-logo" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-              <img src="/pics/toiwo-logo.jpg" alt="Toiwo Residence" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(200,147,68,0.5);" />
-              <span>Toiwo <span style="color:var(--gold)">Residence</span></span>
-            </div>
+            <div class="foot-logo">Toiwo <span>Residence</span></div>
             <p id="footerTagline">A private four-bedroom home in Ilboru, Arusha &mdash; calm, spacious, and ready for your stay.</p>
           </div>
           <div>
