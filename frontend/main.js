@@ -155,13 +155,144 @@ async function initializeApp() {
     }
     // Only render gallery from DB if no CMS gallery was set
     if (!siteContent.gallery || siteContent.gallery.length === 0) {
-      renderGallery(currentAdminSettings?.gallery_images || []);
+      const dbImgs = currentAdminSettings?.gallery_images || [];
+      renderGallery(dbImgs.length > 0 ? dbImgs : [
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+]);
     }
     updateContactDetails();
   } catch (error) {
     console.error('Error initializing app:', error);
     if (!siteContent.gallery || siteContent.gallery.length === 0) {
-      renderGallery([]);
+      renderGallery([
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+]);
     }
     updateTotalPrice();
   }
