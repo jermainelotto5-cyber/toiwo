@@ -33,20 +33,21 @@
     </script>
     <style>
       :root {
-        --sand: #f6f1e7;
-        --sand-deep: #ede4d3;
-        --ink: #23291f;
-        --ink-soft: #4b5142;
-        --clay: #a6502c;
-        --clay-deep: #8a3f22;
-        --olive: #5c6b47;
-        --olive-deep: #414b33;
-        --gold: #c89344;
-        --line: rgba(35, 41, 31, 0.12);
+        --sand: #f5eedf;
+        --sand-deep: #e8dcc8;
+        --ink: #121710;
+        --ink-soft: #2e3527;
+        --clay: #9c3f1e;
+        --clay-deep: #7a2e12;
+        --olive: #4a5936;
+        --olive-deep: #333f22;
+        --gold: #a86e18;
+        --line: rgba(18, 23, 16, 0.20);
         --white: #fffdf9;
         --radius: 22px;
         --radius-sm: 14px;
-        --shadow: 0 20px 50px -25px rgba(35, 41, 31, 0.35);
+        --shadow: 0 20px 50px -25px rgba(18, 23, 16, 0.42);
+        --error: #c0392b;
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body {
@@ -62,7 +63,8 @@
         background-attachment: fixed;
         position: relative;
         isolation: isolate;
-        line-height: 1.6;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
       }
       body::after {
         content: "";
@@ -158,12 +160,12 @@
         transition: background 0.35s ease, padding 0.35s ease;
       }
       header .wrap { display: flex; align-items: center; justify-content: space-between; }
-      .logo { font-family: "Fraunces", serif; font-size: 22px; color: var(--white); font-weight: 600; text-decoration: none; }
+      .logo { font-family: "Fraunces", serif; font-size: clamp(30px, 4.2vw, 54px); color: var(--white); font-weight: 600; text-decoration: none; line-height: 1; }
       .logo span { color: var(--gold); }
       nav { display: flex; align-items: center; gap: 28px; }
       nav a { font-size: 14.5px; font-weight: 600; color: rgba(255, 253, 249, 0.86); }
       header.scrolled { background: rgba(246, 241, 231, 0.95); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); padding: 14px 0; }
-      header.scrolled .logo { color: var(--ink); }
+      header.scrolled .logo { color: var(--ink); font-size: clamp(26px, 3.5vw, 46px); }
       
       
       header.scrolled nav a { color: var(--ink-soft); }
