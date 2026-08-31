@@ -35,10 +35,10 @@
       :root {
         --sand: #f5eedf;
         --sand-deep: #e8dcc8;
-        --ink: #121710;
-        --ink-soft: #2e3527;
+        --ink: #060805;
+        --ink-soft: #0f140e;
         --clay: #9c3f1e;
-        --clay-deep: #7a2e12;
+        --clay-deep: #7a2200;
         --olive: #4a5936;
         --olive-deep: #333f22;
         --gold: #a86e18;
@@ -113,6 +113,21 @@
         background: var(--clay-deep);
         display: inline-block;
       }
+      
+      /* High contrast text readability for visually impaired users */
+      p, .about p, .about p.lead, .section-head .sub, .amen-item p, .rev-card p, .book-card label {
+        color: #0d120a !important;
+        font-weight: 500;
+      }
+      .eyebrow {
+        color: #7a2200 !important;
+        font-weight: 800 !important;
+      }
+      .eyebrow::before {
+        background: #7a2200 !important;
+        height: 2px !important;
+      }
+
       section { padding: 100px 0; }
       .about { background: rgba(255, 253, 249, 0.56) !important; }
       .gallery { background: rgba(237, 228, 211, 0.5) !important; }
@@ -313,6 +328,16 @@
           background-position: center 25% !important;
           opacity: 0.45 !important;
           mix-blend-mode: normal !important;
+        }
+      }
+
+      
+      @media (max-width: 768px) {
+        body, body::after {
+          background-size: 90% auto !important;
+          background-position: center 35% !important;
+          background-repeat: no-repeat !important;
+          background-attachment: fixed !important;
         }
       }
 
