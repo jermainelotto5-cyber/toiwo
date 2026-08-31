@@ -115,9 +115,32 @@
       }
       
       /* High contrast text readability for visually impaired users */
-      p, .about p, .about p.lead, .section-head .sub, .amen-item p, .rev-card p, .book-card label {
+      /* Light background sections: Deep high-contrast black text */
+      .about p, .about p.lead, .section-head .sub, .amen-item p, .rev-card p, .gallery-note, .contact p {
         color: #0d120a !important;
         font-weight: 500;
+      }
+      /* Dark background sections & dark photo overlays: Bright crisp white text with text shadow */
+      .hero, .hero p, .hero-lede, .hero-tag,
+      .booking, .booking p, .booking h2,
+      .details, .details p, .details h2 {
+        color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
+      }
+      .hero-lede, .hero p, .booking p, .booking-grid p {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95) !important;
+      }
+      /* Inside white cards: High-contrast dark text without shadow */
+      .book-card, .book-card p, .book-card label, .contact-form, .admin-panel {
+        color: #11140e !important;
+        text-shadow: none !important;
+      }
+      .book-card label, .contact-form label {
+        color: #2e3527 !important;
+        font-weight: 700 !important;
+        text-shadow: none !important;
       }
       .eyebrow {
         color: #7a2200 !important;
