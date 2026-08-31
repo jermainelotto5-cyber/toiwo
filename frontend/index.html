@@ -160,7 +160,7 @@
         transition: background 0.35s ease, padding 0.35s ease;
       }
       header .wrap { display: flex; align-items: center; justify-content: space-between; }
-      .logo { font-family: "Fraunces", serif; font-size: clamp(30px, 4.2vw, 54px); color: var(--white); font-weight: 600; text-decoration: none; line-height: 1; }
+      .logo { font-family: "Fraunces", serif; font-size: clamp(24px, 5vw, 48px); color: var(--white); font-weight: 600; text-decoration: none; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 50px); }
       .logo span { color: var(--gold); }
       nav { display: flex; align-items: center; gap: 28px; }
       nav a { font-size: 14.5px; font-weight: 600; color: rgba(255, 253, 249, 0.86); }
@@ -306,6 +306,22 @@
       footer h5 { color: var(--sand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
       .foot-bottom { border-top: 1px solid rgba(246, 241, 231, 0.14); padding-top: 20px; font-size: 13px; color: rgba(246,241,231,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
       .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+      
+      @media (max-width: 768px) {
+        .logo {
+          font-size: clamp(20px, 5.5vw, 28px) !important;
+        }
+        header.scrolled .logo {
+          font-size: clamp(19px, 5vw, 26px) !important;
+        }
+        .hero::before {
+          background-size: contain !important;
+          background-position: center 20% !important;
+          opacity: 0.65 !important;
+          mix-blend-mode: normal !important;
+        }
+      }
+
       @media (max-width: 900px) {
         .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; gap: 36px; }
         .amen-grid { grid-template-columns: repeat(2, 1fr); }
