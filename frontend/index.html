@@ -306,6 +306,16 @@
       footer h5 { color: var(--sand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
       .foot-bottom { border-top: 1px solid rgba(246, 241, 231, 0.14); padding-top: 20px; font-size: 13px; color: rgba(246,241,231,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
       .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+      
+      @media (max-width: 768px) {
+        .hero::before {
+          background-size: contain !important;
+          background-position: center 25% !important;
+          opacity: 0.45 !important;
+          mix-blend-mode: normal !important;
+        }
+      }
+
       @media (max-width: 900px) {
         .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; gap: 36px; }
         .amen-grid { grid-template-columns: repeat(2, 1fr); }
