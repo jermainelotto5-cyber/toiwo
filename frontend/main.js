@@ -516,7 +516,37 @@ function showBookingConfirmation(booking, totalPrice, nights) {
   const bookingForm = document.getElementById('bookingForm');
   const paymentSlot = document.getElementById('paymentSlot');
   if (bookingForm) bookingForm.style.display = 'none';
-  if (paymentSlot) paymentSlot.style.display = 'block';
+  
+  const waPhone = '255718654332';
+  const waText = encodeURIComponent(
+    `Hello Toiwo Residence! I would like to reserve a stay:\n\n` +
+    `👤 Name: ${booking.guest_name}\n` +
+    `✉️ Email: ${booking.guest_email}\n` +
+    `📅 Check-in: ${booking.check_in}\n` +
+    `📅 Check-out: ${booking.check_out}\n` +
+    `👥 Guests: ${booking.num_guests}\n` +
+    `💰 Total: ${totalPrice || booking.total_price}\n` +
+    (booking.special_requests ? `📝 Requests: ${booking.special_requests}\n` : '')
+  );
+  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+  if (paymentSlot) {
+    paymentSlot.style.display = 'block';
+    paymentSlot.innerHTML = `
+      <div style="text-align: center; padding: 24px; background: rgba(166, 80, 44, 0.06); border-radius: 16px; border: 1px solid rgba(166, 80, 44, 0.2);">
+        <h3 style="margin-bottom: 8px; color: var(--ink);">🎉 Reservation Received!</h3>
+        <p style="margin-bottom: 16px; color: var(--ink-soft); font-size: 14.5px;">Your booking request for <strong>${booking.check_in} → ${booking.check_out}</strong> has been created.</p>
+        <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; margin-bottom: 12px; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
+          <span>💬 Connect on WhatsApp (+255 71 865 4332)</span>
+        </a>
+        <p style="font-size: 13px; color: var(--ink-soft); margin-top: 8px;">We will also confirm your booking at <strong>jessicalotto9@gmail.com</strong>.</p>
+      </div>
+    `;
+  }
+
+  try {
+    window.open(waUrl, '_blank');
+  } catch(e) {}
 }
 
 async function checkAvailabilityFromHero() {
@@ -658,9 +688,33 @@ async function submitContactForm(event) {
     if (currentProperty) {
       await createContactMessage(currentProperty.id, name, email, message);
     }
-    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--success);">Message sent! We\'ll reply soon.</span>'; }
+
+    const waPhone = '255718654332';
+    const waText = encodeURIComponent(
+      `Hello Toiwo Residence!\n\n` +
+      `👤 Name: ${name}\n` +
+      `✉️ Email: ${email}\n` +
+      `💬 Message: ${message}`
+    );
+    const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = `
+        <div style="margin-top: 10px; padding: 14px; background: rgba(37, 211, 102, 0.12); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
+          <p style="margin-bottom: 8px; color: var(--ink); font-weight: 600;">✓ Message sent! Opening WhatsApp to connect with host...</p>
+          <a href="${waUrl}" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            💬 Open WhatsApp Message
+          </a>
+        </div>
+      `;
+    }
+
+    try {
+      window.open(waUrl, '_blank');
+    } catch(e) {}
+
     event.target.reset();
-    setTimeout(() => { if (statusEl) { statusEl.style.display = 'none'; statusEl.innerHTML = ''; } }, 5000);
   } catch (error) {
     console.error('Error submitting contact message:', error);
     if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Error sending message. Please try again.</span>'; }
