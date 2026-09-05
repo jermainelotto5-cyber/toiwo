@@ -1090,7 +1090,22 @@ function renderReviewsList(reviewsList) {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : [];
+  let list = [];
+  if (Array.isArray(reviewsList) && reviewsList.length > 0) {
+    list = reviewsList;
+  } else {
+    const cards = Array.from(grid.querySelectorAll('.rev-card'));
+    if (cards.length > 0) {
+      list = cards.map(c => ({
+        quote: c.querySelector('p')?.textContent.replace(/^"|"$/g, '') || '',
+        author: c.querySelector('.who-meta strong')?.textContent || '',
+        trip_type: c.querySelector('.who-meta')?.textContent.split('–')[1]?.trim() || '',
+        initials: c.querySelector('.avatar')?.textContent || '',
+        stars: (c.querySelector('.stars')?.textContent || '★★★★★').length
+      }));
+    }
+  }
+
   if (list.length === 0) return;
 
   function buildCardsHtml(items) {
@@ -1106,24 +1121,24 @@ function renderReviewsList(reviewsList) {
     `).join('');
   }
 
-  // Render initial 3 reviews from user's authentic reviews
+  // Render initial 3 reviews
   grid.innerHTML = buildCardsHtml(list.slice(0, 3));
 
   const seeAllBtn = document.getElementById('seeAllReviewsBtn');
   if (seeAllBtn) {
     if (list.length > 3) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
+      seeAllBtn.textContent = `See More (${list.length}) ▼`;
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
         if (!isExpanded) {
           grid.innerHTML = buildCardsHtml(list);
-          seeAllBtn.textContent = 'Show Less Reviews ▲';
+          seeAllBtn.textContent = 'See Less ▲';
           isExpanded = true;
         } else {
           grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-          seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
+          seeAllBtn.textContent = `See More (${list.length}) ▼`;
           isExpanded = false;
           const reviewsSec = document.getElementById('reviews');
           if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
