@@ -151,6 +151,7 @@ async function initializeApp() {
     if (currentProperty) {
       currentAdminSettings = await getAdminSettings(currentProperty.id);
       renderPropertyData();
+    renderReviewsList();
     await initAvailabilityCalendar();
     }
     // Only render gallery from DB if no CMS gallery was set
