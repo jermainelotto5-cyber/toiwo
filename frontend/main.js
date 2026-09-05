@@ -146,6 +146,7 @@ function setHref(id, value) {
 }
 
 async function initializeApp() {
+  renderReviewsList(instantLocalReviews);
   try {
     currentProperty = await getPropertyByName('Toiwo Residence');
     if (currentProperty) {
@@ -1086,27 +1087,29 @@ function applyModalDates() {
 // REVIEWS TOGGLE FUNCTION (3 COMMENTS INITIAL VIEW)
 // ============================================
 
+
+// ============================================
+// INSTANT REVIEWS DATA (0ms DELAY ON REFRESH)
+// ============================================
+
+const instantLocalReviews = [
+  { author: 'Liselotte', quote: 'Great accommodation. The house met all expectations and gives a homely feeling, we felt very nice here. The communication with Jessica is great, she always responds and thinks proactively. For example, she arranged taxis for us and gave tips to discover Arusha. All in all great start to our vacation!', stars: 5, trip_type: 'Netherlands', initials: 'L' },
+  { author: 'Daniel', quote: "Our stay at Toiwo Residence in Ilboru was absolutely fantastic! We had such a great time that we wanted to share our experience. First off, Jessica, our Airbnb host, was incredible. She was always available, super helpful, and kept everything spotless. The house itself is amazing - clean, tidy, and equipped with everything you could possibly need. And we can't forget about Gerald, the night watchman - he was friendly and reliable, adding an extra layer of security and warmth to our stay. Overall, our time at Toiwo Residence exceeded our expectations, and we can't wait to come back for another visit. It's definitely a great Airbnb experience, and we highly recommend it to anyone looking for a great place to stay in Ilboru. Thanks again for such a wonderful experience!", stars: 5, trip_type: 'Germany', initials: 'D' },
+  { author: 'Paul', quote: 'spacious and peaceful home, great before and after the safari trip, secure on the outside, comfortable inside. kitchen fully equipped, good dinner table for the family, comfortable beds. host Jessica helped arranged the rides from the and to the airport.', stars: 5, trip_type: 'United States', initials: 'P' },
+  { author: 'Athanasia', quote: 'Really nice and comfortable place that can house multiple people. Located at a safe neighborhood. The hostess, Jessica, is very helpful and gave us tips and help with so many different things. It was sufficiently clean, some extra details could have been spotted too.', stars: 5, trip_type: 'Netherlands', initials: 'A' },
+  { author: 'Mara', quote: 'Wonderful house, with very large and fascinating spaces. Clean, nice, with a terrace to see the sky and the surroundings. Very nice people to welcome us. The house has a night guard to keep the security of the place.', stars: 5, trip_type: 'Italy', initials: 'M' },
+  { author: 'Svetlana', quote: "A wonderful house, it's clear that everything was done with love, it's cozy, with attention to detail! Everything is clean and cozy! The hostess was wonderful and treated us with great attention. We arrived before check-in time, and they accommodated us, cleaned up quickly, and checked us in. It was very nice. We had a great time! I recommend it! Thank you very much for the rest.", stars: 5, trip_type: 'Russia', initials: 'S' },
+  { author: 'Catherine', quote: 'Conveniently located, a welcoming host and high level of privacy. The residence is conveniently located close to town which made it easy for us to get around. It offered a high level of privacy and the host, Jessica was exceptionally friendly. We also had the pleasure of enjoying a lovely bonfire experience.', stars: 5, trip_type: 'Kenya', initials: 'C' },
+  { author: 'Karanja', quote: 'Perfect place to unwind and have a you time to reflect !! Will definitely revisit for a long stay!!', stars: 5, trip_type: 'Kenya', initials: 'K' },
+  { author: 'Zayumba', quote: 'Staying at Toiwo Residence was an idyllic retreat with impeccable service and serene surroundings. Very calm, clean and nice customer service', stars: 5, trip_type: 'Tanzania', initials: 'Z' },
+  { author: 'Mohamed', quote: "We had an amazing stay at Jessica's place. Jessica is a wonderful host who is very helpful and responsive. The place is very clean and tidy and matches the photos perfectly. It's a very nice house with all the needed amenities available.", stars: 5, trip_type: 'UAE', initials: 'M' }
+];
+
 function renderReviewsList(reviewsList) {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  let list = [];
-  if (Array.isArray(reviewsList) && reviewsList.length > 0) {
-    list = reviewsList;
-  } else {
-    const cards = Array.from(grid.querySelectorAll('.rev-card'));
-    if (cards.length > 0) {
-      list = cards.map(c => ({
-        quote: c.querySelector('p')?.textContent.replace(/^"|"$/g, '') || '',
-        author: c.querySelector('.who-meta strong')?.textContent || '',
-        trip_type: c.querySelector('.who-meta')?.textContent.split('–')[1]?.trim() || '',
-        initials: c.querySelector('.avatar')?.textContent || '',
-        stars: (c.querySelector('.stars')?.textContent || '★★★★★').length
-      }));
-    }
-  }
-
-  if (list.length === 0) return;
+  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : instantLocalReviews;
 
   function buildCardsHtml(items) {
     return items.map(r => `
@@ -1121,7 +1124,7 @@ function renderReviewsList(reviewsList) {
     `).join('');
   }
 
-  // Render initial 3 reviews
+  // Render initial 3 reviews instantly
   grid.innerHTML = buildCardsHtml(list.slice(0, 3));
 
   const seeAllBtn = document.getElementById('seeAllReviewsBtn');
@@ -1149,3 +1152,4 @@ function renderReviewsList(reviewsList) {
     }
   }
 }
+
