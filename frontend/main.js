@@ -74,8 +74,651 @@ function applySiteContent() {
     }
   }
 
-    // --- REVIEWS ---
-  renderReviewsList(siteContent.reviews);
+  // --- REVIEWS ---
+  if (siteContent.reviews && Array.isArray(siteContent.reviews)) {
+    const grid = document.getElementById('reviewsGrid');
+    if (grid) {
+      grid.innerHTML = siteContent.reviews.map(r => `
+        <div class="rev-card">
+          <div class="stars">${'★'.repeat(r.stars || 5)}</div>
+          <p>"${r.quote}"</p>
+          <div class="who">
+            <div class="avatar">${r.initials || r.author.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+            <div class="who-meta"><strong>${r.author}</strong> – ${r.trip_type}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // --- CONTACT ---
+  const contact = siteContent.contact || {};
+  if (contact.phone) {
+    const phoneEl = document.getElementById('contactPhoneText');
+    if (phoneEl) { phoneEl.textContent = contact.phone; phoneEl.href = `tel:${contact.phone.replace(/\D/g, '')}`; }
+  }
+  if (contact.whatsapp) {
+    const waEl = document.getElementById('contactWhatsAppText');
+    if (waEl) { waEl.textContent = contact.whatsapp; waEl.href = `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`; }
+  }
+  if (contact.email) {
+    const emEl = document.getElementById('contactEmailText');
+    if (emEl) { emEl.textContent = contact.email; emEl.href = `mailto:${contact.email}`; }
+  }
+
+  // --- SOCIAL ---
+  const social = siteContent.social || {};
+  setHref('footerInstagram', social.instagram);
+  setHref('footerFacebook', social.facebook);
+  setHref('footerWhatsApp', social.whatsapp);
+
+  // --- FOOTER ---
+  const footer = siteContent.footer || {};
+  setText('footerTagline', footer.tagline);
+
+  // --- PROPERTY DETAILS ---
+  const prop = siteContent.property || {};
+  if (prop.bedrooms) setText('detailBedrooms', prop.bedrooms);
+  if (prop.beds) setText('detailBeds', prop.beds);
+  if (prop.bathrooms) setText('detailBathrooms', prop.bathrooms);
+  if (prop.max_guests) setText('detailMaxGuests', prop.max_guests);
+  if (prop.price_per_night) {
+    setText('heroPrice', `$${prop.price_per_night}`);
+    window.NIGHTLY_RATE = prop.price_per_night;
+  }
+
+  // --- GALLERY ---
+  if (siteContent.gallery && siteContent.gallery.length > 0) {
+    renderGallery(siteContent.gallery);
+  }
+}
+
+function setText(id, value) {
+  if (!value) return;
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setHref(id, value) {
+  if (!value) return;
+  const el = document.getElementById(id);
+  if (el) el.href = value;
+}
+
+async function initializeApp() {
+  try {
+    currentProperty = await getPropertyByName('Toiwo Residence');
+    if (currentProperty) {
+      currentAdminSettings = await getAdminSettings(currentProperty.id);
+      renderPropertyData();
+    await initAvailabilityCalendar();
+    }
+    // Only render gallery from DB if no CMS gallery was set
+    if (!siteContent.gallery || siteContent.gallery.length === 0) {
+      const dbImgs = currentAdminSettings?.gallery_images || [];
+      renderGallery(dbImgs.length > 0 ? dbImgs : [
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+]);
+    }
+    updateContactDetails();
+  } catch (error) {
+    console.error('Error initializing app:', error);
+    if (!siteContent.gallery || siteContent.gallery.length === 0) {
+      renderGallery([
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+]);
+    }
+    updateTotalPrice();
+  }
+}
+
+// ============================================
+// RENDERING FUNCTIONS
+// ============================================
+
+function renderPropertyData() {
+  if (!currentProperty) return;
+  updateContactDetails();
+}
+
+function renderGallery(photos = []) {
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) return;
+
+  let photoList = [];
+
+  if (Array.isArray(photos) && photos.length > 0) {
+    photoList = photos.map((p, i) => ({
+      src: typeof p === 'string' ? p : (p.url || p.src || ''),
+      label: typeof p === 'string' ? `Photo ${i + 1}` : (p.caption || p.label || `Photo ${i + 1}`)
+    })).filter(p => p.src);
+  }
+
+  const default16Photos = [
+  {
+    "src": "/pics/exterior-day.jpg",
+    "label": "Exterior"
+  },
+  {
+    "src": "/pics/living-room.jpg",
+    "label": "Living Room"
+  },
+  {
+    "src": "/pics/dining-room.jpg",
+    "label": "Dining Room"
+  },
+  {
+    "src": "/pics/night-exterior.jpg",
+    "label": "Night Exterior"
+  },
+  {
+    "src": "/pics/kitchen.jpg",
+    "label": "Kitchen"
+  },
+  {
+    "src": "/pics/bedroom.jpg",
+    "label": "Master Bedroom"
+  },
+  {
+    "src": "/pics/bedroom-2.jpg",
+    "label": "Guest Bedroom 1"
+  },
+  {
+    "src": "/pics/bedroom-3.jpg",
+    "label": "Guest Bedroom 2"
+  },
+  {
+    "src": "/pics/bathroom.jpg",
+    "label": "Main Bathroom"
+  },
+  {
+    "src": "/pics/bathroom-2.jpg",
+    "label": "Ensuite Bathroom"
+  },
+  {
+    "src": "/pics/backyard.jpg",
+    "label": "Private Garden & Backyard"
+  },
+  {
+    "src": "/pics/outdoor-lounge.jpg",
+    "label": "Outdoor Lounge"
+  },
+  {
+    "src": "/pics/study.jpg",
+    "label": "Study & Work Area"
+  },
+  {
+    "src": "/pics/hallway.jpg",
+    "label": "Arched Hallway"
+  },
+  {
+    "src": "/pics/entryway.jpg",
+    "label": "Gated Entryway"
+  },
+  {
+    "src": "/pics/laundry.jpg",
+    "label": "Laundry"
+  }
+];
+  if (photoList.length < 5) {
+    const existingSrcs = new Set(photoList.map(p => p.src));
+    default16Photos.forEach(dp => {
+      if (!existingSrcs.has(dp.src)) photoList.push(dp);
+    });
+  }
+
+  if (photoList.length === 0) {
+    galleryGrid.innerHTML = '<p style="color:var(--ink-soft); padding: 20px;">No gallery photos yet. Add some in the Admin panel.</p>';
+    return;
+  }
+
+  renderGalleryGrid(photoList.slice(0, 4));
+
+  const seeAllBtn = document.getElementById('seeAllGalleryBtn');
+  if (seeAllBtn) {
+    if (photoList.length > 4) {
+      seeAllBtn.style.display = 'inline-flex';
+      seeAllBtn.textContent = `See More ▼`;
+      let isExpanded = false;
+
+      seeAllBtn.onclick = () => {
+        if (!isExpanded) {
+          renderGalleryGrid(photoList);
+          seeAllBtn.textContent = 'See Less ▲';
+          isExpanded = true;
+        } else {
+          renderGalleryGrid(photoList.slice(0, 4));
+          seeAllBtn.textContent = `See More ▼`;
+          isExpanded = false;
+          const galSection = document.getElementById('gallery');
+          if (galSection) galSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+    } else {
+      seeAllBtn.style.display = 'none';
+    }
+  }
+}
+
+function renderGalleryGrid(photos) {
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) return;
+  galleryGrid.innerHTML = photos.map(({ src, label }) => `
+    <div class="gal-item">
+      <img src="${src}" alt="${label}" loading="lazy" />
+      <span>${label}</span>
+    </div>
+  `).join('');
+}
+
+function updateContactDetails() {
+  if (!currentProperty && !currentAdminSettings && !siteContent.contact) return;
+  const contact = siteContent.contact || {};
+  const settings = currentAdminSettings || {};
+  const phone = contact.phone || settings.contact_phone || currentProperty?.host_phone || '+255 718 654 332';
+  const whatsapp = contact.whatsapp || settings.contact_whatsapp || currentProperty?.host_whatsapp || '+255 718 654 332';
+  const email = contact.email || settings.contact_email || currentProperty?.host_email || 'jermainelotto5@gmail.com';
+
+  const phoneEl = document.getElementById('contactPhoneText');
+  const whatsappEl = document.getElementById('contactWhatsAppText');
+  const emailEl = document.getElementById('contactEmailText');
+
+  if (phoneEl) { phoneEl.textContent = phone; phoneEl.href = `tel:${phone.replace(/\D/g, '')}`; }
+  if (whatsappEl) { whatsappEl.textContent = whatsapp; whatsappEl.href = `https://wa.me/${whatsapp.replace(/\D/g, '')}`; }
+  if (emailEl) { emailEl.textContent = email; emailEl.href = `mailto:${email}`; }
+}
+
+// ============================================
+// BOOKING FORM FUNCTIONS
+// ============================================
+
+async function submitBooking() {
+  const checkIn = document.getElementById('bookingCheckIn').value;
+  const checkOut = document.getElementById('bookingCheckOut').value;
+  const guestCount = document.getElementById('bookingGuests').value;
+  const name = document.getElementById('bookingName').value;
+  const email = document.getElementById('bookingEmail').value;
+  const phone = document.getElementById('bookingPhone')?.value || '';
+  const notes = document.getElementById('bookingNotes').value;
+
+  if (!checkIn || !checkOut || !guestCount || !name || !email) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  if (new Date(checkOut) <= new Date(checkIn)) {
+    alert('Check-out date must be after check-in date.');
+    return;
+  }
+
+  try {
+    // Recheck Airbnb and Booking.com before the final database availability
+    // check so a newly imported reservation cannot be double-booked.
+    await syncExternalCalendars(currentProperty.id);
+    const isAvailable = await checkAvailability(currentProperty.id, checkIn, checkOut);
+    if (!isAvailable) {
+      alert('These dates are not available. Please choose different dates.');
+      return;
+    }
+
+    const nights = calculateNights(checkIn, checkOut);
+    const totalPrice = await calculatePriceForDates(checkIn, checkOut);
+
+    const bookingData = {
+      property_id: currentProperty.id,
+      guest_name: name,
+      guest_email: email,
+      guest_phone: phone,
+      check_in: checkIn,
+      check_out: checkOut,
+      num_guests: parseInt(guestCount),
+      special_requests: notes,
+      total_price: totalPrice,
+      status: 'pending',
+      payment_status: 'unpaid'
+    };
+
+    const booking = await createBooking(bookingData);
+    showBookingConfirmation(booking, totalPrice, nights);
+  } catch (error) {
+    console.error('Error submitting booking:', error);
+    alert('Error creating booking. Please try again.');
+  }
+}
+
+function showBookingConfirmation(booking, totalPrice, nights) {
+  const bookingForm = document.getElementById('bookingForm');
+  const paymentSlot = document.getElementById('paymentSlot');
+  if (bookingForm) bookingForm.style.display = 'none';
+  
+  const waPhone = '255718654332';
+  const waText = encodeURIComponent(
+    `Hello Toiwo Residence! I would like to reserve a stay:\n\n` +
+    `👤 Name: ${booking.guest_name}\n` +
+    `✉️ Email: ${booking.guest_email}\n` +
+    `📅 Check-in: ${booking.check_in}\n` +
+    `📅 Check-out: ${booking.check_out}\n` +
+    `👥 Guests: ${booking.num_guests}\n` +
+    `💰 Total: ${totalPrice || booking.total_price}\n` +
+    (booking.special_requests ? `📝 Requests: ${booking.special_requests}\n` : '')
+  );
+  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+  if (paymentSlot) {
+    paymentSlot.style.display = 'block';
+    paymentSlot.innerHTML = `
+      <div style="text-align: center; padding: 24px; background: rgba(166, 80, 44, 0.06); border-radius: 16px; border: 1px solid rgba(166, 80, 44, 0.2);">
+        <h3 style="margin-bottom: 8px; color: var(--ink);">🎉 Reservation Received!</h3>
+        <p style="margin-bottom: 16px; color: var(--ink-soft); font-size: 14.5px;">Your booking request for <strong>${booking.check_in} → ${booking.check_out}</strong> has been created.</p>
+        <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; margin-bottom: 12px; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
+          <span>💬 Connect on WhatsApp (+255 71 865 4332)</span>
+        </a>
+        <p style="font-size: 13px; color: var(--ink-soft); margin-top: 8px;">We will also confirm your booking at <strong>jessicalotto9@gmail.com</strong>.</p>
+      </div>
+    `;
+  }
+
+  try {
+    window.open(waUrl, '_blank');
+  } catch(e) {}
+}
+
+async function checkAvailabilityFromHero() {
+  const checkIn = document.getElementById('heroCheckIn')?.value;
+  const checkOut = document.getElementById('heroCheckOut')?.value;
+  const guests = document.getElementById('heroGuests')?.value;
+
+  if (document.getElementById('bookingGuests') && guests) {
+    document.getElementById('bookingGuests').value = guests;
+  }
+
+  if (!checkIn || !checkOut) {
+    // Open big calendar modal to pick dates
+    openCalendarModal();
+    return;
+  }
+
+  if (new Date(checkOut) <= new Date(checkIn)) {
+    alert('Check-out date must be after check-in date.');
+    return;
+  }
+
+  document.getElementById('bookingCheckIn').value = checkIn;
+  document.getElementById('bookingCheckOut').value = checkOut;
+
+  await initAvailabilityCalendar({ syncExternal: true });
+
+  const isAvail = checkRangeAvailability(checkIn, checkOut);
+
+  if (!isAvail) {
+    // Dates are booked! Pop up Big Calendar Modal
+    openCalendarModal();
+    const sub = document.getElementById('modalSelectedDatesSub');
+    if (sub) sub.innerHTML = '<span style="color:var(--error); font-weight:700;">⚠️ Selected dates (' + checkIn + ' to ' + checkOut + ') are ALREADY BOOKED!</span> See taken dates in red/gray below.';
+  } else {
+    // Available! Scroll to booking form and update total
+    updateTotalPrice();
+    const bookSec = document.getElementById('booking');
+    if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function checkRangeAvailability(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return true;
+  let curr = new Date(checkIn);
+  const end = new Date(checkOut);
+  while (curr < end) {
+    const dateStr = curr.toISOString().split('T')[0];
+    if (allBlockedDateStrings.includes(dateStr)) {
+      return false; // Found a booked date
+    }
+    curr.setDate(curr.getDate() + 1);
+  }
+  return true;
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'bookingCheckIn' || e.target.id === 'bookingCheckOut') updateTotalPrice();
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'bookingCheckIn' || e.target.id === 'bookingCheckOut') updateTotalPrice();
+});
+
+async function calculatePriceForDates(checkIn, checkOut) {
+  if (!currentProperty) return 0;
+  try {
+    const rules = await getPricingRules(currentProperty.id);
+    const basePrice = parseFloat(currentProperty.price_per_night || siteContent.property?.price_per_night || 180);
+    let totalPrice = 0;
+    let current = new Date(checkIn);
+    const end = new Date(checkOut);
+    while (current < end) {
+      const dateStr = current.toISOString().split('T')[0];
+      const rule = rules.find(r => dateStr >= r.start_date && dateStr <= r.end_date);
+      totalPrice += rule ? parseFloat(rule.price_per_night) : basePrice;
+      current.setDate(current.getDate() + 1);
+    }
+    return totalPrice;
+  } catch (error) {
+    const base = parseFloat(siteContent.property?.price_per_night || 180);
+    return calculateNights(checkIn, checkOut) * base;
+  }
+}
+
+function updateTotalPrice() {
+  const checkIn = document.getElementById('bookingCheckIn')?.value;
+  const checkOut = document.getElementById('bookingCheckOut')?.value;
+  const subtotalEl = document.getElementById('subtotalPrice');
+  const totalEl = document.getElementById('totalPrice');
+  const msgEl = document.getElementById('bookingMessage');
+
+  if (!checkIn || !checkOut || new Date(checkOut) <= new Date(checkIn)) {
+    if (subtotalEl) subtotalEl.textContent = '$0';
+    if (totalEl) totalEl.textContent = '$0';
+    if (msgEl) msgEl.style.display = 'none';
+    return;
+  }
+
+  // Check if dates are available
+  const isAvail = checkRangeAvailability(checkIn, checkOut);
+  if (!isAvail) {
+    if (subtotalEl) subtotalEl.textContent = '$0';
+    if (totalEl) totalEl.textContent = '$0';
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.innerHTML = '<span style="color:var(--error); font-weight:700;">⚠️ Selected dates are ALREADY BOOKED!</span> Opening calendar...';
+    }
+    openCalendarModal();
+    return;
+  } else {
+    if (msgEl) msgEl.style.display = 'none';
+  }
+
+  const rate = siteContent.property?.price_per_night || NIGHTLY_RATE;
+  const nights = calculateNights(checkIn, checkOut);
+  const total = nights * rate;
+  const formatted = formatCurrency(total);
+  if (subtotalEl) subtotalEl.textContent = formatted;
+  if (totalEl) totalEl.textContent = formatted;
+}
+
+// ============================================
+// CONTACT FORM FUNCTIONS
+// ============================================
+
+async function submitContactForm(event) {
+  event.preventDefault();
+  const name = document.getElementById('contactName').value;
+  const email = document.getElementById('contactEmailInput').value;
+  const message = document.getElementById('contactMessage').value;
+  const statusEl = document.getElementById('contactFormMessage');
+
+  if (!name || !email || !message) {
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Please fill in all fields.</span>'; }
+    return;
+  }
+
+  try {
+    if (currentProperty) {
+      await createContactMessage(currentProperty.id, name, email, message);
+    }
+
+    const waPhone = '255718654332';
+    const waText = encodeURIComponent(
+      `Hello Toiwo Residence!\n\n` +
+      `👤 Name: ${name}\n` +
+      `✉️ Email: ${email}\n` +
+      `💬 Message: ${message}`
+    );
+    const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = `
+        <div style="margin-top: 10px; padding: 14px; background: rgba(37, 211, 102, 0.12); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
+          <p style="margin-bottom: 8px; color: var(--ink); font-weight: 600;">✓ Message sent! Opening WhatsApp to connect with host...</p>
+          <a href="${waUrl}" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            💬 Open WhatsApp Message
+          </a>
+        </div>
+      `;
+    }
+
+    try {
+      window.open(waUrl, '_blank');
+    } catch(e) {}
+
+    event.target.reset();
+  } catch (error) {
+    console.error('Error submitting contact message:', error);
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Error sending message. Please try again.</span>'; }
+  }
 }
 
 // ============================================
@@ -435,66 +1078,4 @@ function applyModalDates() {
   updateTotalPrice();
   const bookSec = document.getElementById('booking');
   if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
-}
-
-
-// ============================================
-// REVIEWS TOGGLE FUNCTION (3 COMMENTS INITIAL VIEW)
-// ============================================
-
-const defaultReviewsList = [
-  { author: "Jemma M.", quote: "An oasis of calm — thoughtful touches and genuine hospitality.", stars: 5, trip_type: "Family stay", initials: "JM" },
-  { author: "Rashid K.", quote: "Perfect base for our safari — comfortable, quiet, and beautifully hosted.", stars: 5, trip_type: "Explorer", initials: "RK" },
-  { author: "Alice L.", quote: "The garden and the morning light were unforgettable — we'll be back.", stars: 5, trip_type: "Couple", initials: "AL" },
-  { author: "David & Sarah P.", quote: "Extremely spacious and clean villa! The courtyard breakfast was lovely.", stars: 5, trip_type: "Safari Group", initials: "DS" },
-  { author: "Elena R.", quote: "Quiet neighborhood in Ilboru, fast Wi-Fi for work, and incredible hosting.", stars: 5, trip_type: "Business Traveler", initials: "ER" },
-  { author: "Michael T.", quote: "Felt like home from day one. Highly recommended for any trip to Arusha!", stars: 5, trip_type: "Vacation", initials: "MT" }
-];
-
-function renderReviewsList(reviewsList) {
-  const grid = document.getElementById('reviewsGrid');
-  if (!grid) return;
-
-  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : defaultReviewsList;
-
-  function buildCardsHtml(items) {
-    return items.map(r => `
-      <div class="rev-card">
-        <div class="stars">${'★'.repeat(r.stars || 5)}</div>
-        <p>"${r.quote || r.text || ''}"</p>
-        <div class="who">
-          <div class="avatar">${r.initials || (r.author ? r.author.split(' ').map(w => w[0]).join('').substring(0,2) : 'GR')}</div>
-          <div class="who-meta"><strong>${r.author || 'Guest'}</strong> – ${r.trip_type || 'Stay'}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Render initial 3 reviews
-  grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-
-  const seeAllBtn = document.getElementById('seeAllReviewsBtn');
-  if (seeAllBtn) {
-    if (list.length > 3) {
-      seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
-      let isExpanded = false;
-
-      seeAllBtn.onclick = () => {
-        if (!isExpanded) {
-          grid.innerHTML = buildCardsHtml(list);
-          seeAllBtn.textContent = 'Show Less Reviews ▲';
-          isExpanded = true;
-        } else {
-          grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-          seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
-          isExpanded = false;
-          const reviewsSec = document.getElementById('reviews');
-          if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-    } else {
-      seeAllBtn.style.display = 'none';
-    }
-  }
 }
