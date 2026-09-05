@@ -1089,17 +1089,23 @@ function applyModalDates() {
 const defaultReviewsList = [
   { author: "Jemma M.", quote: "An oasis of calm — thoughtful touches and genuine hospitality.", stars: 5, trip_type: "Family stay", initials: "JM" },
   { author: "Rashid K.", quote: "Perfect base for our safari — comfortable, quiet, and beautifully hosted.", stars: 5, trip_type: "Explorer", initials: "RK" },
-  { author: "Alice L.", quote: "The garden and the morning light were unforgettable — we'll be back.", stars: 5, trip_type: "Couple", initials: "AL" },
-  { author: "David & Sarah P.", quote: "Extremely spacious and clean villa! The courtyard breakfast was lovely.", stars: 5, trip_type: "Safari Group", initials: "DS" },
-  { author: "Elena R.", quote: "Quiet neighborhood in Ilboru, fast Wi-Fi for work, and incredible hosting.", stars: 5, trip_type: "Business Traveler", initials: "ER" },
-  { author: "Michael T.", quote: "Felt like home from day one. Highly recommended for any trip to Arusha!", stars: 5, trip_type: "Vacation", initials: "MT" }
+  { author: "Alice L.", quote: "The garden and the morning light were unforgettable — we'll be back.", stars: 5, trip_type: "Couple", initials: "AL" }
 ];
 
 function renderReviewsList(reviewsList) {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : defaultReviewsList;
+  // Combine user's original 3 reviews with all database reviews
+  let fullList = [...defaultReviewsList];
+  if (Array.isArray(reviewsList) && reviewsList.length > 0) {
+    reviewsList.forEach(r => {
+      const exists = fullList.some(item => item.author === r.author || item.quote === r.quote);
+      if (!exists) {
+        fullList.push(r);
+      }
+    });
+  }
 
   function buildCardsHtml(items) {
     return items.map(r => `
@@ -1107,31 +1113,31 @@ function renderReviewsList(reviewsList) {
         <div class="stars">${'★'.repeat(r.stars || 5)}</div>
         <p>"${r.quote || r.text || ''}"</p>
         <div class="who">
-          <div class="avatar">${r.initials || (r.author ? r.author.split(' ').map(w => w[0]).join('').substring(0,2) : 'GR')}</div>
+          <div class="avatar">${r.initials || (r.author ? r.author.trim().split(' ').map(w => w[0]).join('').substring(0,2) : 'GR')}</div>
           <div class="who-meta"><strong>${r.author || 'Guest'}</strong> – ${r.trip_type || 'Stay'}</div>
         </div>
       </div>
     `).join('');
   }
 
-  // Render initial 3 reviews
-  grid.innerHTML = buildCardsHtml(list.slice(0, 3));
+  // Render initial 3 reviews (Jemma M., Rashid K., Alice L.)
+  grid.innerHTML = buildCardsHtml(fullList.slice(0, 3));
 
   const seeAllBtn = document.getElementById('seeAllReviewsBtn');
   if (seeAllBtn) {
-    if (list.length > 3) {
+    if (fullList.length > 3) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See More (${list.length}) ▼`;
+      seeAllBtn.textContent = `See All Reviews (${fullList.length}) ▼`;
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
         if (!isExpanded) {
-          grid.innerHTML = buildCardsHtml(list);
-          seeAllBtn.textContent = 'See Less ▲';
+          grid.innerHTML = buildCardsHtml(fullList);
+          seeAllBtn.textContent = 'Show Less Reviews ▲';
           isExpanded = true;
         } else {
-          grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-          seeAllBtn.textContent = `See More (${list.length}) ▼`;
+          grid.innerHTML = buildCardsHtml(fullList.slice(0, 3));
+          seeAllBtn.textContent = `See All Reviews (${fullList.length}) ▼`;
           isExpanded = false;
           const reviewsSec = document.getElementById('reviews');
           if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
