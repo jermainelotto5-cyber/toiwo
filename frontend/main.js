@@ -1086,26 +1086,12 @@ function applyModalDates() {
 // REVIEWS TOGGLE FUNCTION (3 COMMENTS INITIAL VIEW)
 // ============================================
 
-const defaultReviewsList = [
-  { author: "Jemma M.", quote: "An oasis of calm — thoughtful touches and genuine hospitality.", stars: 5, trip_type: "Family stay", initials: "JM" },
-  { author: "Rashid K.", quote: "Perfect base for our safari — comfortable, quiet, and beautifully hosted.", stars: 5, trip_type: "Explorer", initials: "RK" },
-  { author: "Alice L.", quote: "The garden and the morning light were unforgettable — we'll be back.", stars: 5, trip_type: "Couple", initials: "AL" }
-];
-
 function renderReviewsList(reviewsList) {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  // Combine user's original 3 reviews with all database reviews
-  let fullList = [...defaultReviewsList];
-  if (Array.isArray(reviewsList) && reviewsList.length > 0) {
-    reviewsList.forEach(r => {
-      const exists = fullList.some(item => item.author === r.author || item.quote === r.quote);
-      if (!exists) {
-        fullList.push(r);
-      }
-    });
-  }
+  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : [];
+  if (list.length === 0) return;
 
   function buildCardsHtml(items) {
     return items.map(r => `
@@ -1120,24 +1106,24 @@ function renderReviewsList(reviewsList) {
     `).join('');
   }
 
-  // Render initial 3 reviews (Jemma M., Rashid K., Alice L.)
-  grid.innerHTML = buildCardsHtml(fullList.slice(0, 3));
+  // Render initial 3 reviews from user's authentic reviews
+  grid.innerHTML = buildCardsHtml(list.slice(0, 3));
 
   const seeAllBtn = document.getElementById('seeAllReviewsBtn');
   if (seeAllBtn) {
-    if (fullList.length > 3) {
+    if (list.length > 3) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See All Reviews (${fullList.length}) ▼`;
+      seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
         if (!isExpanded) {
-          grid.innerHTML = buildCardsHtml(fullList);
+          grid.innerHTML = buildCardsHtml(list);
           seeAllBtn.textContent = 'Show Less Reviews ▲';
           isExpanded = true;
         } else {
-          grid.innerHTML = buildCardsHtml(fullList.slice(0, 3));
-          seeAllBtn.textContent = `See All Reviews (${fullList.length}) ▼`;
+          grid.innerHTML = buildCardsHtml(list.slice(0, 3));
+          seeAllBtn.textContent = `See All Reviews (${list.length}) ▼`;
           isExpanded = false;
           const reviewsSec = document.getElementById('reviews');
           if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
