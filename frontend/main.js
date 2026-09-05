@@ -1128,7 +1128,7 @@ function renderReviewsList(reviewsList) {
   if (seeAllBtn) {
     if (list.length > 3) {
       seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = `See More (${list.length}) ▼`;
+      seeAllBtn.textContent = 'See More ▼';
       let isExpanded = false;
 
       seeAllBtn.onclick = () => {
@@ -1138,7 +1138,7 @@ function renderReviewsList(reviewsList) {
           isExpanded = true;
         } else {
           grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-          seeAllBtn.textContent = `See More (${list.length}) ▼`;
+          seeAllBtn.textContent = 'See More ▼';
           isExpanded = false;
           const reviewsSec = document.getElementById('reviews');
           if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
