@@ -858,8 +858,79 @@
             <button class="btn btn-primary" id="bookingSubmit" style="width: 100%; margin-bottom: 12px;">Reserve Your Stay</button>
             <p id="bookingMessage" style="margin: 12px 0; color: var(--clay); font-size: 14px; display: none;"></p>
             <p class="book-note">Your stay is reserved once you complete payment.</p>
-            <div id="paymentSlot" class="payment-slot">
-              <div class="placeholder" style="text-align: center; padding: 32px 16px; color: var(--ink-soft); font-size: 14px;">Payment gateway will appear here after confirming your reservation.</div>
+            <div id="paymentSlot" class="payment-slot" style="margin-top: 24px;">
+              <div id="paymentGatewayBox" style="background: var(--white); border: 1.5px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);">
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--line);">
+                  <span style="background: rgba(37, 211, 102, 0.15); color: #166534; font-weight: 700; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; display: inline-block; margin-bottom: 6px;">
+                    💳 Payment Gateway Integration (Live Demo)
+                  </span>
+                  <h3 style="margin: 4px 0; color: var(--ink); font-size: 20px;">Select Payment Method</h3>
+                  <p style="color: var(--ink-soft); font-size: 13.5px; margin: 0;">M-Pesa, Tigo Pesa, Visa, Mastercard, or WhatsApp</p>
+                </div>
+
+                <!-- Payment Tabs -->
+                <div style="display: flex; gap: 6px; margin-bottom: 18px; background: var(--sand); padding: 4px; border-radius: 12px;">
+                  <button type="button" id="payTabMpesa" onclick="switchPaymentTab('mpesa')" style="flex:1; padding: 10px 4px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: var(--white); color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+                    📱 M-Pesa / Tigo
+                  </button>
+                  <button type="button" id="payTabCard" onclick="switchPaymentTab('card')" style="flex:1; padding: 10px 4px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
+                    💳 Credit Card
+                  </button>
+                  <button type="button" id="payTabWa" onclick="switchPaymentTab('whatsapp')" style="flex:1; padding: 10px 4px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
+                    💬 WhatsApp
+                  </button>
+                </div>
+
+                <!-- Tab 1: M-Pesa -->
+                <div id="paymentViewMpesa">
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px;">M-Pesa / Tigo Pesa Phone Number</label>
+                    <input type="tel" id="payMpesaPhone" value="0718654332" placeholder="e.g. 0718 654 332" style="width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; box-sizing: border-box;" />
+                  </div>
+                  <button type="button" onclick="processMpesaPayment(180)" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; background: #16a34a; border-color: #16a34a; color: #fff; font-size: 15px; border-radius: 999px;">
+                    Pay $180 via M-Pesa (Selcom Push)
+                  </button>
+                </div>
+
+                <!-- Tab 2: Credit Card -->
+                <div id="paymentViewCard" style="display: none;">
+                  <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Cardholder Name</label>
+                    <input type="text" id="payCardName" placeholder="Name on card" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+                  </div>
+                  <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Card Number</label>
+                    <input type="text" id="payCardNumber" placeholder="4000 1234 5678 9010" maxlength="19" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+                  </div>
+                  <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+                    <div style="flex: 1;">
+                      <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Expiry Date</label>
+                      <input type="text" placeholder="MM/YY" maxlength="5" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+                    </div>
+                    <div style="flex: 1;">
+                      <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">CVV Security</label>
+                      <input type="password" placeholder="123" maxlength="4" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+                    </div>
+                  </div>
+                  <button type="button" onclick="processCardPayment(180)" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; font-size: 15px; border-radius: 999px;">
+                    Pay $180 Now (Visa / Mastercard)
+                  </button>
+                </div>
+
+                <!-- Tab 3: WhatsApp -->
+                <div id="paymentViewWhatsapp" style="display: none; text-align: center;">
+                  <p style="color: var(--ink-soft); font-size: 14px; margin-bottom: 16px;">Connect directly with the host to confirm booking and arrange payment via WhatsApp.</p>
+                  <a href="https://wa.me/255718654332?text=Hello%20Toiwo%20Residence!%20I%20would%20like%20to%20inquire%20about%20booking%20payment." target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
+                    <span>💬 Direct Host WhatsApp (+255 71 865 4332)</span>
+                  </a>
+                </div>
+
+                <!-- Live Payment Status Box -->
+                <div id="paymentStatusDisplay" style="margin-top: 18px; display: none;"></div>
+
+              </div>
             </div>
           </div>
         </div>
