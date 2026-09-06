@@ -675,51 +675,67 @@ function updateTotalPrice() {
 // ============================================
 
 async function submitContactForm(event) {
-  event.preventDefault();
-  const name = document.getElementById('contactName').value;
-  const email = document.getElementById('contactEmailInput').value;
-  const message = document.getElementById('contactMessage').value;
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+
+  const nameEl = document.getElementById('contactName');
+  const emailEl = document.getElementById('contactEmailInput');
+  const messageEl = document.getElementById('contactMessage');
   const statusEl = document.getElementById('contactFormMessage');
 
+  const name = nameEl ? nameEl.value.trim() : '';
+  const email = emailEl ? emailEl.value.trim() : '';
+  const message = messageEl ? messageEl.value.trim() : '';
+
   if (!name || !email || !message) {
-    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Please fill in all fields.</span>'; }
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = '<span style="color:var(--error); font-weight:700;">Please fill in your name, email, and message.</span>';
+    }
     return;
   }
 
+  const waPhone = '255718654332';
+  const waText = encodeURIComponent(
+    `Hello Toiwo Residence!\n\n` +
+    `👤 Name: ${name}\n` +
+    `✉️ Email: ${email}\n` +
+    `💬 Message: ${message}`
+  );
+  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = `
+      <div style="margin-top: 10px; padding: 14px; background: rgba(37, 211, 102, 0.15); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
+        <p style="margin-bottom: 8px; color: #0d120a; font-weight: 700;">✓ Message Sent! Connecting to WhatsApp...</p>
+        <a href="${waUrl}" id="waDirectBtn" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: #ffffff !important; text-decoration: none; padding: 12px 20px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; font-size: 15px;">
+          💬 Open WhatsApp (+255 71 865 4332)
+        </a>
+      </div>
+    `;
+  }
+
+  // Save to database asynchronously
   try {
-    if (currentProperty) {
-      await createContactMessage(currentProperty.id, name, email, message);
-    }
+    const propId = currentProperty?.id || '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
+    createContactMessage(propId, name, email, message).catch(console.error);
+  } catch (err) {
+    console.error('Contact message error:', err);
+  }
 
-    const waPhone = '255718654332';
-    const waText = encodeURIComponent(
-      `Hello Toiwo Residence!\n\n` +
-      `👤 Name: ${name}\n` +
-      `✉️ Email: ${email}\n` +
-      `💬 Message: ${message}`
-    );
-    const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
-
-    if (statusEl) {
-      statusEl.style.display = 'block';
-      statusEl.innerHTML = `
-        <div style="margin-top: 10px; padding: 14px; background: rgba(37, 211, 102, 0.12); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
-          <p style="margin-bottom: 8px; color: var(--ink); font-weight: 600;">✓ Message sent! Opening WhatsApp to connect with host...</p>
-          <a href="${waUrl}" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-            💬 Open WhatsApp Message
-          </a>
-        </div>
-      `;
-    }
-
+  // Open WhatsApp on mobile seamlessly
+  setTimeout(() => {
     try {
+      window.location.href = waUrl;
+    } catch (e) {
       window.open(waUrl, '_blank');
-    } catch(e) {}
+    }
+  }, 250);
 
+  if (event && event.target && typeof event.target.reset === 'function') {
     event.target.reset();
-  } catch (error) {
-    console.error('Error submitting contact message:', error);
-    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Error sending message. Please try again.</span>'; }
   }
 }
 

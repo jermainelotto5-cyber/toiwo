@@ -166,6 +166,18 @@
         color: var(--gold) !important;
       }
 
+      
+      /* Fix mobile contact form input sizing & prevent iOS Safari auto-zoom */
+      .contact-form input, .contact-form textarea, .book-card input, .book-card select, .book-card textarea {
+        font-size: 16px !important;
+        -webkit-appearance: none;
+        touch-action: manipulation;
+      }
+      .contact-form {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
       section { padding: 100px 0; }
       .about { background: rgba(255, 253, 249, 0.56) !important; }
       .gallery { background: rgba(237, 228, 211, 0.5) !important; }
