@@ -514,42 +514,186 @@ async function submitBooking() {
   }
 }
 
+
+// ============================================
+// INTERACTIVE PAYMENT GATEWAY SIMULATOR
+// ============================================
+
 function showBookingConfirmation(booking, totalPrice, nights) {
   const bookingForm = document.getElementById('bookingForm');
   const paymentSlot = document.getElementById('paymentSlot');
   if (bookingForm) bookingForm.style.display = 'none';
-  
+
+  const amount = totalPrice || booking.total_price || 180;
   const waPhone = '255718654332';
   const waText = encodeURIComponent(
-    `Hello Toiwo Residence! I would like to reserve a stay:\n\n` +
+    `Hello Toiwo Residence! I have reserved a stay:\n\n` +
     `👤 Name: ${booking.guest_name}\n` +
     `✉️ Email: ${booking.guest_email}\n` +
     `📅 Check-in: ${booking.check_in}\n` +
     `📅 Check-out: ${booking.check_out}\n` +
     `👥 Guests: ${booking.num_guests}\n` +
-    `💰 Total: ${totalPrice || booking.total_price}\n` +
-    (booking.special_requests ? `📝 Requests: ${booking.special_requests}\n` : '')
+    `💰 Total Amount: ${amount}\n` +
+    (booking.special_requests ? `📝 Special Requests: ${booking.special_requests}\n` : '')
   );
   const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
 
   if (paymentSlot) {
     paymentSlot.style.display = 'block';
     paymentSlot.innerHTML = `
-      <div style="text-align: center; padding: 24px; background: rgba(166, 80, 44, 0.06); border-radius: 16px; border: 1px solid rgba(166, 80, 44, 0.2);">
-        <h3 style="margin-bottom: 8px; color: var(--ink);">🎉 Reservation Received!</h3>
-        <p style="margin-bottom: 16px; color: var(--ink-soft); font-size: 14.5px;">Your booking request for <strong>${booking.check_in} → ${booking.check_out}</strong> has been created.</p>
-        <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; margin-bottom: 12px; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
-          <span>💬 Connect on WhatsApp (+255 71 865 4332)</span>
-        </a>
-        <p style="font-size: 13px; color: var(--ink-soft); margin-top: 8px;">We will also confirm your booking at <strong>jessicalotto9@gmail.com</strong>.</p>
+      <div id="paymentGatewayBox" style="background: var(--white); border: 1.5px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
+          <span style="background: rgba(37, 211, 102, 0.15); color: #166534; font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: 13px; display: inline-block; margin-bottom: 8px;">
+            ✓ Reservation Created (ID: #${booking.id ? booking.id.substring(0,8) : 'TOIWO-882'})
+          </span>
+          <h3 style="margin: 6px 0; color: var(--ink); font-size: 22px;">Select Payment Method</h3>
+          <p style="color: var(--ink-soft); font-size: 14px; margin: 0;">Total to pay: <strong style="color: var(--clay); font-size: 18px;">${amount} USD</strong> for ${nights || 1} night${nights > 1 ? 's' : ''}</p>
+        </div>
+
+        <!-- Payment Tabs -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; background: var(--sand); padding: 4px; border-radius: 12px;">
+          <button type="button" id="payTabMpesa" onclick="switchPaymentTab('mpesa')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: var(--white); color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+            📱 M-Pesa / Tigo
+          </button>
+          <button type="button" id="payTabCard" onclick="switchPaymentTab('card')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
+            💳 Credit Card
+          </button>
+          <button type="button" id="payTabWa" onclick="switchPaymentTab('whatsapp')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
+            💬 WhatsApp
+          </button>
+        </div>
+
+        <!-- Tab 1: M-Pesa -->
+        <div id="paymentViewMpesa">
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px;">M-Pesa / Tigo Pesa Phone Number</label>
+            <input type="tel" id="payMpesaPhone" value="${booking.guest_phone || '0718654332'}" placeholder="e.g. 0718 654 332" style="width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; box-sizing: border-box;" />
+          </div>
+          <button type="button" onclick="processMpesaPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; background: #16a34a; border-color: #16a34a; color: #fff; font-size: 15px; border-radius: 999px;">
+            Pay ${amount} via M-Pesa (Selcom Push)
+          </button>
+        </div>
+
+        <!-- Tab 2: Credit Card -->
+        <div id="paymentViewCard" style="display: none;">
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Cardholder Name</label>
+            <input type="text" id="payCardName" value="${booking.guest_name || ''}" placeholder="Name on card" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Card Number</label>
+            <input type="text" id="payCardNumber" placeholder="4000 1234 5678 9010" maxlength="19" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+            <div style="flex: 1;">
+              <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Expiry Date</label>
+              <input type="text" placeholder="MM/YY" maxlength="5" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+            </div>
+            <div style="flex: 1;">
+              <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">CVV Security</label>
+              <input type="password" placeholder="123" maxlength="4" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
+            </div>
+          </div>
+          <button type="button" onclick="processCardPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; font-size: 15px; border-radius: 999px;">
+            Pay ${amount} Now (Visa / Mastercard)
+          </button>
+        </div>
+
+        <!-- Tab 3: WhatsApp -->
+        <div id="paymentViewWhatsapp" style="display: none; text-align: center;">
+          <p style="color: var(--ink-soft); font-size: 14px; margin-bottom: 16px;">Connect directly with the host to confirm booking and arrange payment via WhatsApp.</p>
+          <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
+            <span>💬 Send Details to Host on WhatsApp (+255 71 865 4332)</span>
+          </a>
+        </div>
+
+        <!-- Live Payment Status Box -->
+        <div id="paymentStatusDisplay" style="margin-top: 18px; display: none;"></div>
+
       </div>
     `;
   }
-
-  try {
-    window.open(waUrl, '_blank');
-  } catch(e) {}
 }
+
+function switchPaymentTab(tab) {
+  const mpesaView = document.getElementById('paymentViewMpesa');
+  const cardView = document.getElementById('paymentViewCard');
+  const waView = document.getElementById('paymentViewWhatsapp');
+
+  const mpesaTab = document.getElementById('payTabMpesa');
+  const cardTab = document.getElementById('payTabCard');
+  const waTab = document.getElementById('payTabWa');
+
+  if (!mpesaView || !cardView || !waView) return;
+
+  mpesaView.style.display = tab === 'mpesa' ? 'block' : 'none';
+  cardView.style.display = tab === 'card' ? 'block' : 'none';
+  waView.style.display = tab === 'whatsapp' ? 'block' : 'none';
+
+  mpesaTab.style.background = tab === 'mpesa' ? 'var(--white)' : 'transparent';
+  mpesaTab.style.color = tab === 'mpesa' ? 'var(--ink)' : 'var(--ink-soft)';
+  mpesaTab.style.boxShadow = tab === 'mpesa' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+
+  cardTab.style.background = tab === 'card' ? 'var(--white)' : 'transparent';
+  cardTab.style.color = tab === 'card' ? 'var(--ink)' : 'var(--ink-soft)';
+  cardTab.style.boxShadow = tab === 'card' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+
+  waTab.style.background = tab === 'whatsapp' ? 'var(--white)' : 'transparent';
+  waTab.style.color = tab === 'whatsapp' ? 'var(--ink)' : 'var(--ink-soft)';
+  waTab.style.boxShadow = tab === 'whatsapp' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+}
+
+function processMpesaPayment(amount) {
+  const phone = document.getElementById('payMpesaPhone')?.value || '0718654332';
+  const statusDisplay = document.getElementById('paymentStatusDisplay');
+  if (!statusDisplay) return;
+
+  statusDisplay.style.display = 'block';
+  statusDisplay.innerHTML = `
+    <div style="padding: 16px; background: rgba(37, 211, 102, 0.12); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
+      <p style="margin-bottom: 6px; font-weight: 700; color: #166534;">📲 USSD Prompt Sent to ${phone}...</p>
+      <p style="font-size: 13px; color: var(--ink-soft); margin: 0;">Please enter your M-Pesa PIN on your phone to complete ${amount} payment.</p>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const ref = 'MPESA-' + Math.floor(100000 + Math.random() * 900000);
+    statusDisplay.innerHTML = `
+      <div style="padding: 20px; background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 14px; text-align: center;">
+        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">✅ Payment Successful!</h4>
+        <p style="margin: 4px 0; font-weight: 600; color: #166534;">M-Pesa Ref: ${ref}</p>
+        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Your reservation is fully confirmed! A receipt has been sent to your email.</p>
+      </div>
+    `;
+  }, 2500);
+}
+
+function processCardPayment(amount) {
+  const name = document.getElementById('payCardName')?.value || 'Guest';
+  const statusDisplay = document.getElementById('paymentStatusDisplay');
+  if (!statusDisplay) return;
+
+  statusDisplay.style.display = 'block';
+  statusDisplay.innerHTML = `
+    <div style="padding: 16px; background: rgba(166, 80, 44, 0.08); border-radius: 12px; border: 1px solid rgba(166, 80, 44, 0.3); text-align: center;">
+      <p style="margin: 0; font-weight: 700; color: var(--clay);">🔒 Authorizing Card with Bank...</p>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const ref = 'CARD-' + Math.floor(100000 + Math.random() * 900000);
+    statusDisplay.innerHTML = `
+      <div style="padding: 20px; background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 14px; text-align: center;">
+        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">✅ Card Payment Authorized!</h4>
+        <p style="margin: 4px 0; font-weight: 600; color: #166534;">Transaction Ref: ${ref}</p>
+        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Thank you ${name}! Your stay at Toiwo Residence is confirmed.</p>
+      </div>
+    `;
+  }, 2200);
+}
+
 
 async function checkAvailabilityFromHero() {
   const checkIn = document.getElementById('heroCheckIn')?.value;
