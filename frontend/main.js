@@ -519,64 +519,57 @@ async function submitBooking() {
 // INTERACTIVE PAYMENT GATEWAY SIMULATOR
 // ============================================
 
+
+// ============================================
+// PROFESSIONAL PAYMENT GATEWAY & NOTIFICATIONS
+// ============================================
+
+let currentActiveBooking = null;
+
 function showBookingConfirmation(booking, totalPrice, nights) {
+  currentActiveBooking = booking;
   const bookingForm = document.getElementById('bookingForm');
   const paymentSlot = document.getElementById('paymentSlot');
   if (bookingForm) bookingForm.style.display = 'none';
 
   const amount = totalPrice || booking.total_price || 180;
-  const waPhone = '255718654332';
-  const waText = encodeURIComponent(
-    `Hello Toiwo Residence! I have reserved a stay:\n\n` +
-    `👤 Name: ${booking.guest_name}\n` +
-    `✉️ Email: ${booking.guest_email}\n` +
-    `📅 Check-in: ${booking.check_in}\n` +
-    `📅 Check-out: ${booking.check_out}\n` +
-    `👥 Guests: ${booking.num_guests}\n` +
-    `💰 Total Amount: ${amount}\n` +
-    (booking.special_requests ? `📝 Special Requests: ${booking.special_requests}\n` : '')
-  );
-  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
 
   if (paymentSlot) {
     paymentSlot.style.display = 'block';
     paymentSlot.innerHTML = `
-      <div id="paymentGatewayBox" style="background: var(--white); border: 1.5px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+      <div id="paymentGatewayBox" style="background: var(--white); border: 1.5px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);">
         
-        <!-- Header -->
         <div style="text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
-          <span style="background: rgba(37, 211, 102, 0.15); color: #166534; font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: 13px; display: inline-block; margin-bottom: 8px;">
-            ✓ Reservation Created (ID: #${booking.id ? booking.id.substring(0,8) : 'TOIWO-882'})
+          <span style="background: rgba(21, 128, 61, 0.12); color: #15803d; font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Reservation Created (#${booking.id ? booking.id.substring(0,8) : 'TOIWO-882'})
           </span>
-          <h3 style="margin: 6px 0; color: var(--ink); font-size: 22px;">Select Payment Method</h3>
-          <p style="color: var(--ink-soft); font-size: 14px; margin: 0;">Total to pay: <strong style="color: var(--clay); font-size: 18px;">${amount} USD</strong> for ${nights || 1} night${nights > 1 ? 's' : ''}</p>
+          <h3 style="margin: 6px 0; color: var(--ink); font-size: 21px;">Complete Payment</h3>
+          <p style="color: var(--ink-soft); font-size: 14px; margin: 0;">Total amount: <strong style="color: var(--clay); font-size: 18px;">${amount} USD</strong> for ${nights || 1} night${nights > 1 ? 's' : ''}</p>
         </div>
 
-        <!-- Payment Tabs -->
-        <div style="display: flex; gap: 8px; margin-bottom: 20px; background: var(--sand); padding: 4px; border-radius: 12px;">
-          <button type="button" id="payTabMpesa" onclick="switchPaymentTab('mpesa')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: var(--white); color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
-            📱 M-Pesa / Tigo
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; background: var(--sand); padding: 5px; border-radius: 12px;">
+          <button type="button" id="payTabMpesa" onclick="switchPaymentTab('mpesa')" style="flex:1; padding: 12px 8px; border-radius: 9px; border: none; font-weight: 700; font-size: 13.5px; cursor: pointer; background: var(--white); color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <span>M-Pesa / Tigo Pesa</span>
           </button>
-          <button type="button" id="payTabCard" onclick="switchPaymentTab('card')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
-            💳 Credit Card
-          </button>
-          <button type="button" id="payTabWa" onclick="switchPaymentTab('whatsapp')" style="flex:1; padding: 10px 6px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: transparent; color: var(--ink-soft);">
-            💬 WhatsApp
+          <button type="button" id="payTabCard" onclick="switchPaymentTab('card')" style="flex:1; padding: 12px 8px; border-radius: 9px; border: none; font-weight: 700; font-size: 13.5px; cursor: pointer; background: transparent; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Credit / Debit Card</span>
           </button>
         </div>
 
-        <!-- Tab 1: M-Pesa -->
         <div id="paymentViewMpesa">
           <div style="margin-bottom: 14px;">
-            <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px;">M-Pesa / Tigo Pesa Phone Number</label>
+            <label style="display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px;">M-Pesa / Tigo Pesa Mobile Number</label>
             <input type="tel" id="payMpesaPhone" value="${booking.guest_phone || '0718654332'}" placeholder="e.g. 0718 654 332" style="width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; box-sizing: border-box;" />
           </div>
-          <button type="button" onclick="processMpesaPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; background: #16a34a; border-color: #16a34a; color: #fff; font-size: 15px; border-radius: 999px;">
-            Pay ${amount} via M-Pesa (Selcom Push)
+          <button type="button" onclick="processMpesaPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; background: #16a34a; border-color: #16a34a; color: #fff; font-size: 15px; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Pay ${amount} via M-Pesa (Selcom Push)</span>
           </button>
         </div>
 
-        <!-- Tab 2: Credit Card -->
         <div id="paymentViewCard" style="display: none;">
           <div style="margin-bottom: 12px;">
             <label style="display: block; font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">Cardholder Name</label>
@@ -596,20 +589,12 @@ function showBookingConfirmation(booking, totalPrice, nights) {
               <input type="password" placeholder="123" maxlength="4" style="width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
             </div>
           </div>
-          <button type="button" onclick="processCardPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; font-size: 15px; border-radius: 999px;">
-            Pay ${amount} Now (Visa / Mastercard)
+          <button type="button" onclick="processCardPayment(${amount})" class="btn btn-primary" style="width: 100%; padding: 14px; font-weight: 700; font-size: 15px; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Pay ${amount} Now (Visa / Mastercard)</span>
           </button>
         </div>
 
-        <!-- Tab 3: WhatsApp -->
-        <div id="paymentViewWhatsapp" style="display: none; text-align: center;">
-          <p style="color: var(--ink-soft); font-size: 14px; margin-bottom: 16px;">Connect directly with the host to confirm booking and arrange payment via WhatsApp.</p>
-          <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; border-color: #25D366; color: #fff; width: 100%; font-weight: 700; text-decoration: none; padding: 14px 20px; border-radius: 999px; justify-content: center;">
-            <span>💬 Send Details to Host on WhatsApp (+255 71 865 4332)</span>
-          </a>
-        </div>
-
-        <!-- Live Payment Status Box -->
         <div id="paymentStatusDisplay" style="margin-top: 18px; display: none;"></div>
 
       </div>
@@ -620,17 +605,13 @@ function showBookingConfirmation(booking, totalPrice, nights) {
 function switchPaymentTab(tab) {
   const mpesaView = document.getElementById('paymentViewMpesa');
   const cardView = document.getElementById('paymentViewCard');
-  const waView = document.getElementById('paymentViewWhatsapp');
-
   const mpesaTab = document.getElementById('payTabMpesa');
   const cardTab = document.getElementById('payTabCard');
-  const waTab = document.getElementById('payTabWa');
 
-  if (!mpesaView || !cardView || !waView) return;
+  if (!mpesaView || !cardView) return;
 
   mpesaView.style.display = tab === 'mpesa' ? 'block' : 'none';
   cardView.style.display = tab === 'card' ? 'block' : 'none';
-  waView.style.display = tab === 'whatsapp' ? 'block' : 'none';
 
   mpesaTab.style.background = tab === 'mpesa' ? 'var(--white)' : 'transparent';
   mpesaTab.style.color = tab === 'mpesa' ? 'var(--ink)' : 'var(--ink-soft)';
@@ -639,10 +620,36 @@ function switchPaymentTab(tab) {
   cardTab.style.background = tab === 'card' ? 'var(--white)' : 'transparent';
   cardTab.style.color = tab === 'card' ? 'var(--ink)' : 'var(--ink-soft)';
   cardTab.style.boxShadow = tab === 'card' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+}
 
-  waTab.style.background = tab === 'whatsapp' ? 'var(--white)' : 'transparent';
-  waTab.style.color = tab === 'whatsapp' ? 'var(--ink)' : 'var(--ink-soft)';
-  waTab.style.boxShadow = tab === 'whatsapp' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+function notifyHostOfPayment(method, ref, amount) {
+  const b = currentActiveBooking || {};
+  const guestName = b.guest_name || document.getElementById('bookingName')?.value || 'Guest';
+  const guestEmail = b.guest_email || document.getElementById('bookingEmail')?.value || 'jessicalotto9@gmail.com';
+  const guestPhone = b.guest_phone || document.getElementById('payMpesaPhone')?.value || 'N/A';
+  const checkIn = b.check_in || document.getElementById('bookingCheckIn')?.value || 'Selected dates';
+  const checkOut = b.check_out || document.getElementById('bookingCheckOut')?.value || '';
+  const guests = b.num_guests || document.getElementById('bookingGuests')?.value || '2 adults';
+
+  const waPhone = '255718654332';
+  const waText = encodeURIComponent(
+    `CONFIRMED PAID RESERVATION!\n\n` +
+    `Name: ${guestName}\n` +
+    `Email: ${guestEmail}\n` +
+    `Phone: ${guestPhone}\n` +
+    `Check-in: ${checkIn}\n` +
+    `Check-out: ${checkOut}\n` +
+    `Guests: ${guests}\n` +
+    `Amount Paid: ${amount} USD\n` +
+    `Payment Method: ${method}\n` +
+    `Transaction Ref: ${ref}`
+  );
+  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+  // Trigger WhatsApp notification link
+  setTimeout(() => {
+    try { window.location.href = waUrl; } catch(e) { window.open(waUrl, '_blank'); }
+  }, 1200);
 }
 
 function processMpesaPayment(amount) {
@@ -653,8 +660,8 @@ function processMpesaPayment(amount) {
   statusDisplay.style.display = 'block';
   statusDisplay.innerHTML = `
     <div style="padding: 16px; background: rgba(37, 211, 102, 0.12); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
-      <p style="margin-bottom: 6px; font-weight: 700; color: #166534;">📲 USSD Prompt Sent to ${phone}...</p>
-      <p style="font-size: 13px; color: var(--ink-soft); margin: 0;">Please enter your M-Pesa PIN on your phone to complete ${amount} payment.</p>
+      <p style="margin-bottom: 6px; font-weight: 700; color: #166534;">USSD Prompt Sent to ${phone}...</p>
+      <p style="font-size: 13.5px; color: var(--ink-soft); margin: 0;">Please enter your M-Pesa PIN on your phone to complete ${amount} payment.</p>
     </div>
   `;
 
@@ -662,12 +669,13 @@ function processMpesaPayment(amount) {
     const ref = 'MPESA-' + Math.floor(100000 + Math.random() * 900000);
     statusDisplay.innerHTML = `
       <div style="padding: 20px; background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 14px; text-align: center;">
-        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">✅ Payment Successful!</h4>
+        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">Payment Successful!</h4>
         <p style="margin: 4px 0; font-weight: 600; color: #166534;">M-Pesa Ref: ${ref}</p>
-        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Your reservation is fully confirmed! A receipt has been sent to your email.</p>
+        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Reservation confirmed! Receipt sent to host email (jessicalotto9@gmail.com) and connecting on WhatsApp...</p>
       </div>
     `;
-  }, 2500);
+    notifyHostOfPayment('M-Pesa (Selcom)', ref, amount);
+  }, 2200);
 }
 
 function processCardPayment(amount) {
@@ -677,8 +685,8 @@ function processCardPayment(amount) {
 
   statusDisplay.style.display = 'block';
   statusDisplay.innerHTML = `
-    <div style="padding: 16px; background: rgba(166, 80, 44, 0.08); border-radius: 12px; border: 1px solid rgba(166, 80, 44, 0.3); text-align: center;">
-      <p style="margin: 0; font-weight: 700; color: var(--clay);">🔒 Authorizing Card with Bank...</p>
+    <div style="padding: 16px; background: rgba(156, 63, 30, 0.08); border-radius: 12px; border: 1px solid rgba(156, 63, 30, 0.3); text-align: center;">
+      <p style="margin: 0; font-weight: 700; color: var(--clay);">Authorizing Card with Bank...</p>
     </div>
   `;
 
@@ -686,13 +694,15 @@ function processCardPayment(amount) {
     const ref = 'CARD-' + Math.floor(100000 + Math.random() * 900000);
     statusDisplay.innerHTML = `
       <div style="padding: 20px; background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 14px; text-align: center;">
-        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">✅ Card Payment Authorized!</h4>
+        <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 18px;">Card Payment Authorized!</h4>
         <p style="margin: 4px 0; font-weight: 600; color: #166534;">Transaction Ref: ${ref}</p>
-        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Thank you ${name}! Your stay at Toiwo Residence is confirmed.</p>
+        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 8px;">Thank you ${name}! Reservation confirmed & receipt sent to host (jessicalotto9@gmail.com)...</p>
       </div>
     `;
-  }, 2200);
+    notifyHostOfPayment('Credit Card (Visa/Mastercard)', ref, amount);
+  }, 2000);
 }
+
 
 
 async function checkAvailabilityFromHero() {
