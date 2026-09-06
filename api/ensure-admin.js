@@ -1,6 +1,6 @@
 const SUPABASE_URL = 'https://kzpdoxmooddkujtntvlf.supabase.co';
 const SETUP_KEY = process.env.ADMIN_SETUP_KEY || 'toiwo-setup-2026';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jermainelotto5@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jessicalotto9@gmail.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me-now';
 
 module.exports = async (req, res) => {

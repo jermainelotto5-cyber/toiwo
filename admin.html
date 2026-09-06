@@ -15,7 +15,7 @@
       // If Supabase client isn't available (proxy down or keys missing), allow a local fallback
       if (!window.supabaseClient && !window.supabase) {
         console.warn('Supabase client not available — using local fallback for admin sign-in.');
-        const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
+        const FALLBACK_ADMIN_EMAIL = 'jessicalotto9@gmail.com';
         const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
         if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
           return { session: { access_token: 'local-fallback-token' }, user: { email: FALLBACK_ADMIN_EMAIL } };
@@ -31,7 +31,7 @@
       return data;
     } catch (error) {
       console.error('Error signing in:', error);
-      const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
+      const FALLBACK_ADMIN_EMAIL = 'jessicalotto9@gmail.com';
       const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
       if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
         console.warn('Falling back to local admin sign-in for', email);
@@ -460,7 +460,7 @@
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="loginEmail" value="jermainelotto5@gmail.com" placeholder="admin@example.com" required />
+          <input type="email" id="loginEmail" value="jessicalotto9@gmail.com" placeholder="admin@example.com" required />
         </div>
         <div class="form-group">
           <label>Password</label>
@@ -838,7 +838,7 @@
             </div>
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" id="cmsContactEmail" placeholder="jermainelotto5@gmail.com" />
+              <input type="email" id="cmsContactEmail" placeholder="jessicalotto9@gmail.com" />
             </div>
           </div>
           <div class="form-row">
@@ -1031,7 +1031,7 @@
         // If Supabase client isn't available (proxy down or keys missing), allow a local fallback
         if (!window.supabaseClient && !window.supabase) {
           console.warn('Supabase client not available — using local fallback for admin sign-in.');
-          const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
+          const FALLBACK_ADMIN_EMAIL = 'jessicalotto9@gmail.com';
           const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
           if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
             return { session: { access_token: 'local-fallback-token' }, user: { email: FALLBACK_ADMIN_EMAIL } };
@@ -1048,7 +1048,7 @@
       } catch (error) {
         console.error('Error signing in:', error);
         // If server sign-in failed but credentials match the fallback, allow local sign-in
-        const FALLBACK_ADMIN_EMAIL = 'jermainelotto5@gmail.com';
+        const FALLBACK_ADMIN_EMAIL = 'jessicalotto9@gmail.com';
         const FALLBACK_ADMIN_PASSWORD = 'jermy1234';
         if (email === FALLBACK_ADMIN_EMAIL && password === FALLBACK_ADMIN_PASSWORD) {
           console.warn('Falling back to local admin sign-in for', email);

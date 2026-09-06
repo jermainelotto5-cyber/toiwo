@@ -93,6 +93,7 @@ function applySiteContent() {
 
   // --- CONTACT ---
   const contact = siteContent.contact || {};
+  contact.email = 'jessicalotto9@gmail.com';
   if (contact.phone) {
     const phoneEl = document.getElementById('contactPhoneText');
     if (phoneEl) { phoneEl.textContent = contact.phone; phoneEl.href = `tel:${contact.phone.replace(/\D/g, '')}`; }
@@ -445,7 +446,7 @@ function updateContactDetails() {
   const settings = currentAdminSettings || {};
   const phone = contact.phone || settings.contact_phone || currentProperty?.host_phone || '+255 718 654 332';
   const whatsapp = contact.whatsapp || settings.contact_whatsapp || currentProperty?.host_whatsapp || '+255 718 654 332';
-  const email = contact.email || settings.contact_email || currentProperty?.host_email || 'jermainelotto5@gmail.com';
+  const email = contact.email || settings.contact_email || currentProperty?.host_email || 'jessicalotto9@gmail.com';
 
   const phoneEl = document.getElementById('contactPhoneText');
   const whatsappEl = document.getElementById('contactWhatsAppText');
