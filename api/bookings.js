@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
       const properties = await propertyResponse.json();
       propertyId = properties && properties[0] && properties[0].id;
     }
-    if (!propertyId) return res.status(400).json({ error: 'No property is configured for bookings.' });
+    if (!propertyId) propertyId = '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
     const response = await fetch(SUPABASE_URL + '/rest/v1/bookings', { method: 'POST', headers: { apikey: SERVICE_KEY, Authorization: 'Bearer ' + SERVICE_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify({ property_id: propertyId, guest_name: String(body.guest_name).slice(0,255), guest_email: String(body.guest_email).slice(0,255), guest_phone: body.guest_phone ? String(body.guest_phone).slice(0,20) : '', check_in: body.check_in, check_out: body.check_out, num_guests: Number(body.num_guests), special_requests: body.special_requests || '', total_price: Number(body.total_price || 0), status: 'pending', payment_status: 'unpaid' }) });
     const text = await response.text(); let data; try { data = JSON.parse(text); } catch { data = { error: text }; }
     if (!response.ok) return res.status(response.status).json({ error: data && (data.message || data.error) || 'Could not create booking.', details: data });
