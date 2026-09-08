@@ -93,7 +93,6 @@ function applySiteContent() {
 
   // --- CONTACT ---
   const contact = siteContent.contact || {};
-  contact.email = 'jessicalotto9@gmail.com';
   if (contact.phone) {
     const phoneEl = document.getElementById('contactPhoneText');
     if (phoneEl) { phoneEl.textContent = contact.phone; phoneEl.href = `tel:${contact.phone.replace(/\D/g, '')}`; }
@@ -147,13 +146,11 @@ function setHref(id, value) {
 }
 
 async function initializeApp() {
-  renderReviewsList(instantLocalReviews);
   try {
     currentProperty = await getPropertyByName('Toiwo Residence');
     if (currentProperty) {
       currentAdminSettings = await getAdminSettings(currentProperty.id);
       renderPropertyData();
-    renderReviewsList();
     await initAvailabilityCalendar();
     }
     // Only render gallery from DB if no CMS gallery was set
@@ -446,7 +443,7 @@ function updateContactDetails() {
   const settings = currentAdminSettings || {};
   const phone = contact.phone || settings.contact_phone || currentProperty?.host_phone || '+255 718 654 332';
   const whatsapp = contact.whatsapp || settings.contact_whatsapp || currentProperty?.host_whatsapp || '+255 718 654 332';
-  const email = contact.email || settings.contact_email || currentProperty?.host_email || 'jessicalotto9@gmail.com';
+  const email = contact.email || settings.contact_email || currentProperty?.host_email || 'jermainelotto5@gmail.com';
 
   const phoneEl = document.getElementById('contactPhoneText');
   const whatsappEl = document.getElementById('contactWhatsAppText');
@@ -468,6 +465,7 @@ async function submitBooking() {
   const name = document.getElementById('bookingName').value;
   const email = document.getElementById('bookingEmail').value;
   const phone = document.getElementById('bookingPhone')?.value || '';
+  const countryCode = document.getElementById('bookingCountryCode')?.value || '+255';
   const notes = document.getElementById('bookingNotes').value;
 
   if (!checkIn || !checkOut || !guestCount || !name || !email) {
@@ -497,7 +495,7 @@ async function submitBooking() {
       property_id: currentProperty.id,
       guest_name: name,
       guest_email: email,
-      guest_phone: phone,
+      guest_phone: phone ? `${countryCode} ${phone}` : '',
       check_in: checkIn,
       check_out: checkOut,
       num_guests: parseInt(guestCount),
@@ -515,139 +513,54 @@ async function submitBooking() {
   }
 }
 
-
-// ============================================
-// PAYMENT INFO & AUTO-FORWARDING
-// ============================================
-
-let currentActiveBooking = null;
-
 function showBookingConfirmation(booking, totalPrice, nights) {
-  currentActiveBooking = booking;
-  const bookingForm = document.getElementById('bookingForm');
   const paymentSlot = document.getElementById('paymentSlot');
-  if (bookingForm) bookingForm.style.display = 'none';
-
-  const amount = totalPrice || booking.total_price || 180;
-  const nightCount = nights || 1;
+  const name = document.getElementById('bookingName')?.value || 'Guest';
+  const email = document.getElementById('bookingEmail')?.value || '';
+  const phone = document.getElementById('bookingPhone')?.value || '';
+  const countryCode = document.getElementById('bookingCountryCode')?.value || '+255';
+  const checkIn = document.getElementById('bookingCheckIn')?.value || '';
+  const checkOut = document.getElementById('bookingCheckOut')?.value || '';
+  const guests = document.getElementById('bookingGuests')?.value || '';
+  const notes = document.getElementById('bookingNotes')?.value || '';
+  const bookingId = booking?.id ? `\nReference: ${booking.id}` : '';
+  const details = [
+    'Toiwo Residence booking request',
+    `Guest: ${name}`,
+    `Email: ${email}`,
+    `Phone/WhatsApp: ${phone ? countryCode + ' ' + phone : 'Not provided'}`,
+    `Check-in: ${checkIn}`,
+    `Check-out: ${checkOut}`,
+    `Guests: ${guests}`,
+    `Total: $${Number(totalPrice || 0).toFixed(2)} (${nights} night${nights === 1 ? '' : 's'})`,
+    `Notes: ${notes || 'None'}`,
+    bookingId.trim()
+  ].filter(Boolean).join('\n');
+  const whatsappUrl = `https://wa.me/255718654332?text=${encodeURIComponent(details)}`;
+  const emailUrl = `mailto:jessicalotto9@gmail.com?subject=${encodeURIComponent('Toiwo Residence booking request')}&body=${encodeURIComponent(details)}`;
 
   if (paymentSlot) {
-    paymentSlot.style.display = 'block';
     paymentSlot.innerHTML = `
-      <div style="background: var(--white); border: 1.5px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);">
-
-        <div style="text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
-          <span style="background: rgba(21, 128, 61, 0.12); color: #15803d; font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Reservation Created (#${booking.id ? booking.id.substring(0,8) : 'TOIWO'})
-          </span>
-          <h3 style="margin: 6px 0; color: var(--ink); font-size: 21px;">Complete Your Payment</h3>
-          <p style="color: var(--ink-soft); font-size: 14px; margin: 0;">Total: <strong style="color: var(--clay); font-size: 18px;">\$${amount} USD</strong> for ${nightCount} night${nightCount > 1 ? 's' : ''}</p>
+      <div class="payment-confirmation">
+        <strong>Reservation received — no payment is required now.</strong>
+        <p>Your stay for <b>${nights} night${nights === 1 ? '' : 's'}</b> (${checkIn} to ${checkOut}) has been reserved as a pending booking. Jessica will confirm it with you.</p>
+        <p>To pay, use one of these options:</p>
+        <div class="payment-option"><b>Tigo Pesa</b><br />0718 654 332<br /><span>Jessica Lotto Mollel</span></div>
+        <div class="payment-option"><b>Bank transfer</b><br />Diamond Trust Bank<br />Account: 5237474001<br /><span>Jessica Lotto Mollel</span></div>
+        <p class="payment-proof">After payment, send the receipt and your booking name to WhatsApp or email for verification. Your booking is not marked paid until the receipt is verified.</p>
+        <div class="payment-actions">
+          <a class="btn btn-primary" href="${whatsappUrl}" target="_blank" rel="noopener">Send receipt on WhatsApp</a>
+          <a class="btn btn-outline" href="${emailUrl}">Send receipt by email</a>
         </div>
-
-        <div style="background: var(--sand); border-radius: 14px; padding: 18px; margin-bottom: 14px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(21, 128, 61, 0.12); display: flex; align-items: center; justify-content: center; color: #15803d;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-            </div>
-            <div>
-              <strong style="font-size: 15px; color: var(--ink);">M-Pesa / Tigo Pesa</strong>
-              <p style="margin: 0; font-size: 12.5px; color: var(--ink-soft);">Send payment to the number below</p>
-            </div>
-          </div>
-          <div style="background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center;">
-            <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--ink-soft); display: block; margin-bottom: 4px;">Phone Number</span>
-            <span style="font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: 1px;">0718 654 332</span>
-            <p style="margin: 6px 0 0; font-size: 12.5px; color: var(--ink-soft);">Name: <strong>Jessica Lotto Mollel</strong></p>
-          </div>
-        </div>
-
-        <div style="background: var(--sand); border-radius: 14px; padding: 18px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(156, 63, 30, 0.1); display: flex; align-items: center; justify-content: center; color: var(--clay);">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18"></path><path d="M3 10h18"></path><path d="M5 6l7-3 7 3"></path><path d="M4 10v11"></path><path d="M20 10v11"></path><path d="M8 14v4"></path><path d="M12 14v4"></path><path d="M16 14v4"></path></svg>
-            </div>
-            <div>
-              <strong style="font-size: 15px; color: var(--ink);">Bank Transfer</strong>
-              <p style="margin: 0; font-size: 12.5px; color: var(--ink-soft);">Diamond Trust Bank (DTB)</p>
-            </div>
-          </div>
-          <div style="background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center;">
-            <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--ink-soft); display: block; margin-bottom: 4px;">Account Number</span>
-            <span style="font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: 2px;">5237474001</span>
-            <p style="margin: 6px 0 0; font-size: 12.5px; color: var(--ink-soft);">Account Name: <strong>Jessica Lotto Mollel</strong></p>
-            <p style="margin: 3px 0 0; font-size: 12.5px; color: var(--ink-soft);">Bank: <strong>Diamond Trust Bank</strong></p>
-          </div>
-        </div>
-
-        <a href="https://wa.me/255718654332?text=${encodeURIComponent(
-          'Hello Toiwo Residence! I have made my payment of $' + amount + ' USD for ' + nightCount + ' night(s).\\n\\n' +
-          'Booking Ref: #' + (booking.id ? booking.id.substring(0,8) : 'TOIWO') + '\\n' +
-          'Name: ' + (booking.guest_name || '') + '\\n' +
-          'Check-in: ' + (booking.check_in || '') + '\\n' +
-          'Check-out: ' + (booking.check_out || '') + '\\n\\n' +
-          'Please confirm my reservation.'
-        )}" target="_blank" rel="noopener" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: #25D366; border-color: #25D366; color: #fff; font-weight: 700; font-size: 15px; border-radius: 999px; text-decoration: none; box-sizing: border-box;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.84 9.84 0 0 0 12.04 2z"/></svg>
-          <span>Confirm Payment via WhatsApp</span>
-        </a>
-
-        <p style="text-align: center; margin: 12px 0 0; font-size: 13px; color: var(--ink-soft);">
-          After making your payment, tap the button above to confirm with the host.
-        </p>
-      </div>
-    `;
+      </div>`;
+    paymentSlot.style.display = 'block';
   }
 
-  // Auto-forward booking to WhatsApp and email
-  autoForwardBooking(booking, amount, nightCount);
+  // Open both contact channels when the browser permits pop-ups. The visible
+  // buttons above remain available if the browser blocks automatic windows.
+  window.open(whatsappUrl, '_blank', 'noopener');
+  window.open(emailUrl, '_blank');
 }
-
-function autoForwardBooking(booking, amount, nights) {
-  const guestName = booking.guest_name || 'Guest';
-  const guestEmail = booking.guest_email || '';
-  const guestPhone = booking.guest_phone || 'N/A';
-  const checkIn = booking.check_in || '';
-  const checkOut = booking.check_out || '';
-  const guests = booking.num_guests || '';
-  const notes = booking.special_requests || '';
-  const refId = booking.id ? booking.id.substring(0,8) : 'TOIWO';
-
-  const bookingText =
-    'NEW RESERVATION - Toiwo Residence\n\n' +
-    'Booking Ref: #' + refId + '\n' +
-    'Guest: ' + guestName + '\n' +
-    'Email: ' + guestEmail + '\n' +
-    'Phone: ' + guestPhone + '\n' +
-    'Check-in: ' + checkIn + '\n' +
-    'Check-out: ' + checkOut + '\n' +
-    'Guests: ' + guests + '\n' +
-    'Nights: ' + nights + '\n' +
-    'Total: $' + amount + ' USD\n' +
-    (notes ? 'Special Requests: ' + notes + '\n' : '') +
-    '\nStatus: Awaiting Payment';
-
-  // 1. Send WhatsApp notification to host
-  const waUrl = 'https://wa.me/255718654332?text=' + encodeURIComponent(bookingText);
-  setTimeout(function() {
-    try { window.open(waUrl, '_blank'); } catch(e) { /* silent */ }
-  }, 800);
-
-  // 2. Send email notification to host
-  const emailSubject = encodeURIComponent('New Booking: ' + guestName + ' | ' + checkIn + ' - ' + checkOut + ' | #' + refId);
-  const emailBody = encodeURIComponent(bookingText);
-  const mailtoUrl = 'mailto:jessicalotto9@gmail.com?subject=' + emailSubject + '&body=' + emailBody;
-  setTimeout(function() {
-    try {
-      var a = document.createElement('a');
-      a.href = mailtoUrl;
-      a.target = '_blank';
-      a.click();
-    } catch(e) { /* silent */ }
-  }, 2000);
-}
-
-
 
 async function checkAvailabilityFromHero() {
   const checkIn = document.getElementById('heroCheckIn')?.value;
@@ -773,67 +686,27 @@ function updateTotalPrice() {
 // ============================================
 
 async function submitContactForm(event) {
-  if (event && typeof event.preventDefault === 'function') {
-    event.preventDefault();
-  }
-
-  const nameEl = document.getElementById('contactName');
-  const emailEl = document.getElementById('contactEmailInput');
-  const messageEl = document.getElementById('contactMessage');
+  event.preventDefault();
+  const name = document.getElementById('contactName').value;
+  const email = document.getElementById('contactEmailInput').value;
+  const message = document.getElementById('contactMessage').value;
   const statusEl = document.getElementById('contactFormMessage');
 
-  const name = nameEl ? nameEl.value.trim() : '';
-  const email = emailEl ? emailEl.value.trim() : '';
-  const message = messageEl ? messageEl.value.trim() : '';
-
   if (!name || !email || !message) {
-    if (statusEl) {
-      statusEl.style.display = 'block';
-      statusEl.innerHTML = '<span style="color:var(--error); font-weight:700;">Please fill in your name, email, and message.</span>';
-    }
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Please fill in all fields.</span>'; }
     return;
   }
 
-  const waPhone = '255718654332';
-  const waText = encodeURIComponent(
-    `Hello Toiwo Residence!\n\n` +
-    `👤 Name: ${name}\n` +
-    `✉️ Email: ${email}\n` +
-    `💬 Message: ${message}`
-  );
-  const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
-
-  if (statusEl) {
-    statusEl.style.display = 'block';
-    statusEl.innerHTML = `
-      <div style="margin-top: 10px; padding: 14px; background: rgba(37, 211, 102, 0.15); border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.4); text-align: center;">
-        <p style="margin-bottom: 8px; color: #0d120a; font-weight: 700;">✓ Message Sent! Connecting to WhatsApp...</p>
-        <a href="${waUrl}" id="waDirectBtn" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: #ffffff !important; text-decoration: none; padding: 12px 20px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; font-size: 15px;">
-          💬 Open WhatsApp (+255 71 865 4332)
-        </a>
-      </div>
-    `;
-  }
-
-  // Save to database asynchronously
   try {
-    const propId = currentProperty?.id || '8156fa77-dd4b-4af5-ab19-646920f7a3ca';
-    createContactMessage(propId, name, email, message).catch(console.error);
-  } catch (err) {
-    console.error('Contact message error:', err);
-  }
-
-  // Open WhatsApp on mobile seamlessly
-  setTimeout(() => {
-    try {
-      window.location.href = waUrl;
-    } catch (e) {
-      window.open(waUrl, '_blank');
+    if (currentProperty) {
+      await createContactMessage(currentProperty.id, name, email, message);
     }
-  }, 250);
-
-  if (event && event.target && typeof event.target.reset === 'function') {
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--success);">Message sent! We\'ll reply soon.</span>'; }
     event.target.reset();
+    setTimeout(() => { if (statusEl) { statusEl.style.display = 'none'; statusEl.innerHTML = ''; } }, 5000);
+  } catch (error) {
+    console.error('Error submitting contact message:', error);
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Error sending message. Please try again.</span>'; }
   }
 }
 
@@ -875,6 +748,8 @@ function setupEventListeners() {
   const checkOutEl = document.getElementById('bookingCheckOut');
   if (checkInEl) { checkInEl.addEventListener('change', updateTotalPrice); checkInEl.addEventListener('input', updateTotalPrice); }
   if (checkOutEl) { checkOutEl.addEventListener('change', updateTotalPrice); checkOutEl.addEventListener('input', updateTotalPrice); }
+  const bookingSubmit = document.getElementById('bookingSubmit');
+  if (bookingSubmit) bookingSubmit.addEventListener('click', submitBooking);
 
   updateTotalPrice();
 }
@@ -1195,75 +1070,3 @@ function applyModalDates() {
   const bookSec = document.getElementById('booking');
   if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
 }
-
-
-// ============================================
-// REVIEWS TOGGLE FUNCTION (3 COMMENTS INITIAL VIEW)
-// ============================================
-
-
-// ============================================
-// INSTANT REVIEWS DATA (0ms DELAY ON REFRESH)
-// ============================================
-
-const instantLocalReviews = [
-  { author: 'Liselotte', quote: 'Great accommodation. The house met all expectations and gives a homely feeling, we felt very nice here. The communication with Jessica is great, she always responds and thinks proactively. For example, she arranged taxis for us and gave tips to discover Arusha. All in all great start to our vacation!', stars: 5, trip_type: 'Netherlands', initials: 'L' },
-  { author: 'Daniel', quote: "Our stay at Toiwo Residence in Ilboru was absolutely fantastic! We had such a great time that we wanted to share our experience. First off, Jessica, our Airbnb host, was incredible. She was always available, super helpful, and kept everything spotless. The house itself is amazing - clean, tidy, and equipped with everything you could possibly need. And we can't forget about Gerald, the night watchman - he was friendly and reliable, adding an extra layer of security and warmth to our stay. Overall, our time at Toiwo Residence exceeded our expectations, and we can't wait to come back for another visit. It's definitely a great Airbnb experience, and we highly recommend it to anyone looking for a great place to stay in Ilboru. Thanks again for such a wonderful experience!", stars: 5, trip_type: 'Germany', initials: 'D' },
-  { author: 'Paul', quote: 'spacious and peaceful home, great before and after the safari trip, secure on the outside, comfortable inside. kitchen fully equipped, good dinner table for the family, comfortable beds. host Jessica helped arranged the rides from the and to the airport.', stars: 5, trip_type: 'United States', initials: 'P' },
-  { author: 'Athanasia', quote: 'Really nice and comfortable place that can house multiple people. Located at a safe neighborhood. The hostess, Jessica, is very helpful and gave us tips and help with so many different things. It was sufficiently clean, some extra details could have been spotted too.', stars: 5, trip_type: 'Netherlands', initials: 'A' },
-  { author: 'Mara', quote: 'Wonderful house, with very large and fascinating spaces. Clean, nice, with a terrace to see the sky and the surroundings. Very nice people to welcome us. The house has a night guard to keep the security of the place.', stars: 5, trip_type: 'Italy', initials: 'M' },
-  { author: 'Svetlana', quote: "A wonderful house, it's clear that everything was done with love, it's cozy, with attention to detail! Everything is clean and cozy! The hostess was wonderful and treated us with great attention. We arrived before check-in time, and they accommodated us, cleaned up quickly, and checked us in. It was very nice. We had a great time! I recommend it! Thank you very much for the rest.", stars: 5, trip_type: 'Russia', initials: 'S' },
-  { author: 'Catherine', quote: 'Conveniently located, a welcoming host and high level of privacy. The residence is conveniently located close to town which made it easy for us to get around. It offered a high level of privacy and the host, Jessica was exceptionally friendly. We also had the pleasure of enjoying a lovely bonfire experience.', stars: 5, trip_type: 'Kenya', initials: 'C' },
-  { author: 'Karanja', quote: 'Perfect place to unwind and have a you time to reflect !! Will definitely revisit for a long stay!!', stars: 5, trip_type: 'Kenya', initials: 'K' },
-  { author: 'Zayumba', quote: 'Staying at Toiwo Residence was an idyllic retreat with impeccable service and serene surroundings. Very calm, clean and nice customer service', stars: 5, trip_type: 'Tanzania', initials: 'Z' },
-  { author: 'Mohamed', quote: "We had an amazing stay at Jessica's place. Jessica is a wonderful host who is very helpful and responsive. The place is very clean and tidy and matches the photos perfectly. It's a very nice house with all the needed amenities available.", stars: 5, trip_type: 'UAE', initials: 'M' }
-];
-
-function renderReviewsList(reviewsList) {
-  const grid = document.getElementById('reviewsGrid');
-  if (!grid) return;
-
-  const list = (Array.isArray(reviewsList) && reviewsList.length > 0) ? reviewsList : instantLocalReviews;
-
-  function buildCardsHtml(items) {
-    return items.map(r => `
-      <div class="rev-card">
-        <div class="stars">${'★'.repeat(r.stars || 5)}</div>
-        <p>"${r.quote || r.text || ''}"</p>
-        <div class="who">
-          <div class="avatar">${r.initials || (r.author ? r.author.trim().split(' ').map(w => w[0]).join('').substring(0,2) : 'GR')}</div>
-          <div class="who-meta"><strong>${r.author || 'Guest'}</strong> – ${r.trip_type || 'Stay'}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Render initial 3 reviews instantly
-  grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-
-  const seeAllBtn = document.getElementById('seeAllReviewsBtn');
-  if (seeAllBtn) {
-    if (list.length > 3) {
-      seeAllBtn.style.display = 'inline-flex';
-      seeAllBtn.textContent = 'See More ▼';
-      let isExpanded = false;
-
-      seeAllBtn.onclick = () => {
-        if (!isExpanded) {
-          grid.innerHTML = buildCardsHtml(list);
-          seeAllBtn.textContent = 'See Less ▲';
-          isExpanded = true;
-        } else {
-          grid.innerHTML = buildCardsHtml(list.slice(0, 3));
-          seeAllBtn.textContent = 'See More ▼';
-          isExpanded = false;
-          const reviewsSec = document.getElementById('reviews');
-          if (reviewsSec) reviewsSec.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-    } else {
-      seeAllBtn.style.display = 'none';
-    }
-  }
-}
-
