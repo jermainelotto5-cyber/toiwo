@@ -181,13 +181,14 @@ async function checkAvailability(propertyId, checkIn, checkOut) {
 
 async function createBooking(bookingData) {
   try {
-    const { data, error } = await supabaseClient
-      .from('bookings')
-      .insert([bookingData])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Booking service rejected the reservation.');
+    return result;
   } catch (error) {
     console.error('Error creating booking:', error);
     throw error;
