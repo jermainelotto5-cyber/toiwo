@@ -519,7 +519,7 @@ async function submitBooking() {
       payment_status: 'unpaid'
     };
 
-    const booking = await createBooking(bookingData);
+    const booking = await createBooking(bookingData);     await notifyBooking(booking);
     showBookingConfirmation(booking, totalPrice, nights);
   } catch (error) {
     console.error('Error submitting booking:', error);
