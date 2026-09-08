@@ -595,3 +595,16 @@ async function uploadPhotoToStorage(file) {
 }
 
 
+
+async function notifyBooking(booking) {
+  try {
+    const response = await fetch('/api/notify-booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(booking) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Notification service rejected the request.');
+    if (result.errors && result.errors.length) console.warn('Booking saved, but some notifications need attention:', result.errors);
+    return result;
+  } catch (error) {
+    console.warn('Booking saved, but notification delivery could not be completed:', error);
+    return { success: false, sent: [], errors: [error.message] };
+  }
+}
