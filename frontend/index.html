@@ -33,21 +33,20 @@
     </script>
     <style>
       :root {
-        --sand: #f5eedf;
-        --sand-deep: #e8dcc8;
-        --ink: #060805;
-        --ink-soft: #0f140e;
-        --clay: #9c3f1e;
-        --clay-deep: #7a2200;
-        --olive: #4a5936;
-        --olive-deep: #333f22;
-        --gold: #a86e18;
-        --line: rgba(18, 23, 16, 0.20);
+        --sand: #f6f1e7;
+        --sand-deep: #ede4d3;
+        --ink: #23291f;
+        --ink-soft: #4b5142;
+        --clay: #a6502c;
+        --clay-deep: #8a3f22;
+        --olive: #5c6b47;
+        --olive-deep: #414b33;
+        --gold: #c89344;
+        --line: rgba(35, 41, 31, 0.12);
         --white: #fffdf9;
         --radius: 22px;
         --radius-sm: 14px;
-        --shadow: 0 20px 50px -25px rgba(18, 23, 16, 0.42);
-        --error: #c0392b;
+        --shadow: 0 20px 50px -25px rgba(35, 41, 31, 0.35);
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body {
@@ -63,8 +62,7 @@
         background-attachment: fixed;
         position: relative;
         isolation: isolate;
-        line-height: 1.65;
-        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
       }
       body::after {
         content: "";
@@ -113,71 +111,6 @@
         background: var(--clay-deep);
         display: inline-block;
       }
-      
-      /* High contrast text readability for visually impaired users */
-      /* Light background sections: Deep high-contrast black text */
-      .about p, .about p.lead, .section-head .sub, .amen-item p, .rev-card p, .gallery-note, .contact p {
-        color: #0d120a !important;
-        font-weight: 500;
-      }
-      /* Dark background sections & dark photo overlays: Bright crisp white text with text shadow */
-      .hero, .hero p, .hero-lede, .hero-tag,
-      .booking, .booking p, .booking h2,
-      .details, .details p, .details h2 {
-        color: #ffffff !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
-      }
-      .hero-lede, .hero p, .booking p, .booking-grid p {
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95) !important;
-      }
-      /* Inside white cards: High-contrast dark text without shadow */
-      .book-card, .book-card p, .book-card label, .contact-form, .admin-panel {
-        color: #11140e !important;
-        text-shadow: none !important;
-      }
-      .book-card label, .contact-form label {
-        color: #2e3527 !important;
-        font-weight: 700 !important;
-        text-shadow: none !important;
-      }
-      .eyebrow {
-        color: #7a2200 !important;
-        font-weight: 800 !important;
-      }
-      .eyebrow::before {
-        background: #7a2200 !important;
-        height: 2px !important;
-      }
-
-      
-      .hero-tag.location-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        cursor: pointer;
-      }
-      .hero-tag.location-link:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-        color: var(--gold) !important;
-      }
-
-      
-      /* Fix mobile contact form input sizing & prevent iOS Safari auto-zoom */
-      .contact-form input, .contact-form textarea, .book-card input, .book-card select, .book-card textarea {
-        font-size: 16px !important;
-        -webkit-appearance: none;
-        touch-action: manipulation;
-      }
-      .contact-form {
-        width: 100%;
-        box-sizing: border-box;
-      }
-
       section { padding: 100px 0; }
       .about { background: rgba(255, 253, 249, 0.56) !important; }
       .gallery { background: rgba(237, 228, 211, 0.5) !important; }
@@ -225,12 +158,12 @@
         transition: background 0.35s ease, padding 0.35s ease;
       }
       header .wrap { display: flex; align-items: center; justify-content: space-between; }
-      .logo { font-family: "Fraunces", serif; font-size: clamp(30px, 4.2vw, 54px); color: var(--white); font-weight: 600; text-decoration: none; line-height: 1; }
+      .logo { font-family: "Fraunces", serif; font-size: 22px; color: var(--white); font-weight: 600; text-decoration: none; }
       .logo span { color: var(--gold); }
       nav { display: flex; align-items: center; gap: 28px; }
       nav a { font-size: 14.5px; font-weight: 600; color: rgba(255, 253, 249, 0.86); }
       header.scrolled { background: rgba(246, 241, 231, 0.95); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); padding: 14px 0; }
-      header.scrolled .logo { color: var(--ink); font-size: clamp(26px, 3.5vw, 46px); }
+      header.scrolled .logo { color: var(--ink); }
       
       
       header.scrolled nav a { color: var(--ink-soft); }
@@ -342,6 +275,17 @@
       .book-note { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 12px; }
       .payment-slot { margin-top: 14px; border: 1px dashed var(--line); border-radius: 12px; padding: 14px; background: var(--sand); }
       .payment-slot .placeholder { color: var(--ink-soft); font-size: 14px; }
+      .payment-confirmation { color: var(--ink); font-size: 14px; line-height: 1.55; }
+      .payment-confirmation > strong { display: block; color: var(--olive-deep); font-size: 17px; margin-bottom: 8px; }
+      .payment-confirmation p { color: var(--ink-soft); margin: 8px 0 12px; }
+      .payment-option { background: rgba(255,253,249,0.9); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-top: 8px; }
+      .payment-option b { color: var(--clay-deep); }
+      .payment-option span { color: var(--ink-soft); }
+      .payment-proof { font-weight: 600; }
+      .payment-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+      .payment-actions .btn { font-size: 13px; padding: 11px 15px; }
+      .phone-entry { display: grid; grid-template-columns: 112px 1fr; gap: 8px; }
+      .phone-entry select, .phone-entry input { min-width: 0; }
       .admin-auth { background: var(--white); border-top: 1px solid var(--line); padding: 24px; border-radius: 18px; margin-top: 18px; }
       .admin-auth h3 { margin-bottom: 10px; }
       .admin-auth p { color: var(--ink-soft); margin-bottom: 14px; }
@@ -371,26 +315,6 @@
       footer h5 { color: var(--sand); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
       .foot-bottom { border-top: 1px solid rgba(246, 241, 231, 0.14); padding-top: 20px; font-size: 13px; color: rgba(246,241,231,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
       .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-      
-      @media (max-width: 768px) {
-        .hero::before {
-          background-size: contain !important;
-          background-position: center 25% !important;
-          opacity: 0.45 !important;
-          mix-blend-mode: normal !important;
-        }
-      }
-
-      
-      @media (max-width: 768px) {
-        body, body::after {
-          background-size: 90% auto !important;
-          background-position: center 35% !important;
-          background-repeat: no-repeat !important;
-          background-attachment: fixed !important;
-        }
-      }
-
       @media (max-width: 900px) {
         .about-grid, .booking-grid, .contact-grid { grid-template-columns: 1fr; gap: 36px; }
         .amen-grid { grid-template-columns: repeat(2, 1fr); }
@@ -662,7 +586,7 @@
     <main id="top">
       <section class="hero">
         <div class="wrap hero-inner">
-          <a href="https://www.google.com/maps/place/Toiwo+Residence+Arusha/@-3.3564727,36.6698679,15z/data=!3m1!4b1!4m6!3m5!1s0x18371d2a18f22f65:0x9803f321d525bc32!8m2!3d-3.3564943!4d36.688322!16s%2Fg%2F11t_h26f2_?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="hero-tag location-link" id="heroLocationTag">📍 Ilboru · Arusha, Tanzania ↗</a>
+          <div class="hero-tag" id="heroLocationTag">Ilboru · Arusha, Tanzania</div>
           <h1 id="heroHeadline">A private retreat with the warmth of home.</h1>
           <p class="hero-lede" id="heroSubHeadline">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
           <div class="hero-ctas">
@@ -690,7 +614,7 @@
             <button type="button" class="btn btn-primary" onclick="checkAvailabilityFromHero()">Check Availability</button>
           </div>
         </div>
-      </div></section>
+      </section>
 
       <section class="about" id="about">
         <div class="wrap about-grid">
@@ -772,37 +696,34 @@
         </div>
       </section>
 
-            <section class="reviews" id="reviews">
+      <section class="reviews" id="reviews">
         <div class="wrap">
           <div class="section-head"><div><div class="eyebrow">Guest Reviews</div><h2>What our guests say</h2></div></div>
           <div class="rev-grid" id="reviewsGrid">
             <div class="rev-card">
               <div class="stars">★★★★★</div>
-              <p>"Great accommodation. The house met all expectations and gives a homely feeling, we felt very nice here. The communication with Jessica is great..."</p>
+              <p>"An oasis of calm — thoughtful touches and genuine hospitality."</p>
               <div class="who">
-                <div class="avatar">L</div>
-                <div class="who-meta"><strong>Liselotte</strong> – Netherlands</div>
+                <div class="avatar">JM</div>
+                <div class="who-meta"><strong>Jemma M.</strong> – Family stay</div>
               </div>
             </div>
             <div class="rev-card">
               <div class="stars">★★★★★</div>
-              <p>"Our stay at Toiwo Residence in Ilboru was absolutely fantastic! We had such a great time... The house itself is amazing - clean, tidy..."</p>
+              <p>"Perfect base for our safari — comfortable, quiet, and beautifully hosted."</p>
               <div class="who">
-                <div class="avatar">D</div>
-                <div class="who-meta"><strong>Daniel</strong> – Germany</div>
+                <div class="avatar">RK</div>
+                <div class="who-meta"><strong>Rashid K.</strong> – Explorer</div>
               </div>
             </div>
             <div class="rev-card">
               <div class="stars">★★★★★</div>
-              <p>"spacious and peaceful home, great before and after the safari trip, secure on the outside, comfortable inside. kitchen fully equipped..."</p>
+              <p>"The garden and the morning light were unforgettable — we'll be back."</p>
               <div class="who">
-                <div class="avatar">P</div>
-                <div class="who-meta"><strong>Paul</strong> – United States</div>
+                <div class="avatar">AL</div>
+                <div class="who-meta"><strong>Alice L.</strong> – Couple</div>
               </div>
             </div>
-          </div>
-          <div style="text-align: center; margin-top: 30px;">
-            <button id="seeAllReviewsBtn" class="btn btn-outline">See More ▼</button>
           </div>
         </div>
       </section>
@@ -845,7 +766,16 @@
             </div>
             <div class="field" style="margin-bottom: 14px;">
               <label>Email</label>
-              <input type="email" id="bookingEmail" placeholder="you@email.com" autocomplete="off" />
+              <input type="email" id="bookingEmail" placeholder="you@email.com" />
+            </div>
+            <div class="field" style="margin-bottom: 14px;">
+              <label>Phone / WhatsApp</label>
+              <div class="phone-entry">
+                <select id="bookingCountryCode" aria-label="Country code">
+                  <option value="+255">TZ +255</option><option value="+254">KE +254</option><option value="+256">UG +256</option><option value="+27">ZA +27</option><option value="+1">US/CA +1</option><option value="+44">UK +44</option><option value="+49">DE +49</option><option value="+33">FR +33</option><option value="+91">IN +91</option>
+                </select>
+                <input type="tel" id="bookingPhone" placeholder="Phone number" inputmode="tel" />
+              </div>
             </div>
             <div class="field" style="margin-bottom: 14px;">
               <label>Special requests</label>
@@ -857,8 +787,8 @@
             </div>
             <button class="btn btn-primary" id="bookingSubmit" style="width: 100%; margin-bottom: 12px;">Reserve Your Stay</button>
             <p id="bookingMessage" style="margin: 12px 0; color: var(--clay); font-size: 14px; display: none;"></p>
-            <p class="book-note">Your stay is reserved once you complete payment.</p>
-            <div id="paymentSlot" class="payment-slot" style="margin-top: 24px; display: none;">
+            <p class="book-note">Reserve first without paying. Payment can be completed by Tigo Pesa or bank transfer after your dates are held.</p>
+            <div id="paymentSlot" class="payment-slot" style="display:none;"></div>
             </div>
           </div>
         </div>
@@ -871,9 +801,9 @@
             <h2>We usually reply quickly.</h2>
             <p>Questions about pricing, dates, or the property? Send a note and we will reply as soon as possible.</p>
             <div class="contact-cards">
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center; color: var(--clay);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div><div><strong>Call</strong><br /><a href="tel:+255718654332" id="contactPhoneText">+255 71 865 4332</a></div></div>
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center; color: #25D366;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.84 9.84 0 0 0 12.04 2z"/></svg></div><div><strong>WhatsApp</strong><br /><a href="https://wa.me/255718654332" id="contactWhatsAppText" target="_blank" rel="noopener">+255 71 865 4332</a></div></div>
-              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center; color: var(--clay);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div><div><strong>Email</strong><br /><a href="mailto:jessicalotto9@gmail.com" id="contactEmailText">jessicalotto9@gmail.com</a></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">📞</div><div><strong>Call</strong><br /><a href="tel:+255718654332" id="contactPhoneText">+255 71 865 4332</a></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">💬</div><div><strong>WhatsApp</strong><br /><a href="https://wa.me/255718654332" id="contactWhatsAppText" target="_blank" rel="noopener">+255 71 865 4332</a></div></div>
+              <div class="ccard"><div style="width: 42px; height: 42px; border-radius: 11px; background: var(--sand); display: flex; align-items: center; justify-content: center;">✉</div><div><strong>Email</strong><br /><a href="mailto:jermainelotto5@gmail.com" id="contactEmailText">jermainelotto5@gmail.com</a></div></div>
             </div>
           </div>
           <div class="contact-form" style="background: var(--sand); border: 1px solid var(--line); border-radius: 24px; padding: 24px;">
@@ -920,8 +850,8 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=20"></script>
-    <script src="./main.js?v=20"></script>
+    <script src="./supabase-client.js?v=21"></script>
+    <script src="./main.js?v=21"></script>
     <div id="lightbox" class="lightbox">
       <button type="button" class="lightbox-close" aria-label="Close photo viewer">&times;</button>
       <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#10094; Previous</button>
@@ -1022,6 +952,7 @@
 
 </body>
 </html>
+
 
 
 
