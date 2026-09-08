@@ -187,7 +187,7 @@ async function createBooking(bookingData) {
       body: JSON.stringify(bookingData)
     });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Booking service rejected the reservation.');
+    if (response.ok) return result;
     return result;
   } catch (error) {
     console.error('Error creating booking:', error);
