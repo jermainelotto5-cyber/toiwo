@@ -77,8 +77,10 @@ function applySiteContent() {
   // --- REVIEWS ---
   if (siteContent.reviews && Array.isArray(siteContent.reviews)) {
     const grid = document.getElementById('reviewsGrid');
+    const reviewsToggle = document.getElementById('reviewsToggleBtn');
     if (grid) {
-      grid.innerHTML = siteContent.reviews.map(r => `
+      const reviews = siteContent.reviews;
+      const renderReviews = (items) => { grid.innerHTML = items.map(r => `
         <div class="rev-card">
           <div class="stars">${'★'.repeat(r.stars || 5)}</div>
           <p>"${r.quote}"</p>
@@ -87,7 +89,19 @@ function applySiteContent() {
             <div class="who-meta"><strong>${r.author}</strong> – ${r.trip_type}</div>
           </div>
         </div>
-      `).join('');
+      `).join(''); };
+      renderReviews(reviews.slice(0, 3));
+      if (reviewsToggle && reviews.length > 3) {
+        reviewsToggle.style.display = 'inline-flex';
+        reviewsToggle.textContent = 'See More Reviews ▼';
+        let expanded = false;
+        reviewsToggle.onclick = () => {
+          expanded = !expanded;
+          renderReviews(expanded ? reviews : reviews.slice(0, 3));
+          reviewsToggle.textContent = expanded ? 'See Less Reviews ▲' : 'See More Reviews ▼';
+          if (!expanded) document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+        };
+      }
     }
   }
 
