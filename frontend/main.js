@@ -7,6 +7,8 @@ let currentAdminSettings = null;
 let siteContent = {}; // loaded from /api/content
 
 const NIGHTLY_RATE = 180;
+let bookingWhatsAppWindow = null;
+let bookingEmailWindow = null;
 
 // ============================================
 // INITIALIZATION
@@ -93,12 +95,12 @@ function applySiteContent() {
       renderReviews(reviews.slice(0, 3));
       if (reviewsToggle && reviews.length > 3) {
         reviewsToggle.style.display = 'inline-flex';
-        reviewsToggle.textContent = 'See More Reviews ▼';
+        reviewsToggle.textContent = 'See More ▼';
         let expanded = false;
         reviewsToggle.onclick = () => {
           expanded = !expanded;
           renderReviews(expanded ? reviews : reviews.slice(0, 3));
-          reviewsToggle.textContent = expanded ? 'See Less Reviews ▲' : 'See More Reviews ▼';
+          reviewsToggle.textContent = expanded ? 'See Less ▲' : 'See More ▼';
           if (!expanded) document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
         };
       }
@@ -492,6 +494,11 @@ async function submitBooking() {
     return;
   }
 
+  // Open both destinations during the user's button click so browsers do not
+  // block them later when the database and calendar checks finish.
+  bookingWhatsAppWindow = window.open('about:blank', '_blank');
+  bookingEmailWindow = window.open('about:blank', '_blank');
+
   try {
     // Recheck Airbnb and Booking.com before the final database availability
     // check so a newly imported reservation cannot be double-booked.
@@ -572,8 +579,10 @@ function showBookingConfirmation(booking, totalPrice, nights) {
 
   // Open both contact channels when the browser permits pop-ups. The visible
   // buttons above remain available if the browser blocks automatic windows.
-  window.open(whatsappUrl, '_blank', 'noopener');
-  window.open(emailUrl, '_blank');
+  if (bookingWhatsAppWindow && !bookingWhatsAppWindow.closed) bookingWhatsAppWindow.location.href = whatsappUrl;
+  else window.open(whatsappUrl, '_blank', 'noopener');
+  if (bookingEmailWindow && !bookingEmailWindow.closed) bookingEmailWindow.location.href = emailUrl;
+  else window.open(emailUrl, '_blank');
 }
 
 async function checkAvailabilityFromHero() {
