@@ -586,7 +586,7 @@
     <main id="top">
       <section class="hero">
         <div class="wrap hero-inner">
-          <div class="hero-tag" id="heroLocationTag">Ilboru · Arusha, Tanzania</div>
+          <a class="hero-tag hero-location-link" id="heroLocationTagLink" href="https://www.google.com/maps/place/Toiwo+Residence+Arusha/@-3.3564889,36.6857471,17z/data=!3m1!4b1!4m6!3m5!1s0x18371d2a18f22f65:0x9803f321d525bc32!8m2!3d-3.3564943!4d36.688322!16s%2Fg%2F11t_h26f2_?entry=ttu" target="_blank" rel="noopener"><span id="heroLocationTag">Ilboru · Arusha, Tanzania</span></a>
           <h1 id="heroHeadline">A private retreat with the warmth of home.</h1>
           <p class="hero-lede" id="heroSubHeadline">A four-bedroom residence in Ilboru, designed for slow mornings, family stays, and easy safari stopovers.</p>
           <div class="hero-ctas">
@@ -725,6 +725,7 @@
               </div>
             </div>
           </div>
+          <button id="reviewsToggleBtn" class="btn btn-outline reviews-toggle" type="button" style="display:none;">See More Reviews ▼</button>
         </div>
       </section>
 
@@ -735,7 +736,6 @@
             <h2>Reserve your dates today.</h2>
             <p>Choose your dates, send your details, and complete your payment once the booking is ready.</p>
             <div class="price-tag"><span class="amt" id="heroPrice">$180</span><span class="per">/ night &middot; whole house</span></div>
-            <p>Payment integration is placed below the form so you can swap in Selcom, M-Pesa, Tigo Pesa, Stripe, or another provider whenever you are ready.</p>
           </div>
           <div class="book-card">
 
@@ -787,7 +787,7 @@
             </div>
             <button class="btn btn-primary" id="bookingSubmit" style="width: 100%; margin-bottom: 12px;">Reserve Your Stay</button>
             <p id="bookingMessage" style="margin: 12px 0; color: var(--clay); font-size: 14px; display: none;"></p>
-            <p class="book-note">Reserve first without paying. Payment can be completed by Tigo Pesa or bank transfer after your dates are held.</p>
+            <p class="book-note">Payment: Tigo Pesa 0718 654 332 or Diamond Trust Bank 5237474001 — Jessica Lotto Mollel. After paying, send the receipt to WhatsApp or email for verification.</p>
             <div id="paymentSlot" class="payment-slot" style="display:none;"></div>
             </div>
           </div>
@@ -850,8 +850,8 @@
     </footer>
 
     <script src="./supabase.min.js"></script>
-    <script src="./supabase-client.js?v=21"></script>
-    <script src="./main.js?v=21"></script>
+    <script src="./supabase-client.js?v=22"></script>
+    <script src="./main.js?v=22"></script>
     <div id="lightbox" class="lightbox">
       <button type="button" class="lightbox-close" aria-label="Close photo viewer">&times;</button>
       <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#10094; Previous</button>
@@ -952,6 +952,7 @@
 
 </body>
 </html>
+
 
 
 
