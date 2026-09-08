@@ -1085,3 +1085,9 @@ function applyModalDates() {
   const bookSec = document.getElementById('booking');
   if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
 }
+
+const originalShowBookingConfirmation = showBookingConfirmation;
+showBookingConfirmation = async function(booking, totalPrice, nights) {
+  await notifyBooking(booking);
+  return originalShowBookingConfirmation(booking, totalPrice, nights);
+};
