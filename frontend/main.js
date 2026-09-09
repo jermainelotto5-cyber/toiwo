@@ -559,13 +559,10 @@ function showBookingConfirmation(booking, totalPrice, nights) {
         <strong>Jessica says thank you and warmly welcomes you to Toiwo Residence ❤️</strong>
         <p>Your reservation has been received with care. We look forward to hosting you and making your stay peaceful, comfortable, and memorable.</p>
         <p>Your stay for <b>${nights} night${nights === 1 ? '' : 's'}</b> (${checkIn} to ${checkOut}) has been reserved as a pending booking. Jessica will confirm it with you.</p>
-        <p>To pay, use one of these options:</p>
-        <div class="payment-option"><b>Tigo Pesa</b><br />0718 654 332<br /><span>Jessica Lotto Mollel</span></div>
-        <div class="payment-option"><b>Bank transfer</b><br />Diamond Trust Bank<br />Account: 5237474001<br /><span>Jessica Lotto Mollel</span></div>
-        <p class="payment-proof">After payment, send the receipt and your booking name to WhatsApp or email for verification. Your booking is not marked paid until the receipt is verified.</p>
+        <p class="payment-proof">Payment is received upon arrival. No advance payment or receipt is required before your stay.</p>
         <div class="payment-actions">
-          <a class="btn btn-primary" href="${whatsappUrl}" target="_blank" rel="noopener">Send receipt on WhatsApp</a>
-          <a class="btn btn-outline" href="${emailUrl}">Send receipt by email</a>
+          <a class="btn btn-primary" href="${whatsappUrl}" target="_blank" rel="noopener">Send booking details on WhatsApp</a>
+          <a class="btn btn-outline" href="${emailUrl}">Send booking details by email</a>
         </div>
       </div>`;
     paymentSlot.style.display = 'block';
