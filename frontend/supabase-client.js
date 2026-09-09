@@ -150,20 +150,45 @@ async function checkAvailability(propertyId, checkIn, checkOut) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error checking availability:', error);
-    return false;
+    // Older Supabase projects may not have the RPC deployed yet. Fall back to
+    // the same blocked-date and booking records used by the calendar instead
+    // of incorrectly telling every guest that dates are unavailable.
+    console.warn('Availability RPC unavailable; checking saved dates directly.', error);
+    try {
+      const [blockedDates, bookings] = await Promise.all([
+        getBlockedDates(propertyId),
+        getAllBookings(propertyId)
+      ]);
+      const blocked = new Set(blockedDates || []);
+      for (const booking of bookings || []) {
+        if (booking.status !== 'pending' && booking.status !== 'confirmed') continue;
+        const start = new Date(booking.check_in);
+        const end = new Date(booking.check_out);
+        for (let day = new Date(start); day < end; day.setDate(day.getDate() + 1)) {
+          blocked.add(day.toISOString().slice(0, 10));
+        }
+      }
+      for (let day = new Date(checkIn); day < new Date(checkOut); day.setDate(day.getDate() + 1)) {
+        if (blocked.has(day.toISOString().slice(0, 10))) return false;
+      }
+      return true;
+    } catch (fallbackError) {
+      console.error('Error checking saved availability:', fallbackError);
+      return false;
+    }
   }
 }
 
 async function createBooking(bookingData) {
   try {
-    const { data, error } = await supabaseClient
-      .from('bookings')
-      .insert([bookingData])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData)
+    });
+    const result = await response.json();
+    if (response.ok) return result;
+    return result;
   } catch (error) {
     console.error('Error creating booking:', error);
     throw error;
@@ -570,3 +595,16 @@ async function uploadPhotoToStorage(file) {
 }
 
 
+
+async function notifyBooking(booking) {
+  try {
+    const response = await fetch('/api/notify-booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(booking) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Notification service rejected the request.');
+    if (result.errors && result.errors.length) console.warn('Booking saved, but some notifications need attention:', result.errors);
+    return result;
+  } catch (error) {
+    console.warn('Booking saved, but notification delivery could not be completed:', error);
+    return { success: false, sent: [], errors: [error.message] };
+  }
+}

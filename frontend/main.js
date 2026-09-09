@@ -92,13 +92,13 @@ function applySiteContent() {
       `).join(''); };
       renderReviews(reviews.slice(0, 3));
       if (reviewsToggle && reviews.length > 3) {
-        reviewsToggle.style.display = 'inline-flex';
-        reviewsToggle.textContent = 'See More Reviews ▼';
+        reviewsToggle.style.display = 'block';
+        reviewsToggle.textContent = 'See More ▼';
         let expanded = false;
         reviewsToggle.onclick = () => {
           expanded = !expanded;
           renderReviews(expanded ? reviews : reviews.slice(0, 3));
-          reviewsToggle.textContent = expanded ? 'See Less Reviews ▲' : 'See More Reviews ▼';
+          reviewsToggle.textContent = expanded ? 'See Less ▲' : 'See More ▼';
           if (!expanded) document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
         };
       }
@@ -519,7 +519,7 @@ async function submitBooking() {
       payment_status: 'unpaid'
     };
 
-    const booking = await createBooking(bookingData);
+    const booking = await createBooking(bookingData);     await notifyBooking(booking);
     showBookingConfirmation(booking, totalPrice, nights);
   } catch (error) {
     console.error('Error submitting booking:', error);
@@ -556,7 +556,8 @@ function showBookingConfirmation(booking, totalPrice, nights) {
   if (paymentSlot) {
     paymentSlot.innerHTML = `
       <div class="payment-confirmation">
-        <strong>Reservation received — no payment is required now.</strong>
+        <strong>Jessica says thank you and warmly welcomes you to Toiwo Residence ❤️</strong>
+        <p>Your reservation has been received with care. We look forward to hosting you and making your stay peaceful, comfortable, and memorable.</p>
         <p>Your stay for <b>${nights} night${nights === 1 ? '' : 's'}</b> (${checkIn} to ${checkOut}) has been reserved as a pending booking. Jessica will confirm it with you.</p>
         <p>To pay, use one of these options:</p>
         <div class="payment-option"><b>Tigo Pesa</b><br />0718 654 332<br /><span>Jessica Lotto Mollel</span></div>
@@ -570,8 +571,8 @@ function showBookingConfirmation(booking, totalPrice, nights) {
     paymentSlot.style.display = 'block';
   }
 
-  // Open both contact channels when the browser permits pop-ups. The visible
-  // buttons above remain available if the browser blocks automatic windows.
+  // Open the real destinations only; never open an empty about:blank tab.
+  // The visible buttons remain available if a browser blocks pop-ups.
   window.open(whatsappUrl, '_blank', 'noopener');
   window.open(emailUrl, '_blank');
 }
@@ -1084,3 +1085,9 @@ function applyModalDates() {
   const bookSec = document.getElementById('booking');
   if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
 }
+
+const originalShowBookingConfirmation = showBookingConfirmation;
+showBookingConfirmation = async function(booking, totalPrice, nights) {
+  await notifyBooking(booking);
+  return originalShowBookingConfirmation(booking, totalPrice, nights);
+};
