@@ -31,7 +31,10 @@ module.exports = async (req, res) => {
       const propId = settings.property_id;
 
       const [bookingsResp, blocksResp] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/bookings?property_id=eq.${propId}&status=eq.confirmed&select=*`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }),
+        // Pending website reservations must be exported too: the dates are
+        // held as soon as the guest submits the form, before payment/admin
+        // confirmation, so Airbnb and Booking.com cannot sell them meanwhile.
+        fetch(`${SUPABASE_URL}/rest/v1/bookings?property_id=eq.${propId}&status=in.(pending,confirmed)&select=*`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }),
         fetch(`${SUPABASE_URL}/rest/v1/blocked_dates?property_id=eq.${propId}&select=*`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } })
       ]);
       const bookings = bookingsResp.ok ? await bookingsResp.json() : [];

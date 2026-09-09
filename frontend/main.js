@@ -94,7 +94,11 @@ function applySiteContent() {
       `).join(''); };
       renderReviews(reviews.slice(0, 3));
       if (reviewsToggle && reviews.length > 3) {
+<<<<<<< HEAD
         reviewsToggle.style.display = 'inline-flex';
+=======
+        reviewsToggle.style.display = 'block';
+>>>>>>> origin/main
         reviewsToggle.textContent = 'See More ▼';
         let expanded = false;
         reviewsToggle.onclick = () => {
@@ -526,7 +530,7 @@ async function submitBooking() {
       payment_status: 'unpaid'
     };
 
-    const booking = await createBooking(bookingData);
+    const booking = await createBooking(bookingData);     await notifyBooking(booking);
     showBookingConfirmation(booking, totalPrice, nights);
   } catch (error) {
     console.error('Error submitting booking:', error);
@@ -563,7 +567,8 @@ function showBookingConfirmation(booking, totalPrice, nights) {
   if (paymentSlot) {
     paymentSlot.innerHTML = `
       <div class="payment-confirmation">
-        <strong>Reservation received — no payment is required now.</strong>
+        <strong>Jessica says thank you and warmly welcomes you to Toiwo Residence ❤️</strong>
+        <p>Your reservation has been received with care. We look forward to hosting you and making your stay peaceful, comfortable, and memorable.</p>
         <p>Your stay for <b>${nights} night${nights === 1 ? '' : 's'}</b> (${checkIn} to ${checkOut}) has been reserved as a pending booking. Jessica will confirm it with you.</p>
         <p>To pay, use one of these options:</p>
         <div class="payment-option"><b>Tigo Pesa</b><br />0718 654 332<br /><span>Jessica Lotto Mollel</span></div>
@@ -1093,3 +1098,9 @@ function applyModalDates() {
   const bookSec = document.getElementById('booking');
   if (bookSec) bookSec.scrollIntoView({ behavior: 'smooth' });
 }
+
+const originalShowBookingConfirmation = showBookingConfirmation;
+showBookingConfirmation = async function(booking, totalPrice, nights) {
+  await notifyBooking(booking);
+  return originalShowBookingConfirmation(booking, totalPrice, nights);
+};
