@@ -528,6 +528,23 @@ async function submitBooking() {
   }
 }
 
+async function notifyBooking(booking) {
+  try {
+    const response = await fetch('/api/notify-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(booking)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Notification service unavailable.');
+    if (result.errors?.length) console.warn('Booking saved, but some emails failed:', result.errors);
+    return result;
+  } catch (error) {
+    console.warn('Booking saved, but notification delivery failed:', error);
+    return { success: false, errors: [error.message] };
+  }
+}
+
 function showBookingConfirmation(booking, totalPrice, nights) {
   const paymentSlot = document.getElementById('paymentSlot');
   const name = document.getElementById('bookingName')?.value || 'Guest';
@@ -783,6 +800,18 @@ let calendarCurrentMonth = new Date().getMonth();
 let calendarCurrentYear = new Date().getFullYear();
 let selectedCheckInDate = null;
 let selectedCheckOutDate = null;
+
+async function syncExternalCalendars(propertyId) {
+  if (!propertyId) return false;
+  try {
+    const response = await fetch(`/api/ical?sync=true&property_id=${encodeURIComponent(propertyId)}&t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Calendar sync returned ${response.status}`);
+    return true;
+  } catch (error) {
+    console.warn('External calendar sync failed; using the latest saved blocks.', error);
+    return false;
+  }
+}
 
 async function initAvailabilityCalendar({ syncExternal = true } = {}) {
   const container = document.getElementById('availabilityCalendarContainer');
