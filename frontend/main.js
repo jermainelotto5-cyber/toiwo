@@ -79,7 +79,8 @@ function applySiteContent() {
     const grid = document.getElementById('reviewsGrid');
     const reviewsToggle = document.getElementById('reviewsToggleBtn');
     if (grid) {
-      const reviews = siteContent.reviews;
+      const unwantedSeedReviews = new Set(['Jemma M.', 'Rashid K.', 'Alice L.']);
+      const reviews = siteContent.reviews.filter(r => !unwantedSeedReviews.has(String(r.author || '').trim()));
       const renderReviews = (items) => { grid.innerHTML = items.map(r => `
         <div class="rev-card">
           <div class="stars">${'★'.repeat(r.stars || 5)}</div>
