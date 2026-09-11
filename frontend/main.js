@@ -700,9 +700,9 @@ function updateTotalPrice() {
 
 async function submitContactForm(event) {
   event.preventDefault();
-  const name = document.getElementById('contactName').value;
-  const email = document.getElementById('contactEmailInput').value;
-  const message = document.getElementById('contactMessage').value;
+  const name = document.getElementById('contactName').value.trim();
+  const email = document.getElementById('contactEmailInput').value.trim();
+  const message = document.getElementById('contactMessage').value.trim();
   const statusEl = document.getElementById('contactFormMessage');
 
   if (!name || !email || !message) {
@@ -710,17 +710,24 @@ async function submitContactForm(event) {
     return;
   }
 
+  const whatsappText = [
+    'Toiwo Residence contact message',
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Message: ${message}`
+  ].join('\n');
+  const whatsappUrl = `https://wa.me/255718654332?text=${encodeURIComponent(whatsappText)}`;
+  const whatsappWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
   try {
-    if (currentProperty) {
-      await createContactMessage(currentProperty.id, name, email, message);
-    }
-    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--success);">Message sent! We\'ll reply soon.</span>'; }
+    if (currentProperty) await createContactMessage(currentProperty.id, name, email, message);
     event.target.reset();
-    setTimeout(() => { if (statusEl) { statusEl.style.display = 'none'; statusEl.innerHTML = ''; } }, 5000);
   } catch (error) {
-    console.error('Error submitting contact message:', error);
-    if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = '<span style="color:var(--error);">Error sending message. Please try again.</span>'; }
+    console.warn('Could not save contact message:', error);
   }
+
+  // If the browser blocked the new tab, navigate the current tab instead.
+  if (!whatsappWindow) window.location.href = whatsappUrl;
 }
 
 // ============================================
