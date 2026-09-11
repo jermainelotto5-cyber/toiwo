@@ -45,7 +45,7 @@ function applySiteContent() {
   const about = siteContent.about || {};
   setText('aboutEyebrow', about.eyebrow);
   setText('aboutHeadline', about.headline);
-  setText('aboutLead', about.lead);
+  setText('aboutLead', );
   setText('aboutBody', about.body);
   setText('aboutCaption', about.photo_caption);
   if (about.photo_url) {
