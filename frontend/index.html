@@ -789,7 +789,7 @@
             </div>
             <button class="btn btn-primary" id="bookingSubmit" style="width: 100%; margin-bottom: 12px;">Reserve Your Stay</button>
             <p id="bookingMessage" style="margin: 12px 0; color: var(--clay); font-size: 14px; display: none;"></p>
-            <p class="book-note">Payment is received upon arrival. No advance payment is required.</p>
+            <p class="book-note">Payment is received upon arrival.</p>
             <div id="paymentSlot" class="payment-slot" style="display:none;"></div>
             </div>
           </div>
@@ -872,7 +872,7 @@
       .lightbox-close:hover, .lightbox-nav:hover { background: var(--clay); }
       @media (max-width: 700px) {
         /* Keep the image visible on phones: cover the viewport without removing it. */
-        body { background-size: cover; background-position: center center; background-attachment: fixed; }
+        body { background-size: auto 100vh; background-position: center top; background-attachment: scroll; }
         .lightbox img { max-width: 82%; max-height: 78%; }
         .lightbox-nav { min-width: 82px; height: 50px; padding: 0 8px; }
         .lightbox-prev { left: 8px; }
