@@ -37,7 +37,7 @@ function applySiteContent() {
   const hero = siteContent.hero || {};
   setText('heroLocationTag', hero.location_tag);
   setText('heroHeadline', hero.headline);
-  setText('heroSubHeadline', hero.sub_headline);
+  setText('heroSubHeadline', 'A spacious four-bedroom residence in peaceful Ilboru area, offering space, privacy and the comforts of home for up to 8 guests. A professional setting for families, groups, business & safari travelers. Enjoy a quiet garden retreat just 10–15 minutes from Arusha city centre, with space to relax, work and stay connected.');
   setText('heroCtaPrimary', hero.cta_primary_label);
   setText('heroCtaSecondary', hero.cta_secondary_label);
 
