@@ -45,7 +45,7 @@ function applySiteContent() {
   const about = siteContent.about || {};
   setText('aboutEyebrow', about.eyebrow);
   setText('aboutHeadline', about.headline);
-  setText('aboutLead', );
+  setText('aboutLead', 'Set behind a gated garden in the residential quiet of Ilboru, a thoughtfully designed four-bedroom residence offering a peaceful and private stay in Arusha. Whether you’re here for business, a family holiday, a group getaway, or a safari adventure, Toiwo Residence gives you the space and comfort to settle in and make yourself at home.');setText('aboutBody', 'Thoughtfully designed with character and warmth, Toiwo Residence combines elegant arched doorways, natural wood details, and comfortable living spaces to create a welcoming home-away-from-home. Enjoy a spacious garden, outdoor fire pit, private gated and fully fenced grounds, and a calm environment where you can relax after a day of meetings, sightseeing, or safari. With space for up to 8 guests and night security on-site, it’s an ideal base for both short visits and extended stays.');
   setText('aboutBody', about.body);
   setText('aboutCaption', about.photo_caption);
   if (about.photo_url) {
